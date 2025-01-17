@@ -1,32 +1,15 @@
 from datetime import datetime
 import subprocess
-import time
 import boto3
 import os
-import RPi.GPIO as GPIO
 
-# turns on the watering system every X seconds, then captures an image and uploads it to AWS storage bucket
-
+# captures an image and uploads it to AWS storage bucket. to be scheduled by a cronjob.
 
 # aws s3 setup
 BUCKET_NAME = 'grobot-data-bucket'
 s3_client = boto3.client('s3')
 S3_FOLDER = 'microgreen-images/'
 IMAGE_FOLDER = '/home/raspberrypi/Desktop/grobot/'
-
-# compressore relay setup
-RELAY_PIN = 23
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(RELAY_PIN, GPIO.OUT)
-
-TIME_BETWEEN = 120 # seconds to wait between watering/image capture
-WATERING_TIME = 60 # seconds to turn on misting system
-
-# -----------MISTING SYSTEM FNS-----------
-def water():
-    GPIO.output(RELAY_PIN, GPIO.HIGH)
-    time.sleep(WATERING_TIME)
-    GPIO.output(RELAY_PIN, GPIO.LOW)
 
 # ----------GROWTH IMAGE FNS--------------
 def capture_image():
@@ -52,17 +35,11 @@ def upload_to_s3(file_path):
         print(f'Error uploading to S3: {e}')
 
 def main():
-    while True:
-#         TURN ON MISTING SYSTEM
-        water()
-#         CAPTURE AND UPLOAD GROWTH IMAGE
         image_path = capture_image()
         if image_path:
-#             upload_to_s3(image_path)
-# ^ above line temporarily commented out so not using free aws limits while testing growing
+            upload_to_s3(image_path)
 #             clean up local image
             os.remove(image_path) 
-        time.sleep(TIME_BETWEEN)
         
 if __name__ == '__main__':
     main()
