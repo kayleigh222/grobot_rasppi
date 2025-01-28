@@ -3,7 +3,7 @@ import time
 
 # turns on the watering system for X seconds. to be scheduled by a cronjob.
 
-WATERING_TIME = 25 # seconds to turn on misting system
+WATERING_TIME = 30 # seconds to turn on misting system
 
 # compressor relay setup
 RELAY_PIN = 23
