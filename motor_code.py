@@ -5,7 +5,7 @@ import time
 DIR_PIN = 17     # Direction control
 STEP_PIN = 27    # Step signal
 SLEEP_PIN = 22   # Sleep mode control
-RESET_PIN = 26   # Reset control
+RESET_PIN = 10   # Reset control
 
 # Setup GPIO
 GPIO.setmode(GPIO.BCM)
