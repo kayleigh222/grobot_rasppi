@@ -7,10 +7,10 @@ pins = [26, 19, 13, 6]  # Adjust based on wiring
 motor = RpiMotorLib.BYJMotor("MyStepper", "28BYJ")
 
 # Rotate forward
-motor.motor_run(pins, delay=0.002, steps=512, ccwise=False)
+motor.motor_run(pins, step_delay=0.002, steps=512, ccwise=False)
 
 # Rotate backward
-motor.motor_run(pins, delay=0.002, steps=512, ccwise=True)
+motor.motor_run(pins, step_delay=0.002, steps=512, ccwise=True)
 
 GPIO.cleanup()
 
