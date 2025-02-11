@@ -1,21 +1,25 @@
-import time
 import RPi.GPIO as GPIO
 from RpiMotorLib import RpiMotorLib
 
-# Define GPIO pins (change these according to your wiring)
-pins = [26, 19, 13, 6]  # Adjust based on wiring
+# Use BCM mode for GPIO numbering
+GPIO.setmode(GPIO.BCM)
 
-# Create a stepper motor instance
+# Define GPIO pins for ULN2003
+pins = [26, 19, 13, 6]  
+
+# Initialize the stepper motor
 motor = RpiMotorLib.BYJMotor("MyStepper", "28BYJ")
 
-# Run motor forward
-motor.motor_run(pins, .002, 512, False, False, "full", 0)
+# Try running the motor forward and backward
+print("Moving Forward...")
+motor.motor_run(pins, 0.005, 512, False, False, "full", 0)
 
-# Run motor backward
-motor.motor_run(pins, .002, 512, True, False, "full", 0)
+print("Moving Backward...")
+motor.motor_run(pins, 0.005, 512, True, False, "full", 0)
 
 # Cleanup GPIO
 GPIO.cleanup()
+print("Test Complete")
 
 # import RPi.GPIO as GPIO
 # import time
