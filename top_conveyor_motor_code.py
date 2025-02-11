@@ -2,16 +2,19 @@ import time
 import RPi.GPIO as GPIO
 from RpiMotorLib import RpiMotorLib
 
-# Define GPIO pins
+# Define GPIO pins (change these according to your wiring)
 pins = [26, 19, 13, 6]  # Adjust based on wiring
+
+# Create a stepper motor instance
 motor = RpiMotorLib.BYJMotor("MyStepper", "28BYJ")
 
-# Rotate forward
-motor.motor_run(pins, step_delay=0.002, steps=512, ccwise=False)
+# Run motor forward
+motor.motor_run(pins, .002, 512, False, False, "full", 0)
 
-# Rotate backward
-motor.motor_run(pins, step_delay=0.002, steps=512, ccwise=True)
+# Run motor backward
+motor.motor_run(pins, .002, 512, True, False, "full", 0)
 
+# Cleanup GPIO
 GPIO.cleanup()
 
 # import RPi.GPIO as GPIO
