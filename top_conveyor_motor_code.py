@@ -1,11 +1,3 @@
-"""
-This Raspberry Pi code was developed by newbiely.com
-This Raspberry Pi code is made available for public use without any restriction
-For comprehensive instructions and wiring diagrams, please visit:
-https://newbiely.com/tutorials/raspberry-pi/raspberry-pi-28byj-48-stepper-motor-uln2003-driver
-"""
-
-
 import RPi.GPIO as GPIO
 import time
 
@@ -26,7 +18,7 @@ GPIO.setup(IN4, GPIO.OUT)
 DEG_PER_STEP = 1.8
 STEPS_PER_REVOLUTION = int(360 / DEG_PER_STEP)
 
-# Define sequence for 28BYJ-48 stepper motor
+# Define sequence for 28BYJ-48 stepper motor (8-step sequence for smoother movement)
 seq = [
     [1, 0, 0, 1],
     [1, 0, 0, 0],
@@ -38,43 +30,42 @@ seq = [
     [0, 0, 0, 1]
 ]
 
-# Function to rotate the stepper motor one step
+# Function to move the stepper motor one step
 def step(delay, step_sequence):
-    for i in range(4):
-        GPIO.output(IN1, step_sequence[i][0])
-        GPIO.output(IN2, step_sequence[i][1])
-        GPIO.output(IN3, step_sequence[i][2])
-        GPIO.output(IN4, step_sequence[i][3])
-        time.sleep(delay)
+    """Activates motor coils for a single step."""
+    GPIO.output(IN1, step_sequence[0])
+    GPIO.output(IN2, step_sequence[1])
+    GPIO.output(IN3, step_sequence[2])
+    GPIO.output(IN4, step_sequence[3])
+    time.sleep(delay)
 
-# Function to move the stepper motor one step forward
+# Function to move the stepper motor forward
 def step_forward(delay, steps):
+    """Moves the motor forward by a given number of steps."""
     for _ in range(steps):
-        step(delay, seq[0])
-        step(delay, seq[1])
-        step(delay, seq[2])
-        step(delay, seq[3])
+        for step_seq in seq:  # Iterate through the sequence
+            step(delay, step_seq)
 
-# Function to move the stepper motor one step backward
+# Function to move the stepper motor backward
 def step_backward(delay, steps):
+    """Moves the motor backward by a given number of steps."""
     for _ in range(steps):
-        step(delay, seq[3])
-        step(delay, seq[2])
-        step(delay, seq[1])
-        step(delay, seq[0])
+        for step_seq in reversed(seq):  # Iterate in reverse
+            step(delay, step_seq)
 
 try:
-    # Set the delay between steps
-    delay = 0.005
-
+    delay = 0.005  # Adjust speed (lower = faster)
+    
     while True:
-        # Rotate one revolution forward (clockwise)
+        # Rotate one full revolution forward (clockwise)
+        print("Rotating forward...")
         step_forward(delay, STEPS_PER_REVOLUTION)
-
+        
         # Pause for 2 seconds
         time.sleep(2)
 
-        # Rotate one revolution backward (anticlockwise)
+        # Rotate one full revolution backward (anticlockwise)
+        print("Rotating backward...")
         step_backward(delay, STEPS_PER_REVOLUTION)
 
         # Pause for 2 seconds
@@ -84,8 +75,8 @@ except KeyboardInterrupt:
     print("\nExiting the script.")
 
 finally:
-    # Clean up GPIO settings
-    GPIO.cleanup()
+    GPIO.cleanup()  # Clean up GPIO settings
+
 
 # #!/usr/bin/python3
 # import RPi.GPIO as GPIO
