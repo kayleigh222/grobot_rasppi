@@ -1,86 +1,175 @@
-#!/usr/bin/python3
+"""
+This Raspberry Pi code was developed by newbiely.com
+This Raspberry Pi code is made available for public use without any restriction
+For comprehensive instructions and wiring diagrams, please visit:
+https://newbiely.com/tutorials/raspberry-pi/raspberry-pi-28byj-48-stepper-motor-uln2003-driver
+"""
+
+
 import RPi.GPIO as GPIO
 import time
 
-in1 = 26
-in2 = 19
-in3 = 13
-in4 = 6
+# Define GPIO pins for ULN2003 driver
+IN1 = 23
+IN2 = 24
+IN3 = 25
+IN4 = 8
 
-# careful lowering this, at some point you run into the mechanical limitation of how quick your motor can move
-step_sleep = 0.002
+# Set GPIO mode and configure pins
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(IN1, GPIO.OUT)
+GPIO.setup(IN2, GPIO.OUT)
+GPIO.setup(IN3, GPIO.OUT)
+GPIO.setup(IN4, GPIO.OUT)
 
-step_count = 4096 # 5.625*(1/64) per step, 4096 steps is 360°
+# Define constants
+DEG_PER_STEP = 1.8
+STEPS_PER_REVOLUTION = int(360 / DEG_PER_STEP)
 
-direction = False # True for clockwise, False for counter-clockwise
+# Define sequence for 28BYJ-48 stepper motor
+seq = [
+    [1, 0, 0, 1],
+    [1, 0, 0, 0],
+    [1, 1, 0, 0],
+    [0, 1, 0, 0],
+    [0, 1, 1, 0],
+    [0, 0, 1, 0],
+    [0, 0, 1, 1],
+    [0, 0, 0, 1]
+]
 
-# defining stepper motor sequence (found in documentation http://www.4tronix.co.uk/arduino/Stepper-Motors.php)
-step_sequence = [[1,0,0,1],
-                 [1,0,0,0],
-                 [1,1,0,0],
-                 [0,1,0,0],
-                 [0,1,1,0],
-                 [0,0,1,0],
-                 [0,0,1,1],
-                 [0,0,0,1]]
+# Function to rotate the stepper motor one step
+def step(delay, step_sequence):
+    for i in range(4):
+        GPIO.output(IN1, step_sequence[i][0])
+        GPIO.output(IN2, step_sequence[i][1])
+        GPIO.output(IN3, step_sequence[i][2])
+        GPIO.output(IN4, step_sequence[i][3])
+        time.sleep(delay)
 
-# setting up
-GPIO.setmode( GPIO.BCM )
-GPIO.setup( in1, GPIO.OUT )
-GPIO.setup( in2, GPIO.OUT )
-GPIO.setup( in3, GPIO.OUT )
-GPIO.setup( in4, GPIO.OUT )
+# Function to move the stepper motor one step forward
+def step_forward(delay, steps):
+    for _ in range(steps):
+        step(delay, seq[0])
+        step(delay, seq[1])
+        step(delay, seq[2])
+        step(delay, seq[3])
 
-# initializing
-GPIO.output( in1, GPIO.LOW )
-GPIO.output( in2, GPIO.LOW )
-GPIO.output( in3, GPIO.LOW )
-GPIO.output( in4, GPIO.LOW )
+# Function to move the stepper motor one step backward
+def step_backward(delay, steps):
+    for _ in range(steps):
+        step(delay, seq[3])
+        step(delay, seq[2])
+        step(delay, seq[1])
+        step(delay, seq[0])
 
-motor_pins = [in1,in2,in3,in4]
-motor_step_counter = 0 ;
-
-def cleanup():
-    GPIO.output( in1, GPIO.LOW )
-    GPIO.output( in2, GPIO.LOW )
-    GPIO.output( in3, GPIO.LOW )
-    GPIO.output( in4, GPIO.LOW )
-    GPIO.cleanup()
-
-# the meat
 try:
-    GPIO.output(in1, GPIO.HIGH)
-    time.sleep( 5 )
-    GPIO.output(in1, GPIO.LOW)
-    GPIO.output(in2, GPIO.HIGH)
-    time.sleep( 5 )
-    GPIO.output(in2, GPIO.LOW)
-    GPIO.output(in3, GPIO.HIGH)
-    time.sleep( 5 )
-    GPIO.output(in3, GPIO.LOW)
-    GPIO.output(in4, GPIO.HIGH)
-    time.sleep( 5 )
-    GPIO.output(in4, GPIO.LOW)
-    # i = 0
-    # for i in range(step_count):
-    #     for pin in range(0, len(motor_pins)):
-    #         GPIO.output( motor_pins[pin], step_sequence[motor_step_counter][pin] )
-    #     if direction==True:
-    #         motor_step_counter = (motor_step_counter - 1) % 8
-    #     elif direction==False:
-    #         motor_step_counter = (motor_step_counter + 1) % 8
-    #     else: # defensive programming
-    #         print( "uh oh... direction should *always* be either True or False" )
-    #         cleanup()
-    #         exit( 1 )
-    #     time.sleep( step_sleep )
+    # Set the delay between steps
+    delay = 0.005
+
+    while True:
+        # Rotate one revolution forward (clockwise)
+        step_forward(delay, STEPS_PER_REVOLUTION)
+
+        # Pause for 2 seconds
+        time.sleep(2)
+
+        # Rotate one revolution backward (anticlockwise)
+        step_backward(delay, STEPS_PER_REVOLUTION)
+
+        # Pause for 2 seconds
+        time.sleep(2)
 
 except KeyboardInterrupt:
-    cleanup()
-    exit( 1 )
+    print("\nExiting the script.")
 
-cleanup()
-exit( 0 )
+finally:
+    # Clean up GPIO settings
+    GPIO.cleanup()
+
+# #!/usr/bin/python3
+# import RPi.GPIO as GPIO
+# import time
+
+# in1 = 26
+# in2 = 19
+# in3 = 13
+# in4 = 6
+
+# # careful lowering this, at some point you run into the mechanical limitation of how quick your motor can move
+# step_sleep = 0.002
+
+# step_count = 4096 # 5.625*(1/64) per step, 4096 steps is 360°
+
+# direction = False # True for clockwise, False for counter-clockwise
+
+# # defining stepper motor sequence (found in documentation http://www.4tronix.co.uk/arduino/Stepper-Motors.php)
+# step_sequence = [[1,0,0,1],
+#                  [1,0,0,0],
+#                  [1,1,0,0],
+#                  [0,1,0,0],
+#                  [0,1,1,0],
+#                  [0,0,1,0],
+#                  [0,0,1,1],
+#                  [0,0,0,1]]
+
+# # setting up
+# GPIO.setmode( GPIO.BCM )
+# GPIO.setup( in1, GPIO.OUT )
+# GPIO.setup( in2, GPIO.OUT )
+# GPIO.setup( in3, GPIO.OUT )
+# GPIO.setup( in4, GPIO.OUT )
+
+# # initializing
+# GPIO.output( in1, GPIO.LOW )
+# GPIO.output( in2, GPIO.LOW )
+# GPIO.output( in3, GPIO.LOW )
+# GPIO.output( in4, GPIO.LOW )
+
+# motor_pins = [in1,in2,in3,in4]
+# motor_step_counter = 0 ;
+
+# def cleanup():
+#     GPIO.output( in1, GPIO.LOW )
+#     GPIO.output( in2, GPIO.LOW )
+#     GPIO.output( in3, GPIO.LOW )
+#     GPIO.output( in4, GPIO.LOW )
+#     GPIO.cleanup()
+
+# # the meat
+# try:
+#     GPIO.output(in1, GPIO.HIGH)
+#     time.sleep( 5 )
+#     GPIO.output(in1, GPIO.LOW)
+#     GPIO.output(in2, GPIO.HIGH)
+#     time.sleep( 5 )
+#     GPIO.output(in2, GPIO.LOW)
+#     GPIO.output(in3, GPIO.HIGH)
+#     time.sleep( 5 )
+#     GPIO.output(in3, GPIO.LOW)
+#     GPIO.output(in4, GPIO.HIGH)
+#     time.sleep( 5 )
+#     GPIO.output(in4, GPIO.LOW)
+#     # i = 0
+#     # for i in range(step_count):
+#     #     for pin in range(0, len(motor_pins)):
+#     #         GPIO.output( motor_pins[pin], step_sequence[motor_step_counter][pin] )
+#     #     if direction==True:
+#     #         motor_step_counter = (motor_step_counter - 1) % 8
+#     #     elif direction==False:
+#     #         motor_step_counter = (motor_step_counter + 1) % 8
+#     #     else: # defensive programming
+#     #         print( "uh oh... direction should *always* be either True or False" )
+#     #         cleanup()
+#     #         exit( 1 )
+#     #     time.sleep( step_sleep )
+
+# except KeyboardInterrupt:
+#     cleanup()
+#     exit( 1 )
+
+# cleanup()
+# exit( 0 )
 
 # import RPi.GPIO as GPIO
 # from RpiMotorLib import RpiMotorLib
