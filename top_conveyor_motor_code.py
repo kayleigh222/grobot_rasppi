@@ -49,21 +49,35 @@ def cleanup():
 
 # the meat
 try:
-    # GPIO.output(in1, GPIO.HIGH)
-    # time.sleep(  )
-    i = 0
-    for i in range(step_count):
-        for pin in range(0, len(motor_pins)):
-            GPIO.output( motor_pins[pin], step_sequence[motor_step_counter][pin] )
-        if direction==True:
-            motor_step_counter = (motor_step_counter - 1) % 8
-        elif direction==False:
-            motor_step_counter = (motor_step_counter + 1) % 8
-        else: # defensive programming
-            print( "uh oh... direction should *always* be either True or False" )
-            cleanup()
-            exit( 1 )
-        time.sleep( step_sleep )
+    GPIO.output(in1, GPIO.HIGH)
+    time.sleep( 5 )
+    GPIO.output(in1, GPIO.LOW)
+    time.sleep( 5 )
+    GPIO.output(in2, GPIO.HIGH)
+    time.sleep( 5 )
+    GPIO.output(in2, GPIO.LOW)
+    time.sleep( 5 )
+    GPIO.output(in3, GPIO.HIGH)
+    time.sleep( 5 )
+    GPIO.output(in3, GPIO.LOW)
+    time.sleep( 5 )
+    GPIO.output(in4, GPIO.HIGH)
+    time.sleep( 5 )
+    GPIO.output(in4, GPIO.LOW)
+    time.sleep( 5 )
+    # i = 0
+    # for i in range(step_count):
+    #     for pin in range(0, len(motor_pins)):
+    #         GPIO.output( motor_pins[pin], step_sequence[motor_step_counter][pin] )
+    #     if direction==True:
+    #         motor_step_counter = (motor_step_counter - 1) % 8
+    #     elif direction==False:
+    #         motor_step_counter = (motor_step_counter + 1) % 8
+    #     else: # defensive programming
+    #         print( "uh oh... direction should *always* be either True or False" )
+    #         cleanup()
+    #         exit( 1 )
+    #     time.sleep( step_sleep )
 
 except KeyboardInterrupt:
     cleanup()
