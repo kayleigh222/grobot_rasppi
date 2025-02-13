@@ -54,7 +54,7 @@ def step_backward(delay, steps):
             step(delay, step_seq)
 
 try:
-    delay = 0.002  # Adjust speed (lower = faster)
+    delay = 0.001  # Adjust speed (lower = faster)
     
     while True:
         # Rotate one full revolution forward (clockwise)
