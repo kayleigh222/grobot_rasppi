@@ -59,14 +59,14 @@ try:
     while True:
         # Rotate one full revolution forward (clockwise)
         print("Rotating forward...")
-        step_forward(delay, STEPS_PER_REVOLUTION)
+        step_forward(delay, 7*STEPS_PER_REVOLUTION)
         
         # Pause for 2 seconds
         time.sleep(2)
 
         # Rotate one full revolution backward (anticlockwise)
         print("Rotating backward...")
-        step_backward(delay, STEPS_PER_REVOLUTION)
+        step_backward(delay, 7*STEPS_PER_REVOLUTION)
 
         # Pause for 2 seconds
         time.sleep(2)
