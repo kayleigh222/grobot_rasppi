@@ -52,19 +52,15 @@ try:
     GPIO.output(in1, GPIO.HIGH)
     time.sleep( 5 )
     GPIO.output(in1, GPIO.LOW)
-    time.sleep( 5 )
     GPIO.output(in2, GPIO.HIGH)
     time.sleep( 5 )
     GPIO.output(in2, GPIO.LOW)
-    time.sleep( 5 )
     GPIO.output(in3, GPIO.HIGH)
     time.sleep( 5 )
     GPIO.output(in3, GPIO.LOW)
-    time.sleep( 5 )
     GPIO.output(in4, GPIO.HIGH)
     time.sleep( 5 )
     GPIO.output(in4, GPIO.LOW)
-    time.sleep( 5 )
     # i = 0
     # for i in range(step_count):
     #     for pin in range(0, len(motor_pins)):
