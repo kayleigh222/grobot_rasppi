@@ -31,7 +31,7 @@ while True:
         break
 
     # Convert the frame from YUV420 to BGR (OpenCV format)
-    frame_bgr = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR_I420)
+    # frame_bgr = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR_I420)
 
     # Show the frame
     cv2.imshow("Camera", frame_bgr)
