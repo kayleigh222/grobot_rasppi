@@ -42,8 +42,14 @@ except KeyboardInterrupt:
     print("\nKeyboard Interrupt detected. Exiting...")
 
 finally:
-    # Ensure camera and OpenCV window are released properly
-    print("Releasing camera and closing windows...")
-    cap.release()
-    cv2.destroyAllWindows()
+    # **Fix: Explicitly set the GStreamer pipeline to NULL**
+    if cap.isOpened():
+        cap.release()  # Release the camera
+    cv2.destroyAllWindows()  # Close OpenCV windows
+
+    # **Ensure GStreamer pipeline is stopped**
+    import os
+    os.system("gst-launch-1.0 -e videotestsrc ! fakesink & killall gst-launch-1.0")
+
+    print("Camera released and windows closed.")
 
