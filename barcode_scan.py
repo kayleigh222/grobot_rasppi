@@ -3,11 +3,13 @@ import numpy as np
 from picamera2 import Picamera2
 
 cam = Picamera2()
-height = 480
-width = 640
+height = 1080
+width = 1920
 middle = (int(width / 2), int(height / 2))
-cam.configure(cam.create_video_configuration(main={"format": 'RGB888', "size": (width, height)}))
-
+config = cam.create_video_configuration(
+    main={"format": "RGB888", "size": (1920, 1080)}  # Set a high-resolution mode
+)
+cam.configure(config)
 cam.start()
 
 while True:
