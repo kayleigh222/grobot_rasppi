@@ -8,11 +8,11 @@ os.system("rpicam-still --output captured_image.jpg")
 image = cv2.imread('captured_image.jpg')
 
 # Step 3: Calculate the center of the image
-height, width, _ = image.shape
-center = (width // 2, height // 2)
+# height, width, _ = image.shape
+# center = (width // 2, height // 2)
 
 # Step 4: Draw a dot in the center of the image (dot color is green)
-cv2.circle(image, center, 10, (0, 255, 0), -1)  # Green dot with radius 10
+# cv2.circle(image, center, 10, (0, 255, 0), -1)  # Green dot with radius 10
 
 # Step 5: Display the image with the dot in the center
 cv2.imshow('Captured Image with Dot', image)
