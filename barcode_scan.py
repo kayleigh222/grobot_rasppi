@@ -2,7 +2,7 @@ import cv2
 import zbar
 
 # Initialize the camera
-cap = cv2.VideoCapture(0)  # Use 0 for the first camera
+cap = cv2.VideoCapture("libcamerasrc ! videoconvert ! appsink", cv2.CAP_GSTREAMER)
 
 # Initialize the ZBar scanner
 scanner = zbar.Scanner()
