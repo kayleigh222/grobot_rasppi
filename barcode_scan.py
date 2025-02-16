@@ -19,19 +19,22 @@ while True:
     print("Frame shape:", frame.shape)
 
       # Ensure the frame has the right number of channels
-    if len(frame.shape) == 2:  # Grayscale or single-channel image
-        # Convert grayscale to BGR
-        frame_bgr = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
-    elif len(frame.shape) == 3 and frame.shape[-1] == 1:  # Single-channel image (e.g., YUV420)
-        frame_bgr = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
-    elif len(frame.shape) == 3 and frame.shape[-1] == 3:  # BGR format
-        frame_bgr = frame  # No conversion needed
-    else:
-        print("Unsupported frame format")
-        break
+    # if len(frame.shape) == 2:  # Grayscale or single-channel image
+    #     # Convert grayscale to BGR
+    #     frame_bgr = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
+    # elif len(frame.shape) == 3 and frame.shape[-1] == 1:  # Single-channel image (e.g., YUV420)
+    #     frame_bgr = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
+    # elif len(frame.shape) == 3 and frame.shape[-1] == 3:  # BGR format
+    #     frame_bgr = frame  # No conversion needed
+    # else:
+    #     print("Unsupported frame format")
+    #     break
 
     # Convert the frame from YUV420 to BGR (OpenCV format)
     # frame_bgr = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR_I420)
+
+    # Ensure the frame is in BGR format (if needed)
+    frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
     # Show the frame
     cv2.imshow("Camera", frame_bgr)
