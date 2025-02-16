@@ -11,6 +11,9 @@ image = cv2.imread('captured_image.jpg')
 # Step 3: Detect barcodes in the image
 barcodes = decode(image)
 
+# Print the number of barcodes found
+print(f"Number of barcodes found: {len(barcodes)}")
+
 # Step 4: Loop through each detected barcode
 for barcode in barcodes:
     # Get the bounding box (polygon) of the barcode
