@@ -5,11 +5,11 @@ import numpy as np
 # Initialize the camera
 picam2 = Picamera2()
 
+# Configure the camera
+picam2.configure(picam2.create_still_configuration())
+
 # Start the camera
 picam2.start()
-
-# Set camera resolution (optional)
-picam2.configure(picam2.create_still_configuration())
 
 # Capture frames and process with OpenCV
 while True:
@@ -29,6 +29,7 @@ while True:
 # Release the camera and close windows
 picam2.stop()
 cv2.destroyAllWindows()
+
 
 
 # import cv2
