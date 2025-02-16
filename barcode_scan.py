@@ -1,51 +1,65 @@
 import cv2
 from picamera2 import Picamera2
-import numpy as np
 
-# Initialize the camera
 picam2 = Picamera2()
-
-# Configure the camera
-picam2.configure(picam2.create_still_configuration())
-
-# Start the camera
 picam2.start()
-
-# Capture frames and process with OpenCV
 while True:
-    # Capture a frame
-    frame = picam2.capture_array()
-
-    print("Frame shape:", frame.shape)
-
-      # Ensure the frame has the right number of channels
-    # if len(frame.shape) == 2:  # Grayscale or single-channel image
-    #     # Convert grayscale to BGR
-    #     frame_bgr = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
-    # elif len(frame.shape) == 3 and frame.shape[-1] == 1:  # Single-channel image (e.g., YUV420)
-    #     frame_bgr = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
-    # elif len(frame.shape) == 3 and frame.shape[-1] == 3:  # BGR format
-    #     frame_bgr = frame  # No conversion needed
-    # else:
-    #     print("Unsupported frame format")
-    #     break
-
-    # Convert the frame from YUV420 to BGR (OpenCV format)
-    # frame_bgr = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR_I420)
-
-    # Ensure the frame is in BGR format (if needed)
-    frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
-
-    # Show the frame
-    cv2.imshow("Camera", frame_bgr)
-
-    # Wait for the 'q' key to exit
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    image = picam2.capture_array()
+    cv2.imshow("Frame", image)
+    if(cv2.waitKey(1) == ord("q")):
+        cv2.imwrite("test_frame.png", image)
         break
 
-# Release the camera and close windows
-picam2.stop()
 cv2.destroyAllWindows()
+
+# import cv2
+# from picamera2 import Picamera2
+# import numpy as np
+
+# # Initialize the camera
+# picam2 = Picamera2()
+
+# # Configure the camera
+# picam2.configure(picam2.create_still_configuration())
+
+# # Start the camera
+# picam2.start()
+
+# # Capture frames and process with OpenCV
+# while True:
+#     # Capture a frame
+#     frame = picam2.capture_array()
+
+#     print("Frame shape:", frame.shape)
+
+#       # Ensure the frame has the right number of channels
+#     # if len(frame.shape) == 2:  # Grayscale or single-channel image
+#     #     # Convert grayscale to BGR
+#     #     frame_bgr = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
+#     # elif len(frame.shape) == 3 and frame.shape[-1] == 1:  # Single-channel image (e.g., YUV420)
+#     #     frame_bgr = cv2.cvtColor(frame, cv2.COLOR_GRAY2BGR)
+#     # elif len(frame.shape) == 3 and frame.shape[-1] == 3:  # BGR format
+#     #     frame_bgr = frame  # No conversion needed
+#     # else:
+#     #     print("Unsupported frame format")
+#     #     break
+
+#     # Convert the frame from YUV420 to BGR (OpenCV format)
+#     # frame_bgr = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR_I420)
+
+#     # Ensure the frame is in BGR format (if needed)
+#     frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+
+#     # Show the frame
+#     cv2.imshow("Camera", frame_bgr)
+
+#     # Wait for the 'q' key to exit
+#     if cv2.waitKey(1) & 0xFF == ord('q'):
+#         break
+
+# # Release the camera and close windows
+# picam2.stop()
+# cv2.destroyAllWindows()
 
 
 
