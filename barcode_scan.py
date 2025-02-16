@@ -1,23 +1,45 @@
 import cv2
 import os
 
-# Step 1: Capture an image with rpicam-still
-os.system("rpicam-still --output captured_image.jpg")
+# Step 1: Capture an image with rpicam-still without displaying it
+os.system("rpicam-still --output captured_image.jpg --nopreview")
 
-# Step 2: Read the image with OpenCV
+# Step 2: Read the captured image with OpenCV
 image = cv2.imread('captured_image.jpg')
 
 # Step 3: Calculate the center of the image
-# height, width, _ = image.shape
-# center = (width // 2, height // 2)
+height, width, _ = image.shape
+center = (width // 2, height // 2)
 
 # Step 4: Draw a dot in the center of the image (dot color is green)
-# cv2.circle(image, center, 10, (0, 255, 0), -1)  # Green dot with radius 10
+cv2.circle(image, center, 10, (0, 255, 0), -1)  # Green dot with radius 10
 
-# Step 5: Display the image with the dot in the center
-cv2.imshow('Captured Image with Dot', image)
-cv2.waitKey(0)  # Wait for a key press to close the window
-cv2.destroyAllWindows()
+# Step 5: Save the modified image
+cv2.imwrite('captured_image_with_dot.jpg', image)
+
+# The image is saved as 'captured_image_with_dot.jpg' without displaying it
+
+
+# import cv2
+# import os
+
+# # Step 1: Capture an image with rpicam-still
+# os.system("rpicam-still --output captured_image.jpg")
+
+# # Step 2: Read the image with OpenCV
+# image = cv2.imread('captured_image.jpg')
+
+# # Step 3: Calculate the center of the image
+# # height, width, _ = image.shape
+# # center = (width // 2, height // 2)
+
+# # Step 4: Draw a dot in the center of the image (dot color is green)
+# # cv2.circle(image, center, 10, (0, 255, 0), -1)  # Green dot with radius 10
+
+# # Step 5: Display the image with the dot in the center
+# cv2.imshow('Captured Image with Dot', image)
+# cv2.waitKey(0)  # Wait for a key press to close the window
+# cv2.destroyAllWindows()
 
 
 # import cv2
