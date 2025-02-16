@@ -17,10 +17,10 @@ while True:
     frame = picam2.capture_array()
 
     # Convert the frame from YUV420 to BGR (OpenCV format)
-    # frame_bgr = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR_I420)
+    frame_bgr = cv2.cvtColor(frame, cv2.COLOR_YUV2BGR_I420)
 
     # Show the frame
-    cv2.imshow("Camera", frame)
+    cv2.imshow("Camera", frame_bgr)
 
     # Wait for the 'q' key to exit
     if cv2.waitKey(1) & 0xFF == ord('q'):
