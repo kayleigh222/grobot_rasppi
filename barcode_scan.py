@@ -1,5 +1,6 @@
 import cv2
 import os
+import numpy as np
 from pyzbar.pyzbar import decode
 
 # Step 1: Capture an image with rpicam-still without displaying it
