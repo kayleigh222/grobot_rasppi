@@ -19,6 +19,9 @@ while True:
         if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
+cv2.destroyAllWindows()
+cam.stop()
+
 # import cv2
 # from picamera2 import Picamera2
 
