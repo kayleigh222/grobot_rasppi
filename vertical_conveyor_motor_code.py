@@ -2,10 +2,10 @@ import RPi.GPIO as GPIO
 import time
 
 # Define GPIO pins based on new wiring
-DIR_PIN = 17     # Direction control
-STEP_PIN = 27    # Step signal
-SLEEP_PIN = 22   # Sleep mode control
-RESET_PIN = 10   # Reset control
+DIR_PIN = 1     # Direction control
+STEP_PIN = 7    # Step signal
+SLEEP_PIN = 8   # Sleep mode control
+RESET_PIN = 25   # Reset control
 
 # Setup GPIO
 GPIO.setmode(GPIO.BCM)
