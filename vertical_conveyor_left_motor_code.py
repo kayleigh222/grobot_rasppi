@@ -33,11 +33,11 @@ def move_stepper(steps, direction="CW", delay=0.001):
 try:
     while True:
         print("Moving Forward")
-        move_stepper(800, "CW")  # Move 200 steps clockwise
+        move_stepper(200, "CW")  # Move 200 steps clockwise
         time.sleep(1)
         
         print("Moving Backward")
-        move_stepper(200, "CCW") # Move 200 steps counterclockwise
+        move_stepper(800, "CCW") # Move 200 steps counterclockwise
         time.sleep(1)
 
 except KeyboardInterrupt:
