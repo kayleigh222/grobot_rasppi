@@ -9,12 +9,12 @@ if not pi.connected:
 
 print("Setting PWM on GPIO 18 (50Hz, 1.5ms pulse)...")
 pi.set_PWM_frequency(PWM_PIN, 50)  # 50Hz servo frequency
-pi.set_servo_pulsewidth(PWM_PIN, 1500)  # Move to center position (90 degrees)
+pi.set_servo_pulsewidth(PWM_PIN, 3500)  # Move to center position (90 degrees)
 
 time.sleep(2)
 
 print("Moving to 0 degrees...")
-pi.set_servo_pulsewidth(PWM_PIN, 500)  # ~60 degrees
+pi.set_servo_pulsewidth(PWM_PIN, 2500)  # ~60 degrees
 time.sleep(2)
 
 print("Stopping PWM...")
