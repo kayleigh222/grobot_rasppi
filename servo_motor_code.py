@@ -13,12 +13,8 @@ pi.set_servo_pulsewidth(PWM_PIN, 1500)  # Move to center position (90 degrees)
 
 time.sleep(2)
 
-print("Moving to 60 degrees...")
-pi.set_servo_pulsewidth(PWM_PIN, 1200)  # ~60 degrees
-time.sleep(2)
-
-print("Moving to 120 degrees...")
-pi.set_servo_pulsewidth(PWM_PIN, 1800)  # ~120 degrees
+print("Moving to 0 degrees...")
+pi.set_servo_pulsewidth(PWM_PIN, 500)  # ~60 degrees
 time.sleep(2)
 
 print("Stopping PWM...")
