@@ -8,6 +8,7 @@ SLEEP_PIN = 24   # Sleep mode control
 RESET_PIN = 25   # Reset control
 
 # Setup GPIO
+GPIO.cleanup()
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(DIR_PIN, GPIO.OUT)
 GPIO.setup(STEP_PIN, GPIO.OUT)
