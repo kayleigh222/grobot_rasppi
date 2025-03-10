@@ -18,12 +18,14 @@ GPIO.setup(RESET_PIN, GPIO.OUT)
 GPIO.output(SLEEP_PIN, GPIO.HIGH)
 GPIO.output(RESET_PIN, GPIO.HIGH)
 
-# Function to move the stepper motor
 def move_stepper(steps, direction="CW", delay=0.001):
-    # Set direction
-    GPIO.output(DIR_PIN, GPIO.HIGH if direction == "CW" else GPIO.LOW)
+    if direction == "CW":
+        GPIO.output(DIR_PIN, GPIO.HIGH)
+        print("Direction: CW (HIGH)")
+    else:
+        GPIO.output(DIR_PIN, GPIO.LOW)
+        print("Direction: CCW (LOW)")
 
-    # Pulse the STEP pin
     for _ in range(steps):
         GPIO.output(STEP_PIN, GPIO.HIGH)
         time.sleep(delay)
