@@ -29,10 +29,10 @@ def move_stepper(steps, direction="CW", delay=0.001):
     time.sleep(0.01)  # Add small delay to allow direction change
 
     # for _ in range(steps):
-    #     GPIO.output(STEP_PIN, GPIO.HIGH)
-    #     time.sleep(delay)
-    #     GPIO.output(STEP_PIN, GPIO.LOW)
-    #     time.sleep(delay)
+        GPIO.output(STEP_PIN, GPIO.HIGH)
+        time.sleep(delay)
+        GPIO.output(STEP_PIN, GPIO.LOW)
+        time.sleep(delay)
 
 try:
     while True:
