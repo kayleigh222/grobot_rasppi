@@ -5,8 +5,16 @@ def barcodes_divided_into_conveyors(image_path):
     barcode_centres = find_barcode_locations(image_path)  # Get barcode center coordinates
      if not barcode_centres:
         return None  # No barcodes found
-    
-    raise NotImplementedError("This method is not implemented yet.")
+
+    # figure out threshold for left and right conveyor
+    # use canny edge detection
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+     # The second and third arguments are the lower and upper thresholds for edge detection
+    edges = cv2.Canny(blurred, 100, 200)
+    cv2.imwrite('captured_image_edges.jpg', edges)
+
+    return [], []
 
 def find_barcode_locations(image_path):
     image = cv2.imread(image_path) # read the captured image with opencv
