@@ -18,12 +18,12 @@ else:
 print("Top barcode right conveyor:", top_barcode_right_conveyor)
 
 
-# step 2: rotate left conveyor until plant at top
-# step 3: check location of holder on right conveyor
-# step 4: rotate right conveyor until holder at top (slightly below left conveyor)
+# step 2: rotate right conveyor until plant at top
+# step 3: check location of holder on left conveyor
+# step 4: rotate left conveyor until holder at top (slightly below left conveyor)
 # step 5: rotate servo motor to put down tray push leg
-# step 6: rotate top conveyor to push tray left to right
-# step 7: return top conveyor to left side
+# step 6: rotate top conveyor to push tray right to left
+# step 7: return top conveyor to right side
 
 # trickier version - multiple plants on each conveyor. note space plant holders evenly and with few enough plants that when a plant is at the top there's an empty holder at the bottom (and vice versa for right conveyor)
 # step 1: check location of top plant on left conveyor (barcode in top left position) - note distance from top
