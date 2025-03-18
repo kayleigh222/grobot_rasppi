@@ -5,7 +5,7 @@ def barcodes_divided_into_conveyors(image_path):
     image = cv2.imread(image_path) # read the captured image with opencv
     barcode_centres = find_barcode_locations(image)  # Get barcode center coordinates
     if not barcode_centres:
-        return None  # No barcodes found
+        return [], []  # No barcodes found
 
     # figure out threshold for left and right conveyor
     # use canny edge detection
