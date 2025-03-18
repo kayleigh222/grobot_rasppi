@@ -23,7 +23,7 @@ def find_top_and_bottom_of_conveyors(image):
     binary_mask = np.where(gray < 50, 1, 0)
 
     # Iterate through the rows and find the first row with at least 1000 ones
-    threshold = 1000  # Minimum number of ones required in a row to consider it to be part of the conveyor
+    threshold = 2000  # Minimum number of ones required in a row to consider it to be part of the conveyor
     for row_idx, row in enumerate(binary_mask):
         ones_count = np.sum(row)  # Count the number of ones in the current row
         if ones_count >= threshold:
