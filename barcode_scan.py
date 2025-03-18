@@ -23,7 +23,7 @@ def barcodes_divided_into_conveyors(image_path):
             cv2.line(image, (0, row_idx), (image.shape[1] - 1, row_idx), (0, 255, 0), 2)
             break  # Exit the loop once we find the row
    
-    image[black_pixels_mask] = [0, 255, 255]  # Yellow in BGR format
+    # image[black_pixels_mask] = [0, 255, 255]  # Yellow in BGR format
      # The second and third arguments are the lower and upper thresholds for edge detection
     # edges = cv2.Canny(blurred, 100, 200)
     cv2.imwrite('black_highlighted.jpg', image)
