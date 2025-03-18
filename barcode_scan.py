@@ -30,7 +30,6 @@ def find_top_and_bottom_of_conveyors(image):
             print(f"The first row with at least {threshold} ones is row {row_idx}")
             # Draw a horizontal green line along the y-coordinate of the found row
             cv2.line(image, (0, row_idx), (image.shape[1] - 1, row_idx), (0, 255, 0), 2)
-            cv2.imwrite('black_highlighted.jpg', image)
             break  # Exit the loop once we find the row
 
     # Iterate through the rows and find the last row with enough dark pixels (bottom of conveyors)
@@ -43,6 +42,8 @@ def find_top_and_bottom_of_conveyors(image):
         # Draw a horizontal green line along the y-coordinate of the found row
         cv2.line(image, (0, row_idx), (image.shape[1] - 1, row_idx), (0, 255, 0), 2)
         break  # Exit the loop once we find the row
+
+    cv2.imwrite('black_highlighted.jpg', image)
 
 def find_barcode_locations(image):
     barcodes = decode(image) # detect barcodes
