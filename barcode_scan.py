@@ -2,7 +2,7 @@ import cv2
 from pyzbar.pyzbar import decode
 
 def find_barcode_locations(image_path):
-    image = cv2.imread('captured_image.jpg') # read the captured image with opencv
+    image = cv2.imread(image_path) # read the captured image with opencv
     barcodes = decode(image) # detect barcodes
     # print(f"Number of barcodes found: {len(barcodes)}")
 
