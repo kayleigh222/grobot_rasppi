@@ -19,7 +19,7 @@ def barcodes_divided_into_conveyors(image_path):
 
 def find_barcode_locations(image):
     barcodes = decode(image) # detect barcodes
-    # print(f"Number of barcodes found: {len(barcodes)}")
+    print(f"Number of barcodes found: {len(barcodes)}")
 
     centres = []  # List to store center coordinates
 
