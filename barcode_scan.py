@@ -34,14 +34,14 @@ def find_top_and_bottom_of_conveyors(image):
 
     # Iterate through the rows and find the last row with enough dark pixels (bottom of conveyors)
     for row_idx in range(binary_mask.shape[0] - 1, -1, -1):  # Start from the last row
-    row = binary_mask[row_idx]
-    ones_count = np.sum(row)  # Count the number of ones in the current row
-    if ones_count >= threshold:
-        print(f"The first row from the bottom with at least {threshold} ones is row {row_idx}")
-        
-        # Draw a horizontal green line along the y-coordinate of the found row
-        cv2.line(image, (0, row_idx), (image.shape[1] - 1, row_idx), (0, 255, 0), 2)
-        break  # Exit the loop once we find the row
+        row = binary_mask[row_idx]
+        ones_count = np.sum(row)  # Count the number of ones in the current row
+        if ones_count >= threshold:
+            print(f"The first row from the bottom with at least {threshold} ones is row {row_idx}")
+            
+            # Draw a horizontal green line along the y-coordinate of the found row
+            cv2.line(image, (0, row_idx), (image.shape[1] - 1, row_idx), (0, 255, 0), 2)
+            break  # Exit the loop once we find the row
 
     cv2.imwrite('black_highlighted.jpg', image)
 
