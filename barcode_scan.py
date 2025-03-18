@@ -3,33 +3,28 @@ import os
 import numpy as np
 from pyzbar.pyzbar import decode
 
-# Step 1: Capture an image with rpicam-still without displaying it
-os.system("rpicam-still --output captured_image.jpg --nopreview")
+def find_barcode_locations(image_path):
+    image = cv2.imread('captured_image.jpg') # read the captured image with opencv
+    barcodes = decode(image) # detect barcodes
+    # print(f"Number of barcodes found: {len(barcodes)}")
 
-# Step 2: Read the captured image with OpenCV
-image = cv2.imread('captured_image.jpg')
+    centres = []  # List to store center coordinates
 
-# Step 3: Detect barcodes in the image
-barcodes = decode(image)
+    # loop through each detected barcode
+    for barcode in barcodes:
+        # Get the rectangle around the barcode
+        x, y, w, h = barcode.rect
+        centre_x = x + w/2
+        centre_y = y + h/2
+        centres.append((centre_x, centre_y))  # Store the center coordinates
 
-# Print the number of barcodes found
-print(f"Number of barcodes found: {len(barcodes)}")
-
-# Step 4: Loop through each detected barcode
-for barcode in barcodes:
-    # Get the bounding box (polygon) of the barcode
-    rect_points = barcode.polygon
-    if len(rect_points) == 4:  # The bounding box is a quadrilateral
-        pts = [tuple(point) for point in rect_points]
-        cv2.polylines(image, [np.array(pts, dtype=np.int32)], isClosed=True, color=(0, 255, 0), thickness=2)
-
-    # Draw the rectangle around the barcode
-    x, y, w, h = barcode.rect
-    cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)  # Red rectangle
-
-    # Print the location (bounding box) and data of the barcode
-    print(f"Barcode Location: (x: {x}, y: {y}, width: {w}, height: {h})")
-    print(f"Barcode Data: {barcode.data.decode('utf-8')}")
-
-# Step 5: Save the modified image with barcodes
-cv2.imwrite('captured_image_with_barcodes.jpg', image)
+        # IF WANT TO VISUALISE:
+        # cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)  # Red rectangle
+        # cv2.circle(image, (centre_x, centre_y), radius=3, color=(0, 0, 255), thickness=-1)  # Red filled dot at centre of barcode
+        # cv2.imwrite('captured_image_with_barcodes.jpg', image)
+    
+        # IF DEBUGGING:
+        # print(f"Barcode Location: (x: {x}, y: {y}, width: {w}, height: {h})")
+        # print(f"Barcode Data: {barcode.data.decode('utf-8')}")
+    
+    return centres  # Return the list of center coordinates
