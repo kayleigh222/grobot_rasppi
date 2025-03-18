@@ -30,7 +30,7 @@ def find_top_and_bottom_of_conveyors(image): # top and bottom when vertical in r
             conveyor_top = col_idx
              # draw a vertical green line
             cv2.line(image, (col_idx, 0), (col_idx, image.shape[0] - 1), (0, 255, 0), 2)
-            print(f"The first col from the left with at least {threshold} ones is row {row_idx}")
+            print(f"The first col from the right with at least {threshold} ones is row {col_idx}")
             break  # Exit once we find the last column meeting the threshold
     
     cv2.imwrite('top_and_bottom_of_conveyor.jpg', image)
