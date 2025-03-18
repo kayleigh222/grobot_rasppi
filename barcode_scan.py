@@ -3,12 +3,20 @@ from pyzbar.pyzbar import decode
 
 def barcodes_divided_into_conveyors(image_path):
     image = cv2.imread(image_path) # read the captured image with opencv
-    barcode_centres = find_barcode_locations(image)  # Get barcode center coordinates
-    if not barcode_centres:
-        return [], []  # No barcodes found
+    find_top_and_bottom_of_conveyors(image)
+    
+    # barcode_centres = find_barcode_locations(image)  # Get barcode center coordinates
+    # if not barcode_centres:
+    #     return [], []  # No barcodes found
 
+    # image[black_pixels_mask] = [0, 255, 255]  # Yellow in BGR format
+     # The second and third arguments are the lower and upper thresholds for edge detection
+    # edges = cv2.Canny(blurred, 100, 200)
+
+    return [], []
+
+def find_top_and_bottom_of_conveyors(image):
     # figure out threshold for left and right conveyor
-    # use canny edge detection
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     # Create a binary mask where intensity < 50 is set to 1, and others are set to 0
     binary_mask = np.where(gray < 50, 1, 0)
@@ -21,14 +29,9 @@ def barcodes_divided_into_conveyors(image_path):
             print(f"The first row with at least {threshold} ones is row {row_idx}")
             # Draw a horizontal green line along the y-coordinate of the found row
             cv2.line(image, (0, row_idx), (image.shape[1] - 1, row_idx), (0, 255, 0), 2)
+            cv2.imwrite('black_highlighted.jpg', image)
             break  # Exit the loop once we find the row
-   
-    # image[black_pixels_mask] = [0, 255, 255]  # Yellow in BGR format
-     # The second and third arguments are the lower and upper thresholds for edge detection
-    # edges = cv2.Canny(blurred, 100, 200)
-    cv2.imwrite('black_highlighted.jpg', image)
-
-    return [], []
+    
 
 def find_barcode_locations(image):
     barcodes = decode(image) # detect barcodes
