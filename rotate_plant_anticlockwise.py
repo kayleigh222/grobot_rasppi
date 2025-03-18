@@ -5,7 +5,7 @@ from barcode_scan import find_barcode_locations
 # simpler version - move plant from left to right conveyor (do an equivalent version to move plant from right to left conveyor)
 # step 1: check location of top plant on left conveyor (barcode in top left position) - note distance from top
 image_path = "captured_image.jpg"
-os.system("rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
+os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
 barcode_centres = find_barcode_locations(image_path)
 print("Barcode centers:", barcode_centres)
 # step 2: rotate left conveyor until plant at top
