@@ -8,7 +8,7 @@ def barcodes_divided_into_conveyors(image_path):
     distance = conveyor_bottom - conveyor_top
     threshold_for_top_conveyor_barcodes = conveyor_bottom - distance//4
     cv2.line(image, (0, threshold_for_top_conveyor_barcodes), (image.shape[1] - 1, threshold_for_top_conveyor_barcodes), (0, 255, 0), 2)
-    # cv2.imwrite('top_and_bottom_of_conveyor.jpg', image)
+    cv2.imwrite('top_and_bottom_of_conveyor.jpg', image)
     
     barcode_centres = find_barcode_locations(image)  # Get barcode center coordinates
     if not barcode_centres:
