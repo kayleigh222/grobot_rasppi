@@ -33,7 +33,7 @@ def find_top_and_bottom_of_conveyors(image): # top and bottom when vertical in r
             break  # Exit once we find the last column meeting the threshold
     
     cv2.imwrite('top_and_bottom_of_conveyor.jpg', image)
-    return conveyor_left, conveyor_right
+    return conveyor_top, conveyor_bottom
 
 def find_left_and_right_of_conveyors(image): # left and right when vertical in real world (horizontal in image)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
