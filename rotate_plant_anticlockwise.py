@@ -3,12 +3,15 @@ import os
 
 # NOTE: have a record of how many plants there are i.e. how many barcodes are visible. therefore if a plant falls off will know because less barcodes visible and can send me a photo
 
-# simpler version - move plant from left to right conveyor (do an equivalent version to move plant from right to left conveyor)
-# step 1: check location of top plant on left conveyor (barcode in top left position) - note distance from top
+# simpler version - move plant from right to left conveyor (do an equivalent version to move plant from left to right conveyor)
+# step 1: check location of top plant on right conveyor (barcode in top left position) - note distance from top
 image_path = "captured_image.jpg"
 os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
-barcode_centres = find_barcode_locations(image_path)
-print("Barcode centers:", barcode_centres)
+left_conveyor_barcodes, right_conveyor_barcodes = barcodes_divided_into_conveyors(image_path)
+top_barcode_right_conveyor = max(right_conveyor_barcodes, key=lambda point: point[0])
+print("Top barcode right conveyor:", top_barcode_right_conveyor)
+
+
 # step 2: rotate left conveyor until plant at top
 # step 3: check location of holder on right conveyor
 # step 4: rotate right conveyor until holder at top (slightly below left conveyor)
