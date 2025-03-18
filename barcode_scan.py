@@ -6,7 +6,7 @@ def barcodes_divided_into_conveyors(image_path):
     image = cv2.imread(image_path) # read the captured image with opencv
     conveyor_top, conveyor_bottom = find_top_and_bottom_of_conveyors(image)
     distance = conveyor_bottom - conveyor_top
-    threshold_for_top_conveyor_barcodes = conveyor_bottom - distance/4
+    threshold_for_top_conveyor_barcodes = conveyor_bottom - distance//4
     cv2.line(image, (0, threshold_for_top_conveyor_barcodes), (image.shape[1] - 1, threshold_for_top_conveyor_barcodes), (0, 255, 0), 2)
     # cv2.imwrite('top_and_bottom_of_conveyor.jpg', image)
     
