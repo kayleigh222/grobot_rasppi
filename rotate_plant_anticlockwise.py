@@ -8,7 +8,13 @@ import os
 image_path = "captured_image.jpg"
 os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
 left_conveyor_barcodes, right_conveyor_barcodes = barcodes_divided_into_conveyors(image_path)
-top_barcode_right_conveyor = max(right_conveyor_barcodes, key=lambda point: point[0])
+# Check if there are any barcodes in the right conveyor
+if right_conveyor_barcodes:
+    # Find the barcode with the maximum x-coordinate in the right conveyor
+    top_barcode_right_conveyor = max(right_conveyor_barcodes, key=lambda point: point[0])
+else:
+    # Handle the case where there are no barcodes in the right conveyor
+    top_barcode_right_conveyor = None  # or some default value/message
 print("Top barcode right conveyor:", top_barcode_right_conveyor)
 
 
