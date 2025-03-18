@@ -1,22 +1,36 @@
 import RPi.GPIO as GPIO
 import time
 
-# Define GPIO pins based on new wiring
+# Define GPIO pins
 DIR_PIN = 21     # Direction control
 STEP_PIN = 20   # Step signal
 SLEEP_PIN = 16   # Sleep mode control
 RESET_PIN = 12   # Reset control
 
-# Setup GPIO
-GPIO.setmode(GPIO.BCM)
-GPIO.setup(DIR_PIN, GPIO.OUT)
-GPIO.setup(STEP_PIN, GPIO.OUT)
-GPIO.setup(SLEEP_PIN, GPIO.OUT)
-GPIO.setup(RESET_PIN, GPIO.OUT)
+def move_right_conveyor_up(steps):
+    move_stepper(steps, "CW")
 
-# Enable driver by pulling SLEEP and RESET HIGH
-GPIO.output(SLEEP_PIN, GPIO.HIGH)
-GPIO.output(RESET_PIN, GPIO.HIGH)
+def move_right_conveyor_down(steps):
+    move_stepper(steps, "CCW")
+
+def set_up_right_conveyor():
+    # Setup GPIO
+    GPIO.cleanup()
+    GPIO.setmode(GPIO.BCM)
+    GPIO.setup(DIR_PIN, GPIO.OUT)
+    GPIO.setup(STEP_PIN, GPIO.OUT)
+    GPIO.setup(SLEEP_PIN, GPIO.OUT)
+    GPIO.setup(RESET_PIN, GPIO.OUT)
+    
+    # Enable driver by pulling SLEEP and RESET HIGH
+    GPIO.output(SLEEP_PIN, GPIO.HIGH)
+    GPIO.output(RESET_PIN, GPIO.HIGH)
+
+def clean_up_right_conveyor():
+    # Disable driver by pulling SLEEP and RESET LOW
+    GPIO.output(SLEEP_PIN, GPIO.LOW)
+    GPIO.output(RESET_PIN, GPIO.LOW)
+    GPIO.cleanup()
 
 # Function to move the stepper motor
 def move_stepper(steps, direction="CW", delay=0.001):
@@ -29,17 +43,3 @@ def move_stepper(steps, direction="CW", delay=0.001):
         time.sleep(delay)
         GPIO.output(STEP_PIN, GPIO.LOW)
         time.sleep(delay)
-
-try:
-    while True:
-        print("Moving Forward")
-        move_stepper(200, "CW")  # Move 200 steps clockwise
-        time.sleep(1)
-        
-        print("Moving Backward")
-        move_stepper(800, "CCW") # Move 200 steps counterclockwise
-        time.sleep(1)
-
-except KeyboardInterrupt:
-    print("Stopping motor and cleaning up GPIO")
-    GPIO.cleanup()
