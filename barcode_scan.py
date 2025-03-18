@@ -1,4 +1,5 @@
 import cv2
+import numpy as np
 from pyzbar.pyzbar import decode
 
 def barcodes_divided_into_conveyors(image_path):
