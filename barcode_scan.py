@@ -12,7 +12,7 @@ def barcodes_divided_into_conveyors(image_path):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     blurred = cv2.GaussianBlur(gray, (5, 5), 0)
     # Step 3: Create a mask for black pixels (intensity = 0)
-    black_pixels_mask = (gray < 255)
+    black_pixels_mask = (gray < 50)
     image[black_pixels_mask] = [0, 255, 255]  # Yellow in BGR format
      # The second and third arguments are the lower and upper thresholds for edge detection
     # edges = cv2.Canny(blurred, 100, 200)
