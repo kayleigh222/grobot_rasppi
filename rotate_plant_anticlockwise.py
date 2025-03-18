@@ -20,6 +20,10 @@ else:
 print("Top barcode right conveyor:", top_barcode_right_conveyor)
 
 top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
+print("Top of conveyor: ", top_conveyor)
+
+distance_from_top = top_conveyor - top_barcode_right_conveyor[0]
+print("Distance between: ", distance_from_top)
 
 
 # step 2: rotate right conveyor until plant at top
