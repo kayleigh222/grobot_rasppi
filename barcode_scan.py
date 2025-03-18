@@ -10,8 +10,20 @@ def find_top_barcode_right_conveyor(image_path):
     # Sort by y (descending) to prioritize the right conveyor (lower in the image, higher y values)
     sorted_by_y = sorted(barcode_centres, key=lambda point: point[1], reverse=True)
 
-    # Get the highest x value from the rightmost barcode centres
-    top_barcode = max(sorted_by_y, key=lambda point: point[0])  # Max x value
+     # Find the largest difference between y coordinates in subsequent items
+    max_diff = 0
+    max_diff_index = 0
+    for i in range(1, len(sorted_by_y)):
+        diff = abs(sorted_by_y[i][1] - sorted_by_y[i-1][1])
+        if diff > max_diff:
+            max_diff = diff
+            max_diff_index = i
+
+    # Trim the list to include only the barcodes before the largest difference (i.e., right conveyor)
+    right_conveyor_barcodes = sorted_by_y[:max_diff_index]
+
+    # Find the barcode with the highest x value from the remaining list
+    top_barcode = max(right_conveyor_barcodes, key=lambda point: point[0])  # Max x value
 
     return top_barcode  # Return (centre_x, centre_y) of the top barcode
     
