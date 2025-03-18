@@ -1,4 +1,5 @@
 import os
+import cv2
 from image_analysis import find_top_and_bottom_of_conveyors, barcodes_divided_into_conveyors
 
 # NOTE: have a record of how many plants there are i.e. how many barcodes are visible. therefore if a plant falls off will know because less barcodes visible and can send me a photo
