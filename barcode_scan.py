@@ -2,7 +2,8 @@ import cv2
 from pyzbar.pyzbar import decode
 
 def barcodes_divided_into_conveyors(image_path):
-    barcode_centres = find_barcode_locations(image_path)  # Get barcode center coordinates
+    image = cv2.imread(image_path) # read the captured image with opencv
+    barcode_centres = find_barcode_locations(image)  # Get barcode center coordinates
     if not barcode_centres:
         return None  # No barcodes found
 
@@ -16,8 +17,7 @@ def barcodes_divided_into_conveyors(image_path):
 
     return [], []
 
-def find_barcode_locations(image_path):
-    image = cv2.imread(image_path) # read the captured image with opencv
+def find_barcode_locations(image):
     barcodes = decode(image) # detect barcodes
     # print(f"Number of barcodes found: {len(barcodes)}")
 
