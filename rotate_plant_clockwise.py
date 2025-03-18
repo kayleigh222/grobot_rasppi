@@ -2,6 +2,7 @@
 
 # simpler version - move plant from left to right conveyor (do an equivalent version to move plant from right to left conveyor)
 # step 1: check location of top plant on left conveyor (barcode in top left position) - note distance from top
+os.system("rpicam-still --output captured_image.jpg --nopreview") # os.system("rpicam-still --output captured_image.jpg --nopreview")
 # step 2: rotate left conveyor until plant at top
 # step 3: check location of holder on right conveyor
 # step 4: rotate right conveyor until holder at top (slightly below left conveyor)
