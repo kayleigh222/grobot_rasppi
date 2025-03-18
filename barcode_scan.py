@@ -4,7 +4,11 @@ from pyzbar.pyzbar import decode
 
 def barcodes_divided_into_conveyors(image_path):
     image = cv2.imread(image_path) # read the captured image with opencv
-    find_top_and_bottom_of_conveyors(image)
+    conveyor_top, conveyor_bottom = find_top_and_bottom_of_conveyors(image)
+    distance = conveyor_bottom - conveyor_top
+    threshold_for_top_conveyor_barcodes = conveyor_bottom - distance/4
+    cv2.line(image, (0, row_idx), (image.shape[1] - 1, row_idx), (0, 255, 0), 2)
+    cv2.imwrite('top_and_bottom_of_conveyor.jpg', image)
     
     # barcode_centres = find_barcode_locations(image)  # Get barcode center coordinates
     # if not barcode_centres:
@@ -22,14 +26,18 @@ def find_top_and_bottom_of_conveyors(image):
     # Create a binary mask where intensity < 50 is set to 1, and others are set to 0
     binary_mask = np.where(gray < 50, 1, 0)
 
+    conveyor_top = 0
+    conveyor_bottom = 0
+
     # Iterate through the rows and find the first row with enough dark pixels (top of conveyors)
     threshold = 2000  # Minimum number of ones required in a row to consider it to be part of the conveyor
     for row_idx, row in enumerate(binary_mask):
         ones_count = np.sum(row)  # Count the number of ones in the current row
         if ones_count >= threshold:
-            print(f"The first row with at least {threshold} ones is row {row_idx}")
-            # Draw a horizontal green line along the y-coordinate of the found row
-            cv2.line(image, (0, row_idx), (image.shape[1] - 1, row_idx), (0, 255, 0), 2)
+            conveyor_top = row_idx
+            # print(f"The first row with at least {threshold} ones is row {row_idx}")
+            # # Draw a horizontal green line along the y-coordinate of the found row
+            # cv2.line(image, (0, row_idx), (image.shape[1] - 1, row_idx), (0, 255, 0), 2)
             break  # Exit the loop once we find the row
 
     # Iterate through the rows and find the last row with enough dark pixels (bottom of conveyors)
@@ -37,13 +45,15 @@ def find_top_and_bottom_of_conveyors(image):
         row = binary_mask[row_idx]
         ones_count = np.sum(row)  # Count the number of ones in the current row
         if ones_count >= threshold:
-            print(f"The first row from the bottom with at least {threshold} ones is row {row_idx}")
-            
-            # Draw a horizontal green line along the y-coordinate of the found row
-            cv2.line(image, (0, row_idx), (image.shape[1] - 1, row_idx), (0, 255, 0), 2)
+            conveyor_bottom = row_idx
+            # print(f"The first row from the bottom with at least {threshold} ones is row {row_idx}")
+            # # Draw a horizontal green line along the y-coordinate of the found row
+            # cv2.line(image, (0, row_idx), (image.shape[1] - 1, row_idx), (0, 255, 0), 2)
             break  # Exit the loop once we find the row
 
-    cv2.imwrite('black_highlighted.jpg', image)
+    # cv2.imwrite('top_and_bottom_of_conveyor.jpg', image)
+    return conveyor_top, conveyor_bottom
+    
 
 def find_barcode_locations(image):
     barcodes = decode(image) # detect barcodes
