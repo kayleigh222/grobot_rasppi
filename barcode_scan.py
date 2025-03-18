@@ -3,7 +3,7 @@ from pyzbar.pyzbar import decode
 
 def barcodes_divided_into_conveyors(image_path):
     barcode_centres = find_barcode_locations(image_path)  # Get barcode center coordinates
-     if not barcode_centres:
+    if not barcode_centres:
         return None  # No barcodes found
 
     # figure out threshold for left and right conveyor
