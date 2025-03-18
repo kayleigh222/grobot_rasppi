@@ -70,8 +70,7 @@ def find_left_and_right_of_conveyors(image): # left and right when vertical in r
 
 # -------- BARCODE LOCATIONS ----------------
 
-def barcodes_divided_into_conveyors(image_path):
-    image = cv2.imread(image_path) # read the captured image with opencv
+def barcodes_divided_into_conveyors(image):
     conveyor_left, conveyor_right = find_top_and_bottom_of_conveyors(image)
     distance = conveyor_right - conveyor_left
     threshold_for_top_conveyor_barcodes = conveyor_right - distance//4
