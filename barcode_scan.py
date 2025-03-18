@@ -14,7 +14,20 @@ def barcodes_divided_into_conveyors(image_path):
     if not barcode_centres:
         return [], []  # No barcodes found
 
-    return [], []
+    # Initialize the lists for left and right conveyor barcodes
+    left_conveyor_barcodes = []
+    right_conveyor_barcodes = []
+
+    # Iterate through the barcode centers and classify them based on their y values
+    for centre in barcode_centres:
+        x, y = centre  # Unpack the barcode center coordinates
+        if y < threshold_for_top_conveyor_barcodes:
+            left_conveyor_barcodes.append(centre)  # Barcode is above the threshold (left conveyor)
+        else:
+            right_conveyor_barcodes.append(centre)  # Barcode is below the threshold (right conveyor)
+
+    return left_conveyor_barcodes, right_conveyor_barcodes
+
 
 def find_top_and_bottom_of_conveyors(image):
     # figure out threshold for left and right conveyor
