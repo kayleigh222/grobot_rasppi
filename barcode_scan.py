@@ -22,7 +22,7 @@ def find_top_and_bottom_of_conveyors(image):
     # Create a binary mask where intensity < 50 is set to 1, and others are set to 0
     binary_mask = np.where(gray < 50, 1, 0)
 
-    # Iterate through the rows and find the first row with at least 1000 ones
+    # Iterate through the rows and find the first row with enough dark pixels (top of conveyors)
     threshold = 2000  # Minimum number of ones required in a row to consider it to be part of the conveyor
     for row_idx, row in enumerate(binary_mask):
         ones_count = np.sum(row)  # Count the number of ones in the current row
@@ -32,7 +32,17 @@ def find_top_and_bottom_of_conveyors(image):
             cv2.line(image, (0, row_idx), (image.shape[1] - 1, row_idx), (0, 255, 0), 2)
             cv2.imwrite('black_highlighted.jpg', image)
             break  # Exit the loop once we find the row
-    
+
+    # Iterate through the rows and find the last row with enough dark pixels (bottom of conveyors)
+    for row_idx in range(binary_mask.shape[0] - 1, -1, -1):  # Start from the last row
+    row = binary_mask[row_idx]
+    ones_count = np.sum(row)  # Count the number of ones in the current row
+    if ones_count >= threshold:
+        print(f"The first row from the bottom with at least {threshold} ones is row {row_idx}")
+        
+        # Draw a horizontal green line along the y-coordinate of the found row
+        cv2.line(image, (0, row_idx), (image.shape[1] - 1, row_idx), (0, 255, 0), 2)
+        break  # Exit the loop once we find the row
 
 def find_barcode_locations(image):
     barcodes = decode(image) # detect barcodes
