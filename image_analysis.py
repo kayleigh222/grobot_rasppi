@@ -135,11 +135,11 @@ def find_barcode_locations(image):
 
         # IF WANT TO VISUALISE:
         cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)  # Red rectangle
-        cv2.circle(image, (centre_x, centre_y), radius=3, color=(0, 0, 255), thickness=-1)  # Red filled dot at centre of barcode
+        cv2.circle(image, (int(centre_x), int(centre_y)), radius=3, color=(0, 0, 255), thickness=-1)  # Red filled dot at centre of barcode
         cv2.imwrite('captured_image_with_barcodes.jpg', image)
     
         # IF DEBUGGING:
-        # print(f"Barcode Location: (x: {x}, y: {y}, width: {w}, height: {h})")
-        # print(f"Barcode Data: {barcode.data.decode('utf-8')}")
+        print(f"Barcode Location: (x: {x}, y: {y}, width: {w}, height: {h})")
+        print(f"Barcode Data: {barcode.data.decode('utf-8')}")
     
     return centres  # Return the list of center coordinates
