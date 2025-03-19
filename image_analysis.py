@@ -70,6 +70,30 @@ def find_left_and_right_of_conveyors(image): # left and right when vertical in r
 
 # -------- BARCODE LOCATIONS ----------------
 
+def top_barcode_right_conveyor(image):
+    left_conveyor_barcodes, right_conveyor_barcodes = barcodes_divided_into_conveyors(image)
+    # Check if there are any barcodes in the right conveyor
+    if right_conveyor_barcodes:
+        # Find the barcode with the maximum x-coordinate in the right conveyor
+        top_barcode_right_conveyor = max(right_conveyor_barcodes, key=lambda point: point[0])
+    else:
+        # Handle the case where there are no barcodes in the right conveyor
+        top_barcode_right_conveyor = None  # or some default value/message
+    print("Top barcode right conveyor:", top_barcode_right_conveyor)
+    return top_barcode_right_conveyor
+
+def top_barcode_left_conveyor(image):
+    left_conveyor_barcodes, right_conveyor_barcodes = barcodes_divided_into_conveyors(image)
+    # Check if there are any barcodes in the right conveyor
+    if left_conveyor_barcodes:
+        # Find the barcode with the maximum x-coordinate in the right conveyor
+        top_barcode_left_conveyor = max(left_conveyor_barcodes, key=lambda point: point[0])
+    else:
+        # Handle the case where there are no barcodes in the right conveyor
+        top_barcode_left_conveyor = None  # or some default value/message
+    print("Top barcode left conveyor:", top_barcode_left_conveyor)
+    return top_barcode_left_conveyor
+
 def barcodes_divided_into_conveyors(image):
     conveyor_left, conveyor_right = find_top_and_bottom_of_conveyors(image)
     distance = conveyor_right - conveyor_left
