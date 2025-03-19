@@ -1,7 +1,7 @@
 import os
 import cv2
 from image_analysis import find_top_and_bottom_of_conveyors, top_barcode_right_conveyor
-from calibration import calibrate_vertical_conveyor_motors
+from calibration import calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
 
 # NOTE: have a record of how many plants there are i.e. how many barcodes are visible. therefore if a plant falls off will know because less barcodes visible and can send me a photo
 
@@ -21,6 +21,9 @@ print("Top of conveyor: ", top_conveyor)
 distance_from_top = top_conveyor - top_barcode_right_conveyor[0]
 print("Distance between: ", distance_from_top)
 
+calibration_variables = load_variables() 
+print(calibration_variables[LEFT_CONVEYOR_SPEED])  
+print(calibration_variables[RIGHT_CONVEYOR_SPEED])  
 
 # step 2: rotate right conveyor until plant at top
 # step 3: check location of holder on left conveyor
