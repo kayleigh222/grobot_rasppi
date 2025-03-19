@@ -56,6 +56,7 @@ def calibrate_right_conveyor_motor(num_steps_to_test=100):  # to use, put one ba
 
   # save new calibration variables
   data = {"right_conveyor_motor_pixels_per_step_up": pixels_moved_per_step_up, "right_conveyor_motor_pixels_per_step_down": pixels_moved_per_step_down}
+  print(data)
   save_variables(data)  # Save
 
 # loaded_data = load_variables()  # Load
