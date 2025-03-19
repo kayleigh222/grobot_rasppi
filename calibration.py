@@ -45,6 +45,7 @@ def calibrate_right_conveyor_motor(num_steps_to_test=100):  # to use, put one ba
 
   # move motor down
   move_right_conveyor_down(num_steps_to_test)
+  clean_up_right_conveyor()
 
   # measure new position
   os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
