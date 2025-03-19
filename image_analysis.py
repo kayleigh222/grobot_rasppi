@@ -124,6 +124,7 @@ def find_barcode_locations(image):
     thresholded = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2) # apply thresholding to improve barcode contrast
     barcodes = decode(thresholded) # detect barcodes
     print(f"Number of barcodes found: {len(barcodes)}")
+    cv2.imwrite('thresholded_img.jpg', thresholded)
 
     centres = []  # List to store center coordinates
 
