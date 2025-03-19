@@ -63,3 +63,4 @@ def calibrate_right_conveyor_motor(num_steps_to_test=100):  # to use, put one ba
 # print(loaded_data["motor_speed"])  # 120
 
 def calibrate_left_conveyor_motor():
+    raise NotImplementedError("This feature has not been implemented yet.")
