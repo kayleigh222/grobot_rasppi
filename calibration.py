@@ -9,9 +9,16 @@ from vertical_conveyor_right_motor_code import move_right_conveyor_up, move_righ
 FILE_PATH = "calibration_variables.json"
 
 # Save variables
-def save_variables(data):
+def save_variables(new_data):
+    # Load existing data from file (if exists)
+    data = load_variables()
+
+    # Update the existing data with the new data
+    data.update(new_data)
+
+    # Save the updated data back to the JSON file
     with open(FILE_PATH, "w") as file:
-        json.dump(data, file)
+        json.dump(data, file, indent=4)
 
 # Load variables
 def load_variables():
