@@ -1,26 +1,25 @@
 import os
 import cv2
 from image_analysis import find_top_and_bottom_of_conveyors, top_barcode_right_conveyor
-from calibration import calibrate_vertical_conveyor_motors, calibrate_right_conveyor_motor, calibrate_left_conveyor_motor #TODO - once have 2 barcode trays just make this calibrate motors
+from calibration import calibrate_vertical_conveyor_motors
 
 # NOTE: have a record of how many plants there are i.e. how many barcodes are visible. therefore if a plant falls off will know because less barcodes visible and can send me a photo
 
 # calibrate conveyor motors
-calibrate_right_conveyor_motor()
 # calibrate_vertical_conveyor_motors()
 
 # simpler version - move plant from right to left conveyor (do an equivalent version to move plant from left to right conveyor)
 # step 1: check location of top plant on right conveyor (barcode in top left position) - note distance from top
-# image_path = "captured_image.jpg"
-# os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
-# image = cv2.imread(image_path) # read the captured image with opencv
-# top_barcode_right_conveyor = top_barcode_right_conveyor(image)
+image_path = "captured_image.jpg"
+os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
+image = cv2.imread(image_path) # read the captured image with opencv
+top_barcode_right_conveyor = top_barcode_right_conveyor(image)
 
-# top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
-# print("Top of conveyor: ", top_conveyor)
+top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
+print("Top of conveyor: ", top_conveyor)
 
-# distance_from_top = top_conveyor - top_barcode_right_conveyor[0]
-# print("Distance between: ", distance_from_top)
+distance_from_top = top_conveyor - top_barcode_right_conveyor[0]
+print("Distance between: ", distance_from_top)
 
 
 # step 2: rotate right conveyor until plant at top
