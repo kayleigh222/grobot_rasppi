@@ -21,7 +21,7 @@ def load_variables():
     except (FileNotFoundError, json.JSONDecodeError):
         return {}  # Return empty dict if file doesn't exist or is corrupted
 
-def calibrate_right_conveyor_motor(num_steps_to_test=500):  # to use, put one barcode on left conveyor somewhere in the middle
+def calibrate_right_conveyor_motor(num_steps_to_test=400):  # to use, put one barcode on left conveyor somewhere in the middle
   image_path = "captured_image.jpg"
   os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
   image = cv2.imread(image_path) # read the captured image with opencv
