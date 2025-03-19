@@ -19,7 +19,7 @@ def find_top_and_bottom_of_conveyors(image): # top and bottom when vertical in r
         if ones_count >= threshold:
             conveyor_bottom = col_idx
             # draw a vertical green line
-            # cv2.line(image, (col_idx, 0), (col_idx, image.shape[0] - 1), (0, 255, 0), 2)
+            cv2.line(image, (col_idx, 0), (col_idx, image.shape[0] - 1), (0, 255, 0), 2)
             break  # Exit once we find the first column meeting the threshold
             
     # Iterate through the columns from right to left and find the last column with enough dark pixels
@@ -29,7 +29,7 @@ def find_top_and_bottom_of_conveyors(image): # top and bottom when vertical in r
         if ones_count >= threshold:
             conveyor_top = col_idx
              # draw a vertical green line
-            # cv2.line(image, (col_idx, 0), (col_idx, image.shape[0] - 1), (0, 255, 0), 2)
+            cv2.line(image, (col_idx, 0), (col_idx, image.shape[0] - 1), (0, 255, 0), 2)
             break  # Exit once we find the last column meeting the threshold
     
     cv2.imwrite('top_and_bottom_of_conveyor.jpg', image)
