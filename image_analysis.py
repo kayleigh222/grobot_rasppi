@@ -120,7 +120,9 @@ def barcodes_divided_into_conveyors(image):
     return left_conveyor_barcodes, right_conveyor_barcodes    
 
 def find_barcode_locations(image):
-    barcodes = decode(image) # detect barcodes
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    thresholded = cv2.adaptiveThreshold(gray, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY, 11, 2) # apply thresholding to improve barcode contrast
+    barcodes = decode(thresholded) # detect barcodes
     print(f"Number of barcodes found: {len(barcodes)}")
 
     centres = []  # List to store center coordinates
