@@ -1,6 +1,6 @@
 import os
 import cv2
-from image_analysis import find_top_and_bottom_of_conveyors, barcodes_divided_into_conveyors
+from image_analysis import find_top_and_bottom_of_conveyors, top_barcode_right_conveyor
 
 # NOTE: have a record of how many plants there are i.e. how many barcodes are visible. therefore if a plant falls off will know because less barcodes visible and can send me a photo
 
@@ -9,15 +9,7 @@ from image_analysis import find_top_and_bottom_of_conveyors, barcodes_divided_in
 image_path = "captured_image.jpg"
 os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
 image = cv2.imread(image_path) # read the captured image with opencv
-left_conveyor_barcodes, right_conveyor_barcodes = barcodes_divided_into_conveyors(image)
-# Check if there are any barcodes in the right conveyor
-if right_conveyor_barcodes:
-    # Find the barcode with the maximum x-coordinate in the right conveyor
-    top_barcode_right_conveyor = max(right_conveyor_barcodes, key=lambda point: point[0])
-else:
-    # Handle the case where there are no barcodes in the right conveyor
-    top_barcode_right_conveyor = None  # or some default value/message
-print("Top barcode right conveyor:", top_barcode_right_conveyor)
+top_barcode_right_conveyor = top_barcode_right_conveyor(image)
 
 top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
 print("Top of conveyor: ", top_conveyor)
