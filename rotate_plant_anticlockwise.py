@@ -28,7 +28,7 @@ calibration_variables = load_variables()
 print(calibration_variables[LEFT_CONVEYOR_SPEED])  
 print(calibration_variables[RIGHT_CONVEYOR_SPEED]) 
 
-steps_to_top = distance_from_top // calibration_variables[RIGHT_CONVEYOR_SPEED]
+steps_to_top = int(distance_from_top // calibration_variables[RIGHT_CONVEYOR_SPEED])
 set_up_right_conveyor()
 move_right_conveyor_up(steps_to_top)
 clean_up_right_conveyor()
