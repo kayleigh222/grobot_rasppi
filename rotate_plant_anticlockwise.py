@@ -1,12 +1,12 @@
 import os
 import cv2
 from image_analysis import find_top_and_bottom_of_conveyors, top_barcode_right_conveyor
-from calibration import calibrate_right_conveyor_motor
+from calibration import calibrate_right_conveyor_motor, calibrate_left_conveyor_motor #TODO - once have 2 barcode trays just make this calibrate motors
 
 # NOTE: have a record of how many plants there are i.e. how many barcodes are visible. therefore if a plant falls off will know because less barcodes visible and can send me a photo
 
 # calibrate conveyor motors
-calibrate_right_conveyor_motor()
+calibrate_left_conveyor_motor()
 
 # simpler version - move plant from right to left conveyor (do an equivalent version to move plant from left to right conveyor)
 # step 1: check location of top plant on right conveyor (barcode in top left position) - note distance from top
