@@ -105,7 +105,8 @@ def top_holder_right_conveyor(image, conveyor_threshold):
     else:
         # Handle the case where there are no barcodes in the right conveyor
         top_holder_right_conveyor = None  # or some default value/message
-    print("Top holder right conveyor:", top_holder_right_conveyor)
+    print("Top holder right conveyor center:", top_holder_right_conveyor['holder_center'])
+    print("Top holder right conveyor empty:", top_holder_right_conveyor['is_empty'])
     return top_holder_right_conveyor
 
 # conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
@@ -165,7 +166,7 @@ def find_holders(image):
 
         # draw a circle radius 600 around the holder center
         cv2.circle(image, holder_center, 600, (0, 0, 255), 2)
-        
+
         for barcode_centre in barcode_centres:
             # Compute Euclidean distance to barcode
             distance = np.sqrt((holder_center[0] - barcode_centre[0])**2 + 
