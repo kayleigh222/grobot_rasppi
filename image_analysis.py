@@ -10,7 +10,7 @@ HOLDER_COLOR_UPPER_THRESHOLD_HSV = np.array([140, 255, 255])  # Upper bound of b
 MIN_HOLDER_AREA = 1000 
 
 # max distance between a holder center and its barcode
-MAX_DISTANCE_BETWEEN_HOLDER_CENTER_AND_BARCODE = 300
+MAX_DISTANCE_BETWEEN_HOLDER_CENTER_AND_BARCODE = 400
 
 
 # ----------- CONVEYOR LOCATIONS -------------
