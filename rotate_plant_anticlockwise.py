@@ -48,8 +48,8 @@ top_edge_right = get_top_edge_of_holder(top_holder_right['contour'])
 bottom_edge_left = get_bottom_edge_of_holder(top_holder_left['contour'])
 
 #draw the edges on image
-cv2.drawContours(image, [top_holder_right['contour']], -1, (0, 255, 0), 2)
-cv2.drawContours(image, [top_holder_left['contour']], -1, (0, 255, 0), 2)
+cv2.line(image, top_edge_right[0], top_edge_right[1], (255, 0, 0), 3)  # Blue line
+cv2.line(image, bottom_edge_left[0], bottom_edge_left[1], (0, 0, 255), 3)  # Red line
 cv2.imwrite("image_with_edges.jpg", image)
 
 # step 4: rotate left conveyor until holder at top (slightly below left conveyor)
