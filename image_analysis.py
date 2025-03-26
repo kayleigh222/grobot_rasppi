@@ -7,7 +7,7 @@ HOLDER_COLOR_LOWER_THRESHOLD_HSV = np.array([100, 150, 50])   # Lower bound of b
 HOLDER_COLOR_UPPER_THRESHOLD_HSV = np.array([140, 255, 255])  # Upper bound of blue
 
 # Define a minimum area threshold for contours to be considered a contour
-MIN_HOLDER_AREA = 500 
+MIN_HOLDER_AREA = 1000 
 
 
 # ----------- CONVEYOR LOCATIONS -------------
