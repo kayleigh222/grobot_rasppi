@@ -50,6 +50,15 @@ bottom_edge_left = get_bottom_edge_of_holder(top_holder_left['contour'])
 #draw the edges on image
 cv2.line(image, top_edge_right[0], top_edge_right[1], (255, 0, 0), 3)  # Blue line
 cv2.line(image, bottom_edge_left[0], bottom_edge_left[1], (0, 0, 255), 3)  # Red line
+
+# draw a dot on top_edge_right[0]
+cv2.circle(image, top_edge_right[0], 5, (0, 255, 0), -1)
+# same for left
+cv2.circle(image, bottom_edge_left[0], 5, (0, 255, 0), -1)
+
+distance_between_holders = bottom_edge_left[0][0] - top_edge_right[0][0]
+print("Distance between holders: ", distance_between_holders)
+
 cv2.imwrite("image_with_edges.jpg", image)
 
 # step 4: rotate left conveyor until holder at top (slightly below left conveyor)
