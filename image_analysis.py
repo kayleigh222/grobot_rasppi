@@ -9,9 +9,9 @@ HOLDER_COLOR_UPPER_THRESHOLD_HSV = np.array([140, 255, 255])  # Upper bound of b
 
 # ----------- CONVEYOR LOCATIONS -------------
 def get_conveyor_threshold(image):
-    conveyor_left, conveyor_right = find_top_and_bottom_of_conveyors(image)
+    conveyor_left, conveyor_right = find_left_and_right_of_conveyors(image)
     distance = conveyor_right - conveyor_left
-    threshold = conveyor_right - distance//4
+    threshold = conveyor_right - distance//2
     
     # draw threshold
     cv2.line(image, (0, threshold), (image.shape[1] - 1, threshold), (0, 255, 0), 2)
