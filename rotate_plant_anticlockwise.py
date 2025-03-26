@@ -1,6 +1,6 @@
 import os
 import cv2
-from image_analysis import find_top_and_bottom_of_conveyors, top_barcode_right_conveyor, find_holder_locations, get_conveyor_threshold
+from image_analysis import find_top_and_bottom_of_conveyors, top_barcode_right_conveyor, find_empty_holders, get_conveyor_threshold
 from calibration import calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
 from vertical_conveyor_left_motor_code import move_left_conveyor_up, move_left_conveyor_down, set_up_left_conveyor, clean_up_left_conveyor
 from vertical_conveyor_right_motor_code import move_right_conveyor_up, move_right_conveyor_down, set_up_right_conveyor, clean_up_right_conveyor
