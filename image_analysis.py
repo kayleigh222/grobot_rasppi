@@ -84,71 +84,84 @@ def find_left_and_right_of_conveyors(image): # left and right when vertical in r
 
 # -------- HOLDER LOCATIONS -----------------
 
-# describe the arguments
 # conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
-def empty_holders_divided_into_conveyors(image, conveyor_threshold):
-    conveyor_left, conveyor_right = find_top_and_bottom_of_conveyors(image)
-    distance = conveyor_right - conveyor_left
-    threshold_for_top_conveyor_barcodes = conveyor_right - distance//4
-    
-    barcode_centres = find_barcode_locations(image)  # Get barcode center coordinates
-    if not barcode_centres:
-        return [], []  # No barcodes found
+def holders_divided_into_conveyors(image, conveyor_threshold):    
+    holders = find_holders(image)  # Get empty holder contours
 
     # Initialize the lists for left and right conveyor barcodes
-    left_conveyor_barcodes = []
-    right_conveyor_barcodes = []
+    left_conveyor_holders = []
+    right_conveyor_holders = []
 
     # Iterate through the barcode centers and classify them based on their y values
-    for centre in barcode_centres:
-        x, y = centre  # Unpack the barcode center coordinates
-        if y < threshold_for_top_conveyor_barcodes:
-            left_conveyor_barcodes.append(centre)  # Barcode is above the threshold (left conveyor)
+    for holder in holders:
+        x, y = holder['holder_center']  # Unpack the barcode center coordinates
+        if y < conveyor_threshold:
+            left_conveyor_holders.append(holder)  # Barcode is above the threshold (left conveyor)
         else:
-            right_conveyor_barcodes.append(centre)  # Barcode is below the threshold (right conveyor)
+            right_conveyor_holders.append(holder)  # Barcode is below the threshold (right conveyor)
 
-    return left_conveyor_barcodes, right_conveyor_barcodes    
+        # Draw contours for the left conveyor holders in blue
+    for holder in left_conveyor_holders:
+        cv2.drawContours(image, [holder['contour']], -1, (255, 0, 0), 3)  # Blue color for left conveyor
 
-# finds all empty holders - returns list of their contours
-def find_empty_holders(image):
+    # Draw contours for the right conveyor holders in green
+    for holder in right_conveyor_holders:
+        cv2.drawContours(image, [holder['contour']], -1, (0, 255, 0), 3)  # Green color for right conveyor
+
+    # Save the image with the drawn contours
+    cv2.imwrite('image_with_divided_conveyors.jpg', image)
+
+    return left_conveyor_holders, right_conveyor_holders    
+
+
+# Finds all holders, returns the contours and empty status
+def find_holders(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)  # Convert the image to HSV color space to detect color easier
     # Create mask
     mask = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
     cv2.imwrite('mask.jpg', mask)
 
-    # Find blue contours
-    blue_contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # Find contours of blue areas
+    holder_contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    # find barcodes
+    # Find barcodes in the image
     barcode_centres = find_barcode_locations(image)
 
-    # List to store contours that are NOT near a barcode (i.e. an empty holder)
-    holders = []
+    # List to store information about the holders
+    holders_info = []
 
-    # Iterate through blue contours and check proximity to barcodes
-    for blue_contour in blue_contours:
-        x, y, w, h = cv2.boundingRect(blue_contour)  # Get bounding box of blue patch
-        blue_center = (x + w // 2, y + h // 2)  # Get center of blue patch
+    # Iterate through blue contours
+    for holder_contour in holder_contours:
+        x, y, w, h = cv2.boundingRect(holder_contour)  # Get bounding box of blue patch
+        holder_center = (x + w // 2, y + h // 2)  # Get center of blue patch
 
-        # Check proximity to barcodes
+        # Check proximity to barcodes to determine if the holder is empty
         too_close = False
         for barcode_centre in barcode_centres:
-
-            # Compute Euclidean distance
-            distance = np.sqrt((blue_center[0] - barcode_centre[0])**2 + 
-                            (blue_center[1] - barcode_centre[1])**2)
+            # Compute Euclidean distance to barcode
+            distance = np.sqrt((holder_center[0] - barcode_centre[0])**2 + 
+                               (holder_center[1] - barcode_centre[1])**2)
 
             if distance < 400:  # Adjust distance threshold based on image scale
                 too_close = True
                 break  # No need to check further if already too close
         
-        if not too_close:
-            holders.append(blue_contour)  # Keep only contours far from barcodes
+        # Store the contour, empty status, and barcode (if not empty)
+        holder_info = {
+            'contour': holder_contour,
+            'is_empty': not too_close,  # If not too close to barcode, it's considered empty
+            'holder_center': holder_center
+        }
+        holders_info.append(holder_info)
 
-     # Draw remaining blue contours (those far from barcodes)
-    cv2.drawContours(image, holders, -1, (255, 0, 0), 3)  # Blue color
+    # Optionally, draw contours for all holders
+    for holder in holders_info:
+        color = (255, 0, 0) if holder['is_empty'] else (0, 255, 0)  # Blue for empty, green for not empty
+        cv2.drawContours(image, [holder['contour']], -1, color, 3)  # Draw each holder's contour with different color
 
-    cv2.imwrite('image_with_filtered_blue_patches.jpg', image)
+    cv2.imwrite('image_with_all_holders.jpg', image)
+
+    return holders_info
 
 
 # -------- BARCODE LOCATIONS ----------------
