@@ -13,9 +13,6 @@ def get_conveyor_threshold(image):
     distance = conveyor_right - conveyor_left
     threshold = conveyor_right - distance//2
     
-    # draw threshold
-    cv2.line(image, (0, threshold), (image.shape[1] - 1, threshold), (0, 255, 0), 2)
-    cv2.imwrite('conveyor_threshold.jpg', image)
     return threshold
 
 def find_top_and_bottom_of_conveyors(image): # top and bottom when vertical in real world (vertical in image)
@@ -122,7 +119,6 @@ def find_holders(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)  # Convert the image to HSV color space to detect color easier
     # Create mask
     mask = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
-    cv2.imwrite('mask.jpg', mask)
 
     # Find contours of blue areas
     holder_contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -145,7 +141,7 @@ def find_holders(image):
             distance = np.sqrt((holder_center[0] - barcode_centre[0])**2 + 
                                (holder_center[1] - barcode_centre[1])**2)
 
-            if distance < 400:  # Adjust distance threshold based on image scale
+            if distance < 500:  # Adjust distance threshold based on image scale
                 too_close = True
                 break  # No need to check further if already too close
         
