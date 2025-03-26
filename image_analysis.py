@@ -9,6 +9,9 @@ HOLDER_COLOR_UPPER_THRESHOLD_HSV = np.array([140, 255, 255])  # Upper bound of b
 # Define a minimum area threshold for contours to be considered a contour
 MIN_HOLDER_AREA = 1000 
 
+# max distance between a holder center and its barcode
+MAX_DISTANCE_BETWEEN_HOLDER_CENTER_AND_BARCODE = 300
+
 
 # ----------- CONVEYOR LOCATIONS -------------
 def get_conveyor_threshold(image):
@@ -176,14 +179,14 @@ def find_holders(image):
         too_close = False
 
         # draw a circle radius 600 around the holder center
-        cv2.circle(image, holder_center, 600, (0, 0, 255), 2)
+        cv2.circle(image, holder_center, MAX_DISTANCE_BETWEEN_HOLDER_CENTER_AND_BARCODE, (0, 0, 255), 2)
 
         for barcode_centre in barcode_centres:
             # Compute Euclidean distance to barcode
             distance = np.sqrt((holder_center[0] - barcode_centre[0])**2 + 
                                (holder_center[1] - barcode_centre[1])**2)
 
-            if distance < 600:  # Adjust distance threshold based on image scale
+            if distance < MAX_DISTANCE_BETWEEN_HOLDER_CENTER_AND_BARCODE:  # Adjust distance threshold based on image scale
                 too_close = True
                 break  # No need to check further if already too close
         
