@@ -49,7 +49,7 @@ def find_top_and_bottom_of_conveyors(image): # top and bottom when vertical in r
             cv2.line(image, (col_idx, 0), (col_idx, image.shape[0] - 1), (0, 255, 0), 2)
             break  # Exit once we find the last column meeting the threshold
     
-    cv2.imwrite('top_and_bottom_of_conveyor.jpg', image)
+    # cv2.imwrite('top_and_bottom_of_conveyor.jpg', image)
     return conveyor_top, conveyor_bottom
 
 def find_left_and_right_of_conveyors(image): # left and right when vertical in real world (horizontal in image)
@@ -160,7 +160,7 @@ def holders_divided_into_conveyors(image, conveyor_threshold):
     cv2.line(image, (0, conveyor_threshold), (image.shape[1], conveyor_threshold), (0, 0, 255), 2)  # Red line
 
     # Save the image with the drawn contours
-    cv2.imwrite('image_with_divided_conveyors.jpg', image)
+    # cv2.imwrite('image_with_divided_conveyors.jpg', image)
 
     return left_conveyor_holders, right_conveyor_holders    
 
@@ -169,7 +169,6 @@ def find_holders(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)  # Convert the image to HSV color space to detect color easier
     # Create mask
     mask = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
-    cv2.imwrite('mask.jpg', mask)
 
     # Find contours of blue areas
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -194,8 +193,8 @@ def find_holders(image):
         # Check proximity to barcodes to determine if the holder is empty
         too_close = False
 
-        # draw a circle radius 600 around the holder center
-        cv2.circle(image, holder_center, MAX_DISTANCE_BETWEEN_HOLDER_CENTER_AND_BARCODE, (0, 0, 255), 2)
+        # draw a circle representing the max distance between a holder center and its barcode
+        # cv2.circle(image, holder_center, MAX_DISTANCE_BETWEEN_HOLDER_CENTER_AND_BARCODE, (0, 0, 255), 2)
 
         for barcode_centre in barcode_centres:
             # Compute Euclidean distance to barcode
@@ -215,11 +214,11 @@ def find_holders(image):
         holders_info.append(holder_info)
 
     # Optionally, draw contours for all holders
-    for holder in holders_info:
-        color = (255, 0, 0) if holder['is_empty'] else (0, 255, 0)  # Blue for empty, green for not empty
-        cv2.drawContours(image, [holder['contour']], -1, color, 3)  # Draw each holder's contour with different color
+    # for holder in holders_info:
+    #     color = (255, 0, 0) if holder['is_empty'] else (0, 255, 0)  # Blue for empty, green for not empty
+    #     cv2.drawContours(image, [holder['contour']], -1, color, 3)  # Draw each holder's contour with different color
 
-    cv2.imwrite('image_with_all_holders.jpg', image)
+    # cv2.imwrite('image_with_all_holders.jpg', image)
 
     return holders_info
 
