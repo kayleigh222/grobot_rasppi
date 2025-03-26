@@ -47,6 +47,11 @@ top_holder_left = top_holder_left_conveyor(image, conveyor_threshold)
 top_edge_right = get_top_edge_of_holder(top_holder_right['contour'])
 bottom_edge_left = get_bottom_edge_of_holder(top_holder_left['contour'])
 
+print(top_edge_right[0], top_edge_right[1])
+print(bottom_edge_left[0], bottom_edge_left[1])
+print(type(top_edge_right[0]), type(top_edge_right[1]))
+print(type(bottom_edge_left[0]), type(bottom_edge_left[1]))
+
 #draw the edges on image
 cv2.line(image, top_edge_right[0], top_edge_right[1], (255, 0, 0), 3)  # Blue line
 cv2.line(image, bottom_edge_left[0], bottom_edge_left[1], (0, 0, 255), 3)  # Red line
