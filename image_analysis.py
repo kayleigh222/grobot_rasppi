@@ -3,8 +3,11 @@ import numpy as np
 from pyzbar.pyzbar import decode
 
 # Define holder color range in HSV (currently blue)
-HOLDER_COLOR_LOWER_THRESHOLD_HSV = np.array([90, 150, 50])   # Lower bound of blue
-HOLDER_COLOR_UPPER_THRESHOLD_HSV = np.array([150, 255, 255])  # Upper bound of blue
+HOLDER_COLOR_LOWER_THRESHOLD_HSV = np.array([100, 150, 50])   # Lower bound of blue
+HOLDER_COLOR_UPPER_THRESHOLD_HSV = np.array([140, 255, 255])  # Upper bound of blue
+
+# Define a minimum area threshold for contours to be considered a contour
+MIN_HOLDER_AREA = 500 
 
 
 # ----------- CONVEYOR LOCATIONS -------------
@@ -150,8 +153,11 @@ def find_holders(image):
     cv2.imwrite('mask.jpg', mask)
 
     # Find contours of blue areas
-    holder_contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    # print number of holder contours
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Filter contours based on size
+    holder_contours = [cnt for cnt in contours if cv2.contourArea(cnt) > MIN_HOLDER_AREA]
+     # print number of holder contours
     print(f"Number of holder contours found: {len(holder_contours)}")
 
     # Find barcodes in the image
