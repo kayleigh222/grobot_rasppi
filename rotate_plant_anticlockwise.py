@@ -26,7 +26,7 @@ conveyor_threshold = get_conveyor_threshold(image) # find threshold between left
 # print("Distance between: ", distance_from_top)
 
 # # step 2: rotate right conveyor until plant at top
-# calibration_variables = load_variables() 
+calibration_variables = load_variables() 
 # print(calibration_variables[LEFT_CONVEYOR_SPEED])  
 # print(calibration_variables[RIGHT_CONVEYOR_SPEED]) 
 
@@ -56,12 +56,17 @@ cv2.circle(image, top_edge_right[0], 5, (0, 255, 0), -1)
 # same for left
 cv2.circle(image, bottom_edge_left[0], 5, (0, 255, 0), -1)
 
-distance_between_holders = bottom_edge_left[0][0] - top_edge_right[0][0]
+distance_between_holders = top_edge_right[0][0] - bottom_edge_left[0][0]
 print("Distance between holders: ", distance_between_holders)
 
 cv2.imwrite("image_with_edges.jpg", image)
 
 # step 4: rotate left conveyor until holder at top (slightly below left conveyor)
+steps_to_top = int(distance_between_holders // calibration_variables[LEFT_CONVEYOR_SPEED])
+set_up_left_conveyor()
+move_left_conveyor_up(steps_to_top)
+clean_up_left_conveyor()
+
 # step 5: rotate servo motor to put down tray push leg
 # step 6: rotate top conveyor to push tray right to left
 # step 7: return top conveyor to right side
