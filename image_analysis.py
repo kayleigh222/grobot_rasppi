@@ -3,8 +3,8 @@ import numpy as np
 from pyzbar.pyzbar import decode
 
 # Define holder color range in HSV (currently blue)
-HOLDER_COLOR_LOWER_THRESHOLD_HSV = np.array([100, 150, 50])   # Lower bound of blue
-HOLDER_COLOR_UPPER_THRESHOLD_HSV = np.array([140, 255, 255])  # Upper bound of blue
+HOLDER_COLOR_LOWER_THRESHOLD_HSV = np.array([90, 150, 50])   # Lower bound of blue
+HOLDER_COLOR_UPPER_THRESHOLD_HSV = np.array([150, 255, 255])  # Upper bound of blue
 
 
 # ----------- CONVEYOR LOCATIONS -------------
