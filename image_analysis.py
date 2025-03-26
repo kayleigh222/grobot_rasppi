@@ -159,7 +159,7 @@ def holders_divided_into_conveyors(image, conveyor_threshold):
         cv2.drawContours(image, [holder['contour']], -1, (0, 255, 0), 3)  # Green color for right conveyor
 
     # Draw the conveyor threshold line (horizontal line at the y-coordinate of the threshold)
-    cv2.line(image, (0, conveyor_threshold), (image.shape[1], conveyor_threshold), (0, 0, 255), 2)  # Red line
+    # cv2.line(image, (0, conveyor_threshold), (image.shape[1], conveyor_threshold), (0, 0, 255), 2)  # Red line
 
     # Save the image with the drawn contours
     # cv2.imwrite('image_with_divided_conveyors.jpg', image)
