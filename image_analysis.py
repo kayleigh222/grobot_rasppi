@@ -8,6 +8,16 @@ HOLDER_COLOR_UPPER_THRESHOLD_HSV = np.array([140, 255, 255])  # Upper bound of b
 
 
 # ----------- CONVEYOR LOCATIONS -------------
+def get_conveyor_threshold(image):
+    conveyor_left, conveyor_right = find_top_and_bottom_of_conveyors(image)
+    distance = conveyor_right - conveyor_left
+    threshold = conveyor_right - distance//4
+    
+    # draw threshold
+    cv2.line(image, (0, threshold), (image.shape[1] - 1, threshold), (0, 255, 0), 2)
+    cv2.imwrite('conveyor_threshold.jpg', image)
+    return threshold
+
 def find_top_and_bottom_of_conveyors(image): # top and bottom when vertical in real world (vertical in image)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     # Create a binary mask where intensity < 50 is set to 1, and others are set to 0
@@ -74,8 +84,33 @@ def find_left_and_right_of_conveyors(image): # left and right when vertical in r
 
 # -------- HOLDER LOCATIONS -----------------
 
-# finds all empty holders
-def find_holder_locations(image):
+# describe the arguments
+# conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
+def empty_holders_divided_into_conveyors(image, conveyor_threshold):
+    conveyor_left, conveyor_right = find_top_and_bottom_of_conveyors(image)
+    distance = conveyor_right - conveyor_left
+    threshold_for_top_conveyor_barcodes = conveyor_right - distance//4
+    
+    barcode_centres = find_barcode_locations(image)  # Get barcode center coordinates
+    if not barcode_centres:
+        return [], []  # No barcodes found
+
+    # Initialize the lists for left and right conveyor barcodes
+    left_conveyor_barcodes = []
+    right_conveyor_barcodes = []
+
+    # Iterate through the barcode centers and classify them based on their y values
+    for centre in barcode_centres:
+        x, y = centre  # Unpack the barcode center coordinates
+        if y < threshold_for_top_conveyor_barcodes:
+            left_conveyor_barcodes.append(centre)  # Barcode is above the threshold (left conveyor)
+        else:
+            right_conveyor_barcodes.append(centre)  # Barcode is below the threshold (right conveyor)
+
+    return left_conveyor_barcodes, right_conveyor_barcodes    
+
+# finds all empty holders - returns list of their contours
+def find_empty_holders(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)  # Convert the image to HSV color space to detect color easier
     # Create mask
     mask = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
@@ -118,8 +153,9 @@ def find_holder_locations(image):
 
 # -------- BARCODE LOCATIONS ----------------
 
-def top_barcode_right_conveyor(image):
-    left_conveyor_barcodes, right_conveyor_barcodes = barcodes_divided_into_conveyors(image)
+#conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
+def top_barcode_right_conveyor(image, conveyor_threshold):
+    left_conveyor_barcodes, right_conveyor_barcodes = barcodes_divided_into_conveyors(image, conveyor_threshold)
     # Check if there are any barcodes in the right conveyor
     if right_conveyor_barcodes:
         # Find the barcode with the maximum x-coordinate in the right conveyor
@@ -130,8 +166,9 @@ def top_barcode_right_conveyor(image):
     print("Top barcode right conveyor:", top_barcode_right_conveyor)
     return top_barcode_right_conveyor
 
-def top_barcode_left_conveyor(image):
-    left_conveyor_barcodes, right_conveyor_barcodes = barcodes_divided_into_conveyors(image)
+#conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
+def top_barcode_left_conveyor(image, conveyor_threshold):
+    left_conveyor_barcodes, right_conveyor_barcodes = barcodes_divided_into_conveyors(image, conveyor_threshold)
     # Check if there are any barcodes in the right conveyor
     if left_conveyor_barcodes:
         # Find the barcode with the maximum x-coordinate in the right conveyor
@@ -142,10 +179,7 @@ def top_barcode_left_conveyor(image):
     print("Top barcode left conveyor:", top_barcode_left_conveyor)
     return top_barcode_left_conveyor
 
-def barcodes_divided_into_conveyors(image):
-    conveyor_left, conveyor_right = find_top_and_bottom_of_conveyors(image)
-    distance = conveyor_right - conveyor_left
-    threshold_for_top_conveyor_barcodes = conveyor_right - distance//4
+def barcodes_divided_into_conveyors(image, conveyor_threshold):
     
     barcode_centres = find_barcode_locations(image)  # Get barcode center coordinates
     if not barcode_centres:
@@ -158,7 +192,7 @@ def barcodes_divided_into_conveyors(image):
     # Iterate through the barcode centers and classify them based on their y values
     for centre in barcode_centres:
         x, y = centre  # Unpack the barcode center coordinates
-        if y < threshold_for_top_conveyor_barcodes:
+        if y < conveyor_threshold:
             left_conveyor_barcodes.append(centre)  # Barcode is above the threshold (left conveyor)
         else:
             right_conveyor_barcodes.append(centre)  # Barcode is below the threshold (right conveyor)

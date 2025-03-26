@@ -1,6 +1,6 @@
 import os
 import cv2
-from image_analysis import find_top_and_bottom_of_conveyors, top_barcode_right_conveyor, find_holder_locations
+from image_analysis import find_top_and_bottom_of_conveyors, top_barcode_right_conveyor, find_holder_locations, get_conveyor_threshold
 from calibration import calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
 from vertical_conveyor_left_motor_code import move_left_conveyor_up, move_left_conveyor_down, set_up_left_conveyor, clean_up_left_conveyor
 from vertical_conveyor_right_motor_code import move_right_conveyor_up, move_right_conveyor_down, set_up_right_conveyor, clean_up_right_conveyor
@@ -16,7 +16,8 @@ from vertical_conveyor_right_motor_code import move_right_conveyor_up, move_righ
 image_path = "captured_image.jpg"
 os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
 image = cv2.imread(image_path) # read the captured image with opencv
-# top_barcode_right_conveyor = top_barcode_right_conveyor(image)
+conveyor_threshold = get_conveyor_threshold(image) # find threshold between left and right conveyor
+# top_barcode_right_conveyor = top_barcode_right_conveyor(image, conveyor_threshold)
 
 # top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
 # print("Top of conveyor: ", top_conveyor)
@@ -36,7 +37,7 @@ image = cv2.imread(image_path) # read the captured image with opencv
 
 
 # step 3: check location of holder on left conveyor 
-find_holder_locations(image)
+find_holder_locations(image, conveyor_threshold)
 # step 4: rotate left conveyor until holder at top (slightly below left conveyor)
 # step 5: rotate servo motor to put down tray push leg
 # step 6: rotate top conveyor to push tray right to left
