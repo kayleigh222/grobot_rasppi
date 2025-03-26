@@ -92,7 +92,8 @@ def top_holder_left_conveyor(image, conveyor_threshold):
     else:
         # Handle the case where there are no barcodes in the right conveyor
         top_holder_left_conveyor = None  # or some default value/message
-    print("Top holder left conveyor:", top_holder_left_conveyor)
+    print("Top holder left conveyor center:", top_holder_left_conveyor['holder_center'])
+    print("Top holder left conveyor empty:", top_holder_left_conveyor['is_empty'])
     return top_holder_left_conveyor
 
 #conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
@@ -149,6 +150,8 @@ def find_holders(image):
 
     # Find contours of blue areas
     holder_contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # print number of holder contours
+    print(f"Number of holder contours found: {len(holder_contours)}")
 
     # Find barcodes in the image
     barcode_centres = find_barcode_locations(image)
@@ -160,6 +163,7 @@ def find_holders(image):
     for holder_contour in holder_contours:
         x, y, w, h = cv2.boundingRect(holder_contour)  # Get bounding box of blue patch
         holder_center = (x + w // 2, y + h // 2)  # Get center of blue patch
+        print(f"Holder center: {holder_center}")
 
         # Check proximity to barcodes to determine if the holder is empty
         too_close = False
