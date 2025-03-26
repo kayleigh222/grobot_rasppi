@@ -94,6 +94,7 @@ def get_top_edge_of_holder(holder_contour):
     # The top edge is at y with width w
     top_edge = [(x, y), (x + w, y)]
     print(f"Top edge coordinates: {top_edge}")
+    return top_edge
 
 def get_bottom_edge_of_holder(holder_contour):
     # Get bounding box of the contour
@@ -102,6 +103,7 @@ def get_bottom_edge_of_holder(holder_contour):
     # The bottom edge is at y+h with width w
     bottom_edge = [(x, y + h), (x + w, y + h)]
     print(f"Bottom edge coordinates: {bottom_edge}")
+    return bottom_edge
 
 #conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
 def top_holder_left_conveyor(image, conveyor_threshold):
