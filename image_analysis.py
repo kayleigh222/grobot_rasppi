@@ -2,6 +2,10 @@ import cv2
 import numpy as np
 from pyzbar.pyzbar import decode
 
+# Define holder color range in HSV (currently blue)
+HOLDER_COLOR_LOWER_THRESHOLD_HSV = np.array([100, 150, 50])   # Lower bound of blue
+HOLDER_COLOR_UPPER_THRESHOLD_HSV = np.array([140, 255, 255])  # Upper bound of blue
+
 
 # ----------- CONVEYOR LOCATIONS -------------
 def find_top_and_bottom_of_conveyors(image): # top and bottom when vertical in real world (vertical in image)
@@ -67,6 +71,34 @@ def find_left_and_right_of_conveyors(image): # left and right when vertical in r
 
     # cv2.imwrite('left_and_right_of_conveyor.jpg', image)
     return conveyor_left, conveyor_right
+
+# -------- HOLDER LOCATIONS -----------------
+def find_holder_locations(image):
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)  # Convert the image to HSV color space to detect color easier
+    # Create mask
+    mask = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
+
+    # Find contours
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    for contour in contours:
+        # Approximate the contour
+        epsilon = 0.02 * cv2.arcLength(contour, True)
+        approx = cv2.approxPolyDP(contour, epsilon, True)
+
+        # If it has 4 corners, it might be a rectangle
+        if len(approx) == 4:
+            # Get bounding box to check aspect ratio
+            x, y, w, h = cv2.boundingRect(approx)
+            aspect_ratio = float(w) / h
+
+            # Assuming a rectangle has an aspect ratio close to 1 (or elongated)
+            if 0.8 <= aspect_ratio <= 1.2 or w > 50 or h > 50:  
+                cv2.drawContours(image, [approx], -1, (0, 255, 0), 3)  # Draw in green
+                print("Detected a rectangle!")
+
+    cv2.imwrite('detected_rectangles.jpg', image)
+
 
 # -------- BARCODE LOCATIONS ----------------
 
