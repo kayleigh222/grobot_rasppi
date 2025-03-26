@@ -79,26 +79,28 @@ def find_holder_locations(image):
     mask = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
     cv2.imwrite('mask.jpg', mask)
 
-    # Find contours
-    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    # Find blue contours
+    blue_contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
-    for contour in contours:
-        # Approximate the contour
-        epsilon = 0.02 * cv2.arcLength(contour, True)
-        approx = cv2.approxPolyDP(contour, epsilon, True)
+    # find barcodes
+    barcode_centres = find_barcode_locations(image)
 
-        # If it has 4 corners, it might be a rectangle
-        if len(approx) == 4:
-            # Get bounding box to check aspect ratio
-            x, y, w, h = cv2.boundingRect(approx)
-            aspect_ratio = float(w) / h
+    # Iterate through blue contours and check proximity to barcodes
+    for blue_contour in blue_contours:
+        x, y, w, h = cv2.boundingRect(blue_contour)  # Get bounding box of blue patch
+        blue_center = (x + w // 2, y + h // 2)  # Get center of blue patch
 
-            # Assuming a rectangle has an aspect ratio close to 1 (or elongated)
-            if 0.8 <= aspect_ratio <= 1.2 or w > 50 or h > 50:  
-                cv2.drawContours(image, [approx], -1, (0, 255, 0), 3)  # Draw in green
-                print("Detected a rectangle!")
+        for barcode_centre in barcode_centres:
 
-    cv2.imwrite('detected_rectangles.jpg', image)
+            # Compute Euclidean distance
+            distance = np.sqrt((blue_center[0] - barcode_centre[0])**2 + 
+                            (blue_center[1] - barcode_centre[1])**2)
+
+            if distance < 100:  # Adjust distance threshold based on image scale
+                cv2.drawContours(image, [blue_contour], -1, (0, 255, 0), 3)  # Mark blue patch in green
+                print(f"Blue patch at {blue_center} is near a barcode at {barcode_centre}")
+
+    cv2.imwrite('image_with_blue_patches_near_barcodes.jpg', image)
 
 
 # -------- BARCODE LOCATIONS ----------------
