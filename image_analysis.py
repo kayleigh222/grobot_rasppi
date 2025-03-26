@@ -88,7 +88,7 @@ def top_holder_left_conveyor(image, conveyor_threshold):
     # Check if there are any barcodes in the right conveyor
     if left_conveyor_holders:
         # Find the barcode with the maximum x-coordinate in the right conveyor
-        top_holder_left_conveyor = max(left_conveyor_holders, key=lambda point: point[0])
+        top_holder_left_conveyor = max(left_conveyor_holders, key=lambda holder: holder['holder_center'][0])
     else:
         # Handle the case where there are no barcodes in the right conveyor
         top_holder_left_conveyor = None  # or some default value/message
@@ -99,9 +99,9 @@ def top_holder_left_conveyor(image, conveyor_threshold):
 def top_holder_right_conveyor(image, conveyor_threshold):
     left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors(image, conveyor_threshold)
     # Check if there are any barcodes in the right conveyor
-    if left_conveyor_holders:
+    if right_conveyor_holders:
         # Find the barcode with the maximum x-coordinate in the right conveyor
-        top_holder_right_conveyor = max(right_conveyor_holders, key=lambda point: point[0])
+        top_holder_right_conveyor = max(right_conveyor_holders, key=lambda holder: holder['holder_center'][0])
     else:
         # Handle the case where there are no barcodes in the right conveyor
         top_holder_right_conveyor = None  # or some default value/message
