@@ -81,6 +81,32 @@ def find_left_and_right_of_conveyors(image): # left and right when vertical in r
 
 # -------- HOLDER LOCATIONS -----------------
 
+#conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
+def top_holder_left_conveyor(image, conveyor_threshold):
+    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors(image, conveyor_threshold)
+    # Check if there are any barcodes in the right conveyor
+    if left_conveyor_holders:
+        # Find the barcode with the maximum x-coordinate in the right conveyor
+        top_holder_left_conveyor = max(left_conveyor_holders, key=lambda point: point[0])
+    else:
+        # Handle the case where there are no barcodes in the right conveyor
+        top_holder_left_conveyor = None  # or some default value/message
+    print("Top holder left conveyor:", top_holder_left_conveyor)
+    return top_holder_left_conveyor
+
+#conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
+def top_holder_right_conveyor(image, conveyor_threshold):
+    left_conveyor_holders, right_conveyor_holders = barcodes_divided_into_conveyors(image, conveyor_threshold)
+    # Check if there are any barcodes in the right conveyor
+    if left_conveyor_holders:
+        # Find the barcode with the maximum x-coordinate in the right conveyor
+        top_holder_right_conveyor = max(right_conveyor_holders, key=lambda point: point[0])
+    else:
+        # Handle the case where there are no barcodes in the right conveyor
+        top_holder_right_conveyor = None  # or some default value/message
+    print("Top barcode right conveyor:", top_holder_right_conveyor)
+    return top_holder_right_conveyor
+
 # conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
 def holders_divided_into_conveyors(image, conveyor_threshold):    
     holders = find_holders(image)  # Get empty holder contours
@@ -112,7 +138,6 @@ def holders_divided_into_conveyors(image, conveyor_threshold):
     cv2.imwrite('image_with_divided_conveyors.jpg', image)
 
     return left_conveyor_holders, right_conveyor_holders    
-
 
 # Finds all holders, returns the contours and empty status
 def find_holders(image):
@@ -216,7 +241,6 @@ def find_barcode_locations(image):
     equalized = cv2.equalizeHist(gray)
     barcodes = decode(equalized) # detect barcodes
     print(f"Number of barcodes found: {len(barcodes)}")
-    cv2.imwrite('thresholded_img.jpg', equalized)
 
     centres = []  # List to store center coordinates
 
