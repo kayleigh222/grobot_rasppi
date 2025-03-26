@@ -24,6 +24,7 @@ print("Top of conveyor: ", top_conveyor)
 distance_from_top = top_conveyor - top_barcode_right_conveyor[0]
 print("Distance between: ", distance_from_top)
 
+# step 2: rotate right conveyor until plant at top
 calibration_variables = load_variables() 
 print(calibration_variables[LEFT_CONVEYOR_SPEED])  
 print(calibration_variables[RIGHT_CONVEYOR_SPEED]) 
@@ -34,7 +35,6 @@ move_right_conveyor_up(steps_to_top)
 clean_up_right_conveyor()
 
 
-# step 2: rotate right conveyor until plant at top
 # step 3: check location of holder on left conveyor
 # step 4: rotate left conveyor until holder at top (slightly below left conveyor)
 # step 5: rotate servo motor to put down tray push leg
