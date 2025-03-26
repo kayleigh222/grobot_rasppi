@@ -162,6 +162,10 @@ def find_holders(image):
 
         # Check proximity to barcodes to determine if the holder is empty
         too_close = False
+
+        # draw a circle radius 600 around the holder center
+        cv2.circle(image, holder_center, 600, (0, 0, 255), 2)
+        
         for barcode_centre in barcode_centres:
             # Compute Euclidean distance to barcode
             distance = np.sqrt((holder_center[0] - barcode_centre[0])**2 + 
