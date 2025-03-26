@@ -43,7 +43,7 @@ conveyor_threshold = get_conveyor_threshold(image) # find threshold between left
 # image = cv2.imread(image_path) # read the captured image with opencv
 
 top_holder_right_conveyor(image, conveyor_threshold)
-top_holder_left_conveyor(image, conveyor_threshold)
+# top_holder_left_conveyor(image, conveyor_threshold)
 # step 4: rotate left conveyor until holder at top (slightly below left conveyor)
 # step 5: rotate servo motor to put down tray push leg
 # step 6: rotate top conveyor to push tray right to left
