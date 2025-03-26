@@ -96,7 +96,7 @@ def find_holder_locations(image):
             distance = np.sqrt((blue_center[0] - barcode_centre[0])**2 + 
                             (blue_center[1] - barcode_centre[1])**2)
 
-            if distance < 1000:  # Adjust distance threshold based on image scale
+            if distance < 300:  # Adjust distance threshold based on image scale
                 cv2.drawContours(image, [blue_contour], -1, (0, 255, 0), 3)  # Mark blue patch in green
                 print(f"Blue patch at {blue_center} is near a barcode at {barcode_centre}")
 
