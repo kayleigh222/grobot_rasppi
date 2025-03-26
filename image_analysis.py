@@ -73,6 +73,8 @@ def find_left_and_right_of_conveyors(image): # left and right when vertical in r
     return conveyor_left, conveyor_right
 
 # -------- HOLDER LOCATIONS -----------------
+
+# finds all empty holders
 def find_holder_locations(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)  # Convert the image to HSV color space to detect color easier
     # Create mask
@@ -85,11 +87,16 @@ def find_holder_locations(image):
     # find barcodes
     barcode_centres = find_barcode_locations(image)
 
+    # List to store contours that are NOT near a barcode (i.e. an empty holder)
+    holders = []
+
     # Iterate through blue contours and check proximity to barcodes
     for blue_contour in blue_contours:
         x, y, w, h = cv2.boundingRect(blue_contour)  # Get bounding box of blue patch
         blue_center = (x + w // 2, y + h // 2)  # Get center of blue patch
 
+        # Check proximity to barcodes
+        too_close = False
         for barcode_centre in barcode_centres:
 
             # Compute Euclidean distance
@@ -97,10 +104,16 @@ def find_holder_locations(image):
                             (blue_center[1] - barcode_centre[1])**2)
 
             if distance < 400:  # Adjust distance threshold based on image scale
-                cv2.drawContours(image, [blue_contour], -1, (0, 255, 0), 3)  # Mark blue patch in green
-                print(f"Blue patch at {blue_center} is near a barcode at {barcode_centre}")
+                too_close = True
+                break  # No need to check further if already too close
+        
+        if not too_close:
+            holders.append(blue_contour)  # Keep only contours far from barcodes
 
-    cv2.imwrite('image_with_blue_patches_near_barcodes.jpg', image)
+     # Draw remaining blue contours (those far from barcodes)
+    cv2.drawContours(image, holders, -1, (255, 0, 0), 3)  # Blue color
+
+    cv2.imwrite('image_with_filtered_blue_patches.jpg', image)
 
 
 # -------- BARCODE LOCATIONS ----------------
