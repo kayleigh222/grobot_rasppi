@@ -8,7 +8,7 @@ from vertical_conveyor_right_motor_code import move_right_conveyor_up, move_righ
 
 # NOTE: have a record of how many plants there are i.e. how many barcodes are visible. therefore if a plant falls off will know because less barcodes visible and can send me a photo
 # calibrate conveyor motors
-calibrate_vertical_conveyor_motors()
+# calibrate_vertical_conveyor_motors()
 
 # simpler version - move plant from right to left conveyor (do an equivalent version to move plant from left to right conveyor)
 # step 1: check location of top plant on right conveyor (barcode in top left position) - note distance from top
@@ -17,32 +17,32 @@ os.system(f"rpicam-still --output {image_path} --nopreview") # capture image wit
 image = cv2.imread(image_path) # read the captured image with opencv
 conveyor_threshold = get_conveyor_threshold(image) # find threshold between left and right conveyor
 
-top_barcode_right_conveyor = top_barcode_right_conveyor(image, conveyor_threshold)
+# top_barcode_right_conveyor = top_barcode_right_conveyor(image, conveyor_threshold)
 
-top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
-print("Top of conveyor: ", top_conveyor)
+# top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
+# print("Top of conveyor: ", top_conveyor)
 
-distance_from_top = top_conveyor - top_barcode_right_conveyor[0]
-print("Distance between: ", distance_from_top)
+# distance_from_top = top_conveyor - top_barcode_right_conveyor[0]
+# print("Distance between: ", distance_from_top)
 
-# Draw a vertical line at the top conveyor
-cv2.line(image, (top_conveyor, 0), (top_conveyor, image.shape[0]), (0, 255, 0), 2)  # Green line
+# # Draw a vertical line at the top conveyor
+# cv2.line(image, (top_conveyor, 0), (top_conveyor, image.shape[0]), (0, 255, 0), 2)  # Green line
 
-# Draw a vertical line at top_barcode_right_conveyor
-cv2.line(image, (int(top_barcode_right_conveyor[0]), 0), (int(top_barcode_right_conveyor[0]), image.shape[0]), (0, 0, 255), 2)  # Red line
+# # Draw a vertical line at top_barcode_right_conveyor
+# cv2.line(image, (int(top_barcode_right_conveyor[0]), 0), (int(top_barcode_right_conveyor[0]), image.shape[0]), (0, 0, 255), 2)  # Red line
 
-# Show the image
-cv2.imwrite("before_move_right_holder_to_top.png", image)
+# # Show the image
+# cv2.imwrite("before_move_right_holder_to_top.png", image)
 
 # step 2: rotate right conveyor until plant at top
 calibration_variables = load_variables() 
 print(calibration_variables[LEFT_CONVEYOR_SPEED])  
 print(calibration_variables[RIGHT_CONVEYOR_SPEED]) 
 
-steps_to_top = int(distance_from_top // calibration_variables[RIGHT_CONVEYOR_SPEED])
-set_up_right_conveyor()
-move_right_conveyor_up(steps_to_top)
-clean_up_right_conveyor()
+# steps_to_top = int(distance_from_top // calibration_variables[RIGHT_CONVEYOR_SPEED])
+# set_up_right_conveyor()
+# move_right_conveyor_up(steps_to_top)
+# clean_up_right_conveyor()
 
 
 # step 3: check location of holder on left conveyor 
@@ -69,7 +69,7 @@ while(True):
     distance_between_holders = top_edge_right[0][0] - bottom_edge_left[0][0]
     cv2.imwrite("image_with_edges.jpg", image)
     print("Distance between holders: ", distance_between_holders)
-    
+
     if(distance_between_holders < 10):
         print("Distance between holders is small enough")
         break
