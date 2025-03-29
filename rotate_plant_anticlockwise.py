@@ -5,6 +5,22 @@ from calibration import calibrate_vertical_conveyor_motors, load_variables, LEFT
 from vertical_conveyor_left_motor_code import move_left_conveyor_up, move_left_conveyor_down, set_up_left_conveyor, clean_up_left_conveyor
 from vertical_conveyor_right_motor_code import move_right_conveyor_up, move_right_conveyor_down, set_up_right_conveyor, clean_up_right_conveyor
 
+DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS = 5 # pixels - max vertical distance between holders to be able to slide across
+
+# variables for PID control - used to move conveyor to align holders before sliding tray across
+previous_error = 0
+integral = 0
+
+def pid_control(error, Kp=1.4, Ki=0.1, Kd=0.05): # error is the difference between the target value and the current value
+    global previous_error, integral
+
+    integral += error
+    derivative = error - previous_error
+    previous_error = error
+
+    # Calculate how much to move the conveyor
+    adjustment = Kp * error + Ki * integral + Kd * derivative
+    return adjustment
 
 # NOTE: have a record of how many plants there are i.e. how many barcodes are visible. therefore if a plant falls off will know because less barcodes visible and can send me a photo
 # calibrate conveyor motors
@@ -47,6 +63,7 @@ print(calibration_variables[RIGHT_CONVEYOR_SPEED])
 
 # step 3: check location of holder on left conveyor 
 
+
 while(True):
     #take new image
     os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
@@ -70,16 +87,17 @@ while(True):
     cv2.imwrite("image_with_holder_edges.jpg", image)
     print("Distance between holders: ", distance_between_holders)
 
-    if(distance_between_holders < 10):
+    if(distance_between_holders < DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS):
         print("Distance between holders is small enough")
         break
 
     # step 4: rotate left conveyor until holder at top (slightly below left conveyor)
-    steps_to_top = int(distance_between_holders // calibration_variables[LEFT_CONVEYOR_SPEED])
-    print("Steps to top: ", steps_to_top)
-    print("Left conveyor speed: ", calibration_variables[LEFT_CONVEYOR_SPEED])
+    # steps_to_top = int(distance_between_holders // calibration_variables[LEFT_CONVEYOR_SPEED])
+    steps_to_take = pid_control(distance_between_holders)
+    print("Steps to top: ", steps_to_take)
+    # print("Left conveyor speed: ", calibration_variables[LEFT_CONVEYOR_SPEED])
     set_up_left_conveyor()
-    move_left_conveyor_up(steps_to_top)
+    move_left_conveyor_up(steps_to_take)
     clean_up_left_conveyor()
 
 # step 5: rotate servo motor to put down tray push leg
