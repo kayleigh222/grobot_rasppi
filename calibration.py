@@ -41,6 +41,8 @@ def calibrate_right_conveyor_motor(conveyor_threshold, num_steps_to_test=400):  
   image = cv2.imread(image_path) # read the captured image with opencv
   top_barcode_right_conveyor_original = top_barcode_right_conveyor(image, conveyor_threshold)
 
+  print("Original position: ", top_barcode_right_conveyor_original)
+
   # move motor
   set_up_right_conveyor()
   move_right_conveyor_up(num_steps_to_test)
