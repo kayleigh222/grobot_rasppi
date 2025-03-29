@@ -67,7 +67,7 @@ while(True):
     cv2.circle(image, bottom_edge_left[0], 5, (0, 255, 0), -1)
 
     distance_between_holders = top_edge_right[0][0] - bottom_edge_left[0][0]
-    cv2.imwrite("image_with_edges.jpg", image)
+    cv2.imwrite("image_with_holder_edges.jpg", image)
     print("Distance between holders: ", distance_between_holders)
 
     if(distance_between_holders < 10):
@@ -76,6 +76,8 @@ while(True):
 
     # step 4: rotate left conveyor until holder at top (slightly below left conveyor)
     steps_to_top = int(distance_between_holders // calibration_variables[LEFT_CONVEYOR_SPEED])
+    print("Steps to top: ", steps_to_top)
+    print("Left conveyor speed: ", calibration_variables[LEFT_CONVEYOR_SPEED])
     set_up_left_conveyor()
     move_left_conveyor_up(steps_to_top)
     clean_up_left_conveyor()
