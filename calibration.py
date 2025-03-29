@@ -30,11 +30,11 @@ def load_variables():
     except (FileNotFoundError, json.JSONDecodeError):
         return {}  # Return empty dict if file doesn't exist or is corrupted
 
-def calibrate_vertical_conveyor_motors(num_steps_to_test=400):  # to use, put one barcode on left conveyor and one on right conveyor somewhere in the middle
-    calibrate_right_conveyor_motor(num_steps_to_test)
-    calibrate_left_conveyor_motor(num_steps_to_test)
+def calibrate_vertical_conveyor_motors(conveyor_threshold, num_steps_to_test=400):  # to use, put one barcode on left conveyor and one on right conveyor somewhere in the middle
+    calibrate_right_conveyor_motor(conveyor_threshold, num_steps_to_test)
+    calibrate_left_conveyor_motor(conveyor_threshold, num_steps_to_test)
 
-def calibrate_right_conveyor_motor(num_steps_to_test=400):  # to use, put one barcode on left conveyor somewhere in the middle
+def calibrate_right_conveyor_motor(conveyor_threshold, num_steps_to_test=400):  # to use, put one barcode on left conveyor somewhere in the middle
   # measure initial position
   image_path = "captured_image.jpg"
   os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
@@ -49,7 +49,7 @@ def calibrate_right_conveyor_motor(num_steps_to_test=400):  # to use, put one ba
   # measure new position
   os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
   image = cv2.imread(image_path) # read the captured image with opencv
-  top_barcode_right_conveyor_new = top_barcode_right_conveyor(image)
+  top_barcode_right_conveyor_new = top_barcode_right_conveyor(image, conveyor_threshold)
   pixels_moved = abs(top_barcode_right_conveyor_new[0] - top_barcode_right_conveyor_original[0])
   pixels_moved_per_step = pixels_moved/num_steps_to_test
 
@@ -58,13 +58,13 @@ def calibrate_right_conveyor_motor(num_steps_to_test=400):  # to use, put one ba
   print(data)
   save_variables(data)  # Save
 
-def calibrate_left_conveyor_motor(num_steps_to_test=400):  # to use, put one barcode on left conveyor somewhere in the middle
+def calibrate_left_conveyor_motor(conveyor_threshold, num_steps_to_test=400):  # to use, put one barcode on left conveyor somewhere in the middle
     
     # measure initial position
     image_path = "captured_image.jpg"
     os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
     image = cv2.imread(image_path) # read the captured image with opencv
-    top_barcode_left_conveyor_original = top_barcode_left_conveyor(image)
+    top_barcode_left_conveyor_original = top_barcode_left_conveyor(image, conveyor_threshold)
 
     # move motor
     set_up_left_conveyor()

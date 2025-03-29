@@ -8,15 +8,16 @@ from vertical_conveyor_right_motor_code import move_right_conveyor_up, move_righ
 
 # NOTE: have a record of how many plants there are i.e. how many barcodes are visible. therefore if a plant falls off will know because less barcodes visible and can send me a photo
 
-# calibrate conveyor motors
-calibrate_vertical_conveyor_motors()
-
 # simpler version - move plant from right to left conveyor (do an equivalent version to move plant from left to right conveyor)
 # step 1: check location of top plant on right conveyor (barcode in top left position) - note distance from top
 image_path = "captured_image.jpg"
 os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
 image = cv2.imread(image_path) # read the captured image with opencv
 conveyor_threshold = get_conveyor_threshold(image) # find threshold between left and right conveyor
+
+# calibrate conveyor motors
+calibrate_vertical_conveyor_motors(conveyor_threshold)
+
 top_barcode_right_conveyor = top_barcode_right_conveyor(image, conveyor_threshold)
 
 top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
