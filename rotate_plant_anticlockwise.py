@@ -30,7 +30,7 @@ print("Distance between: ", distance_from_top)
 cv2.line(image, (top_conveyor, 0), (top_conveyor, image.shape[0]), (0, 255, 0), 2)  # Green line
 
 # Draw a vertical line at top_barcode_right_conveyor
-cv2.line(image, (top_barcode_right_conveyor[0], 0), (top_barcode_right_conveyor[0], image.shape[0]), (0, 0, 255), 2)  # Red line
+cv2.line(image, (int(top_barcode_right_conveyor[0]), 0), (int(top_barcode_right_conveyor[0]), image.shape[0]), (0, 0, 255), 2)  # Red line
 
 # Show the image
 cv2.imwrite("before_move_right_holder_to_top", image)
