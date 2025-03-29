@@ -285,6 +285,7 @@ def find_barcode_locations(image):
         barcodes = decode(equalized) # detect barcodes
         num_barcodes_found = len(barcodes)
         if num_barcodes_found != NUM_BARCODES:
+            print("Barcodes: ", barcodes)
             print("Wrong number of barcodes detected. Retrying...")
             image_path = 'retrying_image_to_detect_all_barcodes'
             os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
