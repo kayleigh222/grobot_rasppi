@@ -26,6 +26,15 @@ print("Top of conveyor: ", top_conveyor)
 distance_from_top = top_conveyor - top_barcode_right_conveyor[0]
 print("Distance between: ", distance_from_top)
 
+# Draw a vertical line at the top conveyor
+cv2.line(image, (top_conveyor, 0), (top_conveyor, image.shape[0]), (0, 255, 0), 2)  # Green line
+
+# Draw a vertical line at top_barcode_right_conveyor
+cv2.line(image, (top_barcode_right_conveyor[0], 0), (top_barcode_right_conveyor[0], image.shape[0]), (0, 0, 255), 2)  # Red line
+
+# Show the image
+cv2.imwrite("before_move_right_holder_to_top", image)
+
 # step 2: rotate right conveyor until plant at top
 calibration_variables = load_variables() 
 print(calibration_variables[LEFT_CONVEYOR_SPEED])  
