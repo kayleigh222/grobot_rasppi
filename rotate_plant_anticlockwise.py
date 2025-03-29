@@ -12,7 +12,7 @@ previous_error = 0
 integral = 0
 
 def pid_control(error, Kp=0.7, Ki=0.01, Kd=0.05): # error is the difference between the target value and the current value
-    global previous_error, integral
+    global previous_error, integral # integral used to be 0.1
 
     print("Error: ", error)
 

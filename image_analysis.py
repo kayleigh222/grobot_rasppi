@@ -13,7 +13,7 @@ MIN_HOLDER_AREA = 1000
 # max distance between a holder center and its barcode
 MAX_DISTANCE_BETWEEN_HOLDER_CENTER_AND_BARCODE = 400
 
-NUM_BARCODES = 2  # Number of barcodes to on conveyors total
+NUM_BARCODES = 1  # Number of barcodes to on conveyors total
 
 
 # ----------- CONVEYOR LOCATIONS -------------
