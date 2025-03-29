@@ -1,3 +1,4 @@
+import os
 import cv2
 import numpy as np
 from pyzbar.pyzbar import decode
@@ -285,6 +286,9 @@ def find_barcode_locations(image):
         num_barcodes_found = len(barcodes)
         if num_barcodes_found != NUM_BARCODES:
             print("Wrong number of barcodes detected. Retrying...")
+            image_path = 'retrying_image_to_detect_all_barcodes'
+            os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
+            image = cv2.imread(image_path) # read the captured image with opencv
 
     centres = []  # List to store center coordinates
 
