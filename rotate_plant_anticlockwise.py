@@ -14,12 +14,15 @@ integral = 0
 def pid_control(error, Kp=0.7, Ki=0.1, Kd=0.05): # error is the difference between the target value and the current value
     global previous_error, integral
 
+    print("Error: ", error)
+
     integral += error
     derivative = error - previous_error
     previous_error = error
 
     # Calculate how much to move the conveyor
     adjustment = Kp * error + Ki * integral + Kd * derivative
+    print("Adjustment: ", adjustment)
     return adjustment
 
 # NOTE: have a record of how many plants there are i.e. how many barcodes are visible. therefore if a plant falls off will know because less barcodes visible and can send me a photo
