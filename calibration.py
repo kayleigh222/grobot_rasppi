@@ -74,7 +74,7 @@ def calibrate_left_conveyor_motor(conveyor_threshold, num_steps_to_test=400):  #
     # measure new position
     os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
     image = cv2.imread(image_path) #
-    top_barcode_left_conveyor_new = top_barcode_left_conveyor(image)
+    top_barcode_left_conveyor_new = top_barcode_left_conveyor(image, conveyor_threshold)
     # calculate num pixels moved
     pixels_moved = abs(top_barcode_left_conveyor_new[0] - top_barcode_left_conveyor_original[0])
     pixels_moved_per_step = pixels_moved/num_steps_to_test
