@@ -94,9 +94,9 @@ def get_top_edge_of_holder(holder_contour, image):
     # Get bounding box of the contour
     x, y, w, h = cv2.boundingRect(holder_contour)
 
-    # draw the bounding box on the image 
-    cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Green rectangle
-    cv2.imwrite('bounding_box_of_holder.jpg', image)
+    # # draw the bounding box on the image 
+    # cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Green rectangle
+    # cv2.imwrite('bounding_box_of_holder.jpg', image)
 
     # The top edge is at y with width w
     top_edge = [(x, y), (x + w, y)]
@@ -107,9 +107,9 @@ def get_bottom_edge_of_holder(holder_contour, image):
     # Get bounding box of the contour
     x, y, w, h = cv2.boundingRect(holder_contour)
 
-    # draw the bounding box on the image 
-    cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Green rectangle
-    cv2.imwrite('bounding_box_of_holder.jpg', image)
+    # # draw the bounding box on the image 
+    # cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Green rectangle
+    # cv2.imwrite('bounding_box_of_holder.jpg', image)
 
     # The bottom edge is at y+h with width w
     bottom_edge = [(x, y + h), (x + w, y + h)]
