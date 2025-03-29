@@ -39,7 +39,7 @@ def calibrate_right_conveyor_motor(conveyor_threshold, num_steps_to_test=400):  
   image_path = "captured_image.jpg"
   os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
   image = cv2.imread(image_path) # read the captured image with opencv
-  top_barcode_right_conveyor_original = top_barcode_right_conveyor(image)
+  top_barcode_right_conveyor_original = top_barcode_right_conveyor(image, conveyor_threshold)
 
   # move motor
   set_up_right_conveyor()
