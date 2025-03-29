@@ -2,8 +2,8 @@ import json
 from image_analysis import get_conveyor_threshold, top_barcode_right_conveyor, top_barcode_left_conveyor
 import os
 import cv2
-from vertical_conveyor_left_motor_code import move_left_conveyor_up, move_left_conveyor_down, set_up_left_conveyor, clean_up_left_conveyor
-from vertical_conveyor_right_motor_code import move_right_conveyor_up, move_right_conveyor_down, set_up_right_conveyor, clean_up_right_conveyor
+from vertical_conveyor_left_motor_code import move_left_conveyor, set_up_left_conveyor, clean_up_left_conveyor
+from vertical_conveyor_right_motor_code import move_right_conveyor, set_up_right_conveyor, clean_up_right_conveyor
 
 # File to store variables
 FILE_PATH = "calibration_variables.json"
@@ -46,7 +46,7 @@ def calibrate_right_conveyor_motor(num_steps_to_test=400):  # to use, put one ba
 
   # move motor
   set_up_right_conveyor()
-  move_right_conveyor_up(num_steps_to_test)
+  move_right_conveyor(num_steps_to_test)
   clean_up_right_conveyor()
 
   # measure new position
@@ -72,7 +72,7 @@ def calibrate_left_conveyor_motor(num_steps_to_test=400):  # to use, put one bar
 
     # move motor
     set_up_left_conveyor()
-    move_left_conveyor_up(num_steps_to_test)
+    move_left_conveyor(num_steps_to_test)
     clean_up_left_conveyor()
 
     # measure new position

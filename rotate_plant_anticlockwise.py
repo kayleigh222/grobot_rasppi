@@ -2,8 +2,8 @@ import os
 import cv2
 from image_analysis import find_top_and_bottom_of_conveyors, top_barcode_right_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, get_bottom_edge_of_holder, get_top_edge_of_holder
 from calibration import calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
-from vertical_conveyor_left_motor_code import move_left_conveyor_up, move_left_conveyor_down, set_up_left_conveyor, clean_up_left_conveyor
-from vertical_conveyor_right_motor_code import move_right_conveyor_up, move_right_conveyor_down, set_up_right_conveyor, clean_up_right_conveyor
+from vertical_conveyor_left_motor_code import move_left_conveyor, set_up_left_conveyor, clean_up_left_conveyor
+from vertical_conveyor_right_motor_code import move_right_conveyor, set_up_right_conveyor, clean_up_right_conveyor
 
 DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS = 5 # pixels - max vertical distance between holders to be able to slide across
 
@@ -11,7 +11,7 @@ DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS = 5 # pixels - max vertical distance be
 previous_error = 0
 integral = 0
 
-def pid_control(error, Kp=1.4, Ki=0.1, Kd=0.05): # error is the difference between the target value and the current value
+def pid_control(error, Kp=0.7, Ki=0.1, Kd=0.05): # error is the difference between the target value and the current value
     global previous_error, integral
 
     integral += error
@@ -51,13 +51,13 @@ conveyor_threshold = get_conveyor_threshold(image) # find threshold between left
 # cv2.imwrite("before_move_right_holder_to_top.png", image)
 
 # step 2: rotate right conveyor until plant at top
-calibration_variables = load_variables() 
-print(calibration_variables[LEFT_CONVEYOR_SPEED])  
-print(calibration_variables[RIGHT_CONVEYOR_SPEED]) 
+# calibration_variables = load_variables() 
+# print(calibration_variables[LEFT_CONVEYOR_SPEED])  
+# print(calibration_variables[RIGHT_CONVEYOR_SPEED]) 
 
 # steps_to_top = int(distance_from_top // calibration_variables[RIGHT_CONVEYOR_SPEED])
 # set_up_right_conveyor()
-# move_right_conveyor_up(steps_to_top)
+# move_right_conveyor(steps_to_top)
 # clean_up_right_conveyor()
 
 
@@ -87,7 +87,7 @@ while(True):
     cv2.imwrite("image_with_holder_edges.jpg", image)
     print("Distance between holders: ", distance_between_holders)
 
-    if(distance_between_holders < DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS):
+    if(abs(distance_between_holders) < DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS):
         print("Distance between holders is small enough")
         break
 
@@ -97,7 +97,7 @@ while(True):
     print("Steps to top: ", steps_to_take)
     # print("Left conveyor speed: ", calibration_variables[LEFT_CONVEYOR_SPEED])
     set_up_left_conveyor()
-    move_left_conveyor_up(steps_to_take)
+    move_left_conveyor(steps_to_take)
     clean_up_left_conveyor()
 
 # step 5: rotate servo motor to put down tray push leg

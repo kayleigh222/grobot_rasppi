@@ -7,11 +7,11 @@ STEP_PIN = 8    # Step signal
 SLEEP_PIN = 24   # Sleep mode control
 RESET_PIN = 25   # Reset control
 
-def move_left_conveyor_up(steps):
-    move_stepper(steps, "CCW")
-
-def move_left_conveyor_down(steps):
-    move_stepper(steps, "CW")
+def move_left_conveyor(steps): # steps positive for up, negative for down
+    if(steps > 0):
+        move_stepper(steps, "CCW") # move up
+    else:
+        move_stepper(steps, "CW") # move down
 
 def set_up_left_conveyor():
     # Setup GPIO
