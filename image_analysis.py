@@ -12,6 +12,8 @@ MIN_HOLDER_AREA = 1000
 # max distance between a holder center and its barcode
 MAX_DISTANCE_BETWEEN_HOLDER_CENTER_AND_BARCODE = 400
 
+NUM_BARCODES = 2  # Number of barcodes to on conveyors total
+
 
 # ----------- CONVEYOR LOCATIONS -------------
 def get_conveyor_threshold(image):
@@ -275,10 +277,14 @@ def barcodes_divided_into_conveyors(image, conveyor_threshold):
     return left_conveyor_barcodes, right_conveyor_barcodes    
 
 def find_barcode_locations(image):
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    equalized = cv2.equalizeHist(gray)
-    barcodes = decode(equalized) # detect barcodes
-    print(f"Number of barcodes found: {len(barcodes)}")
+    num_barcodes_found = 0
+    while(num_barcodes_found != NUM_BARCODES):
+        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        equalized = cv2.equalizeHist(gray)
+        barcodes = decode(equalized) # detect barcodes
+        num_barcodes_found = len(barcodes)
+        if num_barcodes_found != NUM_BARCODES:
+            print("Wrong number of barcodes detected. Retrying...")
 
     centres = []  # List to store center coordinates
 
