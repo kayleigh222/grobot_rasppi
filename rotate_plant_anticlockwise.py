@@ -93,7 +93,7 @@ while(True):
 
     # step 4: rotate left conveyor until holder at top (slightly below left conveyor)
     # steps_to_top = int(distance_between_holders // calibration_variables[LEFT_CONVEYOR_SPEED])
-    steps_to_take = pid_control(distance_between_holders)
+    steps_to_take = int(pid_control(distance_between_holders))
     print("Steps to top: ", steps_to_take)
     # print("Left conveyor speed: ", calibration_variables[LEFT_CONVEYOR_SPEED])
     set_up_left_conveyor()
