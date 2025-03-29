@@ -299,6 +299,7 @@ def find_barcode_locations(image):
             os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
             image = cv2.imread(image_path) # read the captured image with opencv
 
+    print("Correct number of barcodes found: ", barcodes)
     centres = []  # List to store center coordinates
 
     # loop through each detected barcode
