@@ -35,8 +35,6 @@ def pid_control(error, Kp=0.7, Ki=0.01, Kd=0.05): # error is the difference betw
 # calibrate_vertical_conveyor_motors()
 # calibrate_top_conveyor_motor() # calibrate top conveyor motor
 
-
-# simpler version - move plant from right to left conveyor (do an equivalent version to move plant from left to right conveyor)
 # step 1: check location of top plant on right conveyor (barcode in top left position) - note distance from top
 image_path = "captured_image.jpg"
 os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
