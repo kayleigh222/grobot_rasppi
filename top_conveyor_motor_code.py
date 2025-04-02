@@ -31,7 +31,6 @@ def set_up_top_conveyor():
     GPIO.setup(IN3, GPIO.OUT)
     GPIO.setup(IN4, GPIO.OUT)
 
-
 # Function to move the stepper motor one step
 def step(delay, step_sequence):
     """Activates motor coils for a single step."""
