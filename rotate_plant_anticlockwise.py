@@ -7,6 +7,7 @@ from vertical_conveyor_left_motor_code import move_left_conveyor, set_up_left_co
 from vertical_conveyor_right_motor_code import move_right_conveyor, set_up_right_conveyor, clean_up_right_conveyor
 
 DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS = 15 # pixels - max vertical distance between holders to be able to slide across
+ADDITIONAL_DISTANCE_TO_PUSH_TRAY_ACROSS_THRESHOLD = 20 # pixels - additional distance to push tray across the threshold to ensure it is properly mounted on the other conveyor
 
 # variables for PID control - used to move conveyor to align holders before sliding tray across
 previous_error = 0
@@ -127,11 +128,11 @@ calibration_variables = load_variables()
 # step 5: rotate top conveyor to push tray right to left
 top_conveyor_leg_x, top_conveyor_leg_y = find_leg_top_conveyor(image)
 distance_from_conveyor_threshold = top_conveyor_leg_y - conveyor_threshold
-steps_to_take = int(distance_from_conveyor_threshold // calibration_variables[TOP_CONVEYOR_SPEED_FORWARD])
+steps_to_take = int((distance_from_conveyor_threshold + ADDITIONAL_DISTANCE_TO_PUSH_TRAY_ACROSS_THRESHOLD) // calibration_variables[TOP_CONVEYOR_SPEED_FORWARD])
 step_top_conveyor_forward(steps_to_take)
 
 # step 7: return top conveyor to right side
-steps_to_take = int(distance_from_conveyor_threshold // calibration_variables[TOP_CONVEYOR_SPEED_BACKWARD])
+steps_to_take = int((distance_from_conveyor_threshold + ADDITIONAL_DISTANCE_TO_PUSH_TRAY_ACROSS_THRESHOLD) // calibration_variables[TOP_CONVEYOR_SPEED_BACKWARD])
 step_top_conveyor_backward(steps_to_take)
 clean_up_top_conveyor()
 
