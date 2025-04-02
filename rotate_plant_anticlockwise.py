@@ -6,7 +6,7 @@ from top_conveyor_motor_code import step_top_conveyor_forward
 from vertical_conveyor_left_motor_code import move_left_conveyor, set_up_left_conveyor, clean_up_left_conveyor
 from vertical_conveyor_right_motor_code import move_right_conveyor, set_up_right_conveyor, clean_up_right_conveyor
 
-DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS = 5 # pixels - max vertical distance between holders to be able to slide across
+DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS = 15 # pixels - max vertical distance between holders to be able to slide across
 
 # variables for PID control - used to move conveyor to align holders before sliding tray across
 previous_error = 0
