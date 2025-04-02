@@ -169,6 +169,7 @@ calibration_variables = load_variables()
 # print("Was top barcode on right ", top_barcode_right_conveyor) # TODO: get data from this e.g. plant 4
 os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
 image = cv2.imread(image_path) # read the captured image with opencv
+conveyor_threshold = get_conveyor_threshold(image) # TODO - delete later find threshold between left and right conveyor
 new_top_barcode_left_conveyor = top_barcode_left_conveyor(image, conveyor_threshold) # TODO: get data from this e.g. plant 4
 print("New top barcode on left ", new_top_barcode_left_conveyor) # TODO: get data from this e.g. plant 4
 # TODO: compare the two barcodes to check they are the same. if not do something idk
