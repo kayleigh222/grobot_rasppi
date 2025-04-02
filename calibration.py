@@ -10,6 +10,8 @@ from vertical_conveyor_right_motor_code import move_right_conveyor, set_up_right
 FILE_PATH = "calibration_variables.json"
 RIGHT_CONVEYOR_SPEED = "right_conveyor_motor_pixels_per_step"
 LEFT_CONVEYOR_SPEED = "left_conveyor_motor_pixels_per_step"
+TOP_CONVEYOR_SPEED_FORWARD = "top_conveyor_motor_pixels_per_step_forward"
+TOP_CONVEYOR_SPEED_BACKWARD = "top_conveyor_motor_pixels_per_step_backward"
 
 # Save variables
 def save_variables(new_data):
@@ -61,8 +63,8 @@ def calibrate_top_conveyor_motor(num_steps_to_test=400):
     pixels_moved_per_step_backward = pixels_moved_backward/num_steps_to_test
 
     # save new calibration variables
-    data = {"top_conveyor_motor_pixels_per_step_forward": pixels_moved_per_step_forward,
-            "top_conveyor_motor_pixels_per_step_backward": pixels_moved_per_step_backward}  # Assuming same speed for both directions
+    data = {TOP_CONVEYOR_SPEED_FORWARD: pixels_moved_per_step_forward,
+            TOP_CONVEYOR_SPEED_BACKWARD: pixels_moved_per_step_backward}  # Assuming same speed for both directions
     print(data)
     save_variables(data)  # Save
 

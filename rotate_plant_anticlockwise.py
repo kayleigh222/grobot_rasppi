@@ -1,8 +1,8 @@
 import os
 import cv2
-from image_analysis import find_top_and_bottom_of_conveyors, top_barcode_right_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, get_bottom_edge_of_holder, get_top_edge_of_holder
-from calibration import calibrate_top_conveyor_motor, calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
-from top_conveyor_motor_code import set_up_top_conveyor, step_top_conveyor_forward
+from image_analysis import find_leg_top_conveyor, find_top_and_bottom_of_conveyors, top_barcode_right_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, get_bottom_edge_of_holder, get_top_edge_of_holder
+from calibration import TOP_CONVEYOR_SPEED_BACKWARD, TOP_CONVEYOR_SPEED_FORWARD, calibrate_top_conveyor_motor, calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
+from top_conveyor_motor_code import clean_up_top_conveyor, set_up_top_conveyor, step_top_conveyor_backward, step_top_conveyor_forward
 from vertical_conveyor_left_motor_code import move_left_conveyor, set_up_left_conveyor, clean_up_left_conveyor
 from vertical_conveyor_right_motor_code import move_right_conveyor, set_up_right_conveyor, clean_up_right_conveyor
 
@@ -59,9 +59,7 @@ calibrate_top_conveyor_motor() # calibrate top conveyor motor
 # cv2.imwrite("before_move_right_holder_to_top.png", image)
 
 # step 2: rotate right conveyor until plant at top
-# calibration_variables = load_variables() 
-# print(calibration_variables[LEFT_CONVEYOR_SPEED])  
-# print(calibration_variables[RIGHT_CONVEYOR_SPEED]) 
+calibration_variables = load_variables() 
 
 # steps_to_top = int(distance_from_top // calibration_variables[RIGHT_CONVEYOR_SPEED])
 # set_up_right_conveyor()
@@ -125,9 +123,16 @@ while(abs(distance_between_holders) > DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS):
 print('finished moving holders together')
 
 # step 5: rotate top conveyor to push tray right to left
+top_conveyor_leg_x, top_conveyor_leg_y = find_leg_top_conveyor(image)
+distance_from_conveyor_threshold = top_conveyor_leg_y - conveyor_threshold
+steps_to_take = int(distance_from_conveyor_threshold // calibration_variables[TOP_CONVEYOR_SPEED_FORWARD])
 set_up_top_conveyor()
-step_top_conveyor_forward(1000)
+step_top_conveyor_forward(steps_to_take)
+
 # step 7: return top conveyor to right side
+steps_to_take = int(distance_from_conveyor_threshold // calibration_variables[TOP_CONVEYOR_SPEED_BACKWARD])
+step_top_conveyor_backward(steps_to_take)
+clean_up_top_conveyor()
 
 # trickier version - multiple plants on each conveyor. note space plant holders evenly and with few enough plants that when a plant is at the top there's an empty holder at the bottom (and vice versa for right conveyor)
 # step 1: check location of top plant on left conveyor (barcode in top left position) - note distance from top
