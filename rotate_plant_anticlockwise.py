@@ -2,6 +2,7 @@ import os
 import cv2
 from image_analysis import find_top_and_bottom_of_conveyors, top_barcode_right_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, get_bottom_edge_of_holder, get_top_edge_of_holder
 from calibration import calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
+from top_conveyor_motor_code import step_top_conveyor_forward
 from vertical_conveyor_left_motor_code import move_left_conveyor, set_up_left_conveyor, clean_up_left_conveyor
 from vertical_conveyor_right_motor_code import move_right_conveyor, set_up_right_conveyor, clean_up_right_conveyor
 
@@ -94,6 +95,9 @@ print("Distance between holders: ", distance_between_holders)
 
 while(abs(distance_between_holders) > DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS):
     steps_to_take = int(pid_control(distance_between_holders))
+    if(steps_to_take == 0):
+        print("No steps to take")
+        break
     print("Steps to take: ", steps_to_take)
     set_up_left_conveyor()
     move_left_conveyor(steps_to_take)
@@ -117,10 +121,10 @@ while(abs(distance_between_holders) > DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS):
     cv2.imwrite("image_with_holder_edges.jpg", image)
     print("Distance between holders: ", distance_between_holders)
 
-print('holders close enough together to slide!')
+print('finished moving holders together')
 
-# step 5: rotate servo motor to put down tray push leg
-# step 6: rotate top conveyor to push tray right to left
+# step 5: rotate top conveyor to push tray right to left
+step_top_conveyor_forward(1000)
 # step 7: return top conveyor to right side
 
 # trickier version - multiple plants on each conveyor. note space plant holders evenly and with few enough plants that when a plant is at the top there's an empty holder at the bottom (and vice versa for right conveyor)
