@@ -1,7 +1,7 @@
 import os
 import cv2
 from image_analysis import find_top_and_bottom_of_conveyors, top_barcode_right_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, get_bottom_edge_of_holder, get_top_edge_of_holder
-from calibration import calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
+from calibration import calibrate_top_conveyor_motor, calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
 from top_conveyor_motor_code import set_up_top_conveyor, step_top_conveyor_forward
 from vertical_conveyor_left_motor_code import move_left_conveyor, set_up_left_conveyor, clean_up_left_conveyor
 from vertical_conveyor_right_motor_code import move_right_conveyor, set_up_right_conveyor, clean_up_right_conveyor
@@ -40,6 +40,7 @@ os.system(f"rpicam-still --output {image_path} --nopreview") # capture image wit
 image = cv2.imread(image_path) # read the captured image with opencv
 conveyor_threshold = get_conveyor_threshold(image) # find threshold between left and right conveyor
 
+calibrate_top_conveyor_motor() # calibrate top conveyor motor
 # top_barcode_right_conveyor = top_barcode_right_conveyor(image, conveyor_threshold)
 
 # top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
