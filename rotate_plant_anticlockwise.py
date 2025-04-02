@@ -72,57 +72,57 @@ calibration_variables = load_variables()
 # step 3: check location of holder on left conveyor 
 
 #take new image
-os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
-image = cv2.imread(image_path) # read the captured image with opencv
+# os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
+# image = cv2.imread(image_path) # read the captured image with opencv
 
-top_holder_right = top_holder_right_conveyor(image, conveyor_threshold)
-top_holder_left = top_holder_left_conveyor(image, conveyor_threshold)
-top_edge_right = get_top_edge_of_holder(top_holder_right['contour'], image)
-bottom_edge_left = get_bottom_edge_of_holder(top_holder_left['contour'], image)
+# top_holder_right = top_holder_right_conveyor(image, conveyor_threshold)
+# top_holder_left = top_holder_left_conveyor(image, conveyor_threshold)
+# top_edge_right = get_top_edge_of_holder(top_holder_right['contour'], image)
+# bottom_edge_left = get_bottom_edge_of_holder(top_holder_left['contour'], image)
 
-target_x_value = top_edge_right[0][0]
+# target_x_value = top_edge_right[0][0]
 
-#draw the edges on image
-cv2.line(image, (target_x_value, 0), (target_x_value, image.shape[0]), (0, 255, 0), 2)  # Green line
-cv2.line(image, bottom_edge_left[0], bottom_edge_left[1], (0, 0, 255), 3)  # Red line
+# #draw the edges on image
+# cv2.line(image, (target_x_value, 0), (target_x_value, image.shape[0]), (0, 255, 0), 2)  # Green line
+# cv2.line(image, bottom_edge_left[0], bottom_edge_left[1], (0, 0, 255), 3)  # Red line
 
 # draw a dot to mark bottom of left holder
-cv2.circle(image, bottom_edge_left[0], 5, (0, 255, 0), -1)
+# cv2.circle(image, bottom_edge_left[0], 5, (0, 255, 0), -1)
 
-distance_between_holders = target_x_value - bottom_edge_left[0][0]
+# distance_between_holders = target_x_value - bottom_edge_left[0][0]
 
-cv2.imwrite("image_with_holder_edges.jpg", image)
-print("Distance between holders: ", distance_between_holders)
+# cv2.imwrite("image_with_holder_edges.jpg", image)
+# print("Distance between holders: ", distance_between_holders)
 
-while(abs(distance_between_holders) > DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS):
-    steps_to_take = int(pid_control(distance_between_holders))
-    if(steps_to_take == 0):
-        print("No steps to take")
-        break
-    print("Steps to take: ", steps_to_take)
-    set_up_left_conveyor()
-    move_left_conveyor(steps_to_take)
-    clean_up_left_conveyor()
+# while(abs(distance_between_holders) > DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS):
+#     steps_to_take = int(pid_control(distance_between_holders))
+#     if(steps_to_take == 0):
+#         print("No steps to take")
+#         break
+#     print("Steps to take: ", steps_to_take)
+#     set_up_left_conveyor()
+#     move_left_conveyor(steps_to_take)
+#     clean_up_left_conveyor()
 
-    #take new image
-    os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
-    image = cv2.imread(image_path) # read the captured image with opencv
+#     #take new image
+#     os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
+#     image = cv2.imread(image_path) # read the captured image with opencv
 
-    top_holder_left = top_holder_left_conveyor(image, conveyor_threshold)
-    bottom_edge_left = get_bottom_edge_of_holder(top_holder_left['contour'], image)
+#     top_holder_left = top_holder_left_conveyor(image, conveyor_threshold)
+#     bottom_edge_left = get_bottom_edge_of_holder(top_holder_left['contour'], image)
 
-    #draw the edges on image
-    cv2.line(image, (target_x_value, 0), (target_x_value, image.shape[0]), (0, 255, 0), 2)  # Green line
-    cv2.line(image, bottom_edge_left[0], bottom_edge_left[1], (0, 0, 255), 3)  # Red line
+#     #draw the edges on image
+#     cv2.line(image, (target_x_value, 0), (target_x_value, image.shape[0]), (0, 255, 0), 2)  # Green line
+#     cv2.line(image, bottom_edge_left[0], bottom_edge_left[1], (0, 0, 255), 3)  # Red line
 
-    #draw a circle to mark bottom of left holder
-    cv2.circle(image, bottom_edge_left[0], 5, (0, 255, 0), -1)
+#     #draw a circle to mark bottom of left holder
+#     cv2.circle(image, bottom_edge_left[0], 5, (0, 255, 0), -1)
 
-    distance_between_holders = target_x_value - bottom_edge_left[0][0]
-    cv2.imwrite("image_with_holder_edges.jpg", image)
-    print("Distance between holders: ", distance_between_holders)
+#     distance_between_holders = target_x_value - bottom_edge_left[0][0]
+#     cv2.imwrite("image_with_holder_edges.jpg", image)
+#     print("Distance between holders: ", distance_between_holders)
 
-print('finished moving holders together')
+# print('finished moving holders together')
 
 # step 5: rotate top conveyor to push tray right to left
 top_conveyor_leg_x, top_conveyor_leg_y = find_leg_top_conveyor(image)
