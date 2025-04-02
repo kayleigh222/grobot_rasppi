@@ -41,7 +41,8 @@ image = cv2.imread(image_path) # read the captured image with opencv
 conveyor_threshold = get_conveyor_threshold(image) # find threshold between left and right conveyor
 
 set_up_top_conveyor()
-calibrate_top_conveyor_motor() # calibrate top conveyor motor
+# calibrate_top_conveyor_motor() # calibrate top conveyor motor
+
 # top_barcode_right_conveyor = top_barcode_right_conveyor(image, conveyor_threshold)
 
 # top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
