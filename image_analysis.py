@@ -271,7 +271,7 @@ def find_holders(image):
 # -------- BARCODE LOCATIONS ----------------
 
 #conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
-def top_barcode_right_conveyor(image, conveyor_threshold):
+def get_top_barcode_right_conveyor(image, conveyor_threshold):
     left_conveyor_barcodes, right_conveyor_barcodes = barcodes_divided_into_conveyors(image, conveyor_threshold)
     # Check if there are any barcodes in the right conveyor
     if right_conveyor_barcodes:
@@ -284,7 +284,7 @@ def top_barcode_right_conveyor(image, conveyor_threshold):
     return top_barcode_right_conveyor
 
 #conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
-def top_barcode_left_conveyor(image, conveyor_threshold):
+def get_top_barcode_left_conveyor(image, conveyor_threshold):
     left_conveyor_barcodes, right_conveyor_barcodes = barcodes_divided_into_conveyors(image, conveyor_threshold)
     # Check if there are any barcodes in the right conveyor
     if left_conveyor_barcodes:
