@@ -12,8 +12,8 @@ LEG_COLOR_LOWER_THRESHOLD_HSV = np.array([30, 50, 50])   # Lower bound of green
 LEG_COLOR_UPPER_THRESHOLD_HSV = np.array([90, 255, 255])  # Upper bound of green
 
 # Define a minimum area threshold for contours to be considered a contour
-MIN_HOLDER_AREA = 3000 
-MIN_LEG_AREA = 3000
+MIN_HOLDER_AREA = 4000 
+MIN_LEG_AREA = 4000
 
 # max distance between a holder center and its barcode
 MAX_DISTANCE_BETWEEN_HOLDER_CENTER_AND_BARCODE = 400
