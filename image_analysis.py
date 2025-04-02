@@ -22,8 +22,7 @@ NUM_BARCODES = 1  # Number of barcodes to on conveyors total
 
 # ----------- PUSH LEG LOCATIONS -------------
 def find_leg_top_conveyor(image):
-    equalized = cv2.equalizeHist(image)
-    hsv = cv2.cvtColor(equalized, cv2.COLOR_BGR2HSV)  # Convert the image to HSV color space to detect color easier
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)  # Convert the image to HSV color space to detect color easier
     # Create mask
     mask = cv2.inRange(hsv, LEG_COLOR_LOWER_THRESHOLD_HSV, LEG_COLOR_UPPER_THRESHOLD_HSV)
     cv2.imwrite('mask.jpg', mask)
@@ -35,8 +34,8 @@ def find_leg_top_conveyor(image):
     leg_contours = [cnt for cnt in contours if cv2.contourArea(cnt) > MIN_LEG_AREA]
     # draw the contours on the image
     for leg_contour in leg_contours:
-        cv2.drawContours(equalized, [leg_contour], -1, (0, 255, 0), 3)
-    cv2.imwrite('image_with_leg_contours.jpg', equalized)
+        cv2.drawContours(image, [leg_contour], -1, (0, 255, 0), 3)
+    cv2.imwrite('image_with_leg_contours.jpg', image)
      # print number of leg contours
     print(f"Number of leg contours found: {len(leg_contours)}")
 
@@ -210,8 +209,7 @@ def holders_divided_into_conveyors(image, conveyor_threshold):
 
 # Finds all holders, returns the contours and empty status
 def find_holders(image):
-    equalized = cv2.equalizeHist(image)  # Equalize the histogram to improve contrast
-    hsv = cv2.cvtColor(equalized, cv2.COLOR_BGR2HSV)  # Convert the image to HSV color space to detect color easier
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)  # Convert the image to HSV color space to detect color easier
     # Create mask
     mask = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
     cv2.imwrite('mask.jpg', mask)
@@ -261,11 +259,11 @@ def find_holders(image):
         holders_info.append(holder_info)
 
     # Optionally, draw contours for all holders
-    for holder in holders_info:
-        color = (255, 0, 0) if holder['is_empty'] else (0, 255, 0)  # Blue for empty, green for not empty
-        cv2.drawContours(equalized, [holder['contour']], -1, color, 3)  # Draw each holder's contour with different color
+    # for holder in holders_info:
+    #     color = (255, 0, 0) if holder['is_empty'] else (0, 255, 0)  # Blue for empty, green for not empty
+    #     cv2.drawContours(image, [holder['contour']], -1, color, 3)  # Draw each holder's contour with different color
 
-    cv2.imwrite('image_with_all_holders.jpg', equalized)
+    # cv2.imwrite('image_with_all_holders.jpg', image)
 
     return holders_info
 
