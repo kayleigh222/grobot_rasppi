@@ -7,13 +7,43 @@ from pyzbar.pyzbar import decode
 HOLDER_COLOR_LOWER_THRESHOLD_HSV = np.array([100, 150, 50])   # Lower bound of blue
 HOLDER_COLOR_UPPER_THRESHOLD_HSV = np.array([140, 255, 255])  # Upper bound of blue
 
+# Defing leg color range in HSV (currently green)
+LEG_COLOR_LOWER_THRESHOLD_HSV = np.array([40, 50, 50])   # Lower bound of green
+LEG_COLOR_UPPER_THRESHOLD_HSV = np.array([80, 255, 255])  # Upper bound of green
+
 # Define a minimum area threshold for contours to be considered a contour
 MIN_HOLDER_AREA = 1000 
+MIN_LEG_AREA = 200
 
 # max distance between a holder center and its barcode
 MAX_DISTANCE_BETWEEN_HOLDER_CENTER_AND_BARCODE = 400
 
 NUM_BARCODES = 1  # Number of barcodes to on conveyors total
+
+# ----------- PUSH LEG LOCATIONS -------------
+def find_leg_top_conveyor(image):
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)  # Convert the image to HSV color space to detect color easier
+    # Create mask
+    mask = cv2.inRange(hsv, LEG_COLOR_LOWER_THRESHOLD_HSV, LEG_COLOR_UPPER_THRESHOLD_HSV)
+    cv2.imwrite('mask.jpg', mask)
+
+    # Find contours of leg areas
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    # Filter contours based on size
+    leg_contours = [cnt for cnt in contours if cv2.contourArea(cnt) > MIN_LEG_AREA]
+    # draw the contours on the image
+    for leg_contour in leg_contours:
+        cv2.drawContours(image, [leg_contour], -1, (0, 255, 0), 3)
+    cv2.imwrite('image_with_leg_contours.jpg', image)
+     # print number of leg contours
+    print(f"Number of leg contours found: {len(leg_contours)}")
+
+    # get the leg contour with the highest x value
+    leg_contour = max(leg_contours, key=lambda cnt: cv2.boundingRect(cnt)[0])
+    x, y, w, h = cv2.boundingRect(leg_contour)  # Get bounding box of the leg 
+
+    return x, y # return the top left corner of the leg contour
 
 
 # ----------- CONVEYOR LOCATIONS -------------
@@ -49,7 +79,7 @@ def find_top_and_bottom_of_conveyors(image): # top and bottom when vertical in r
         if ones_count >= threshold:
             conveyor_top = col_idx
              # draw a vertical green line
-            cv2.line(image, (col_idx, 0), (col_idx, image.shape[0] - 1), (0, 255, 0), 2)
+            # cv2.line(image, (col_idx, 0), (col_idx, image.shape[0] - 1), (0, 255, 0), 2)
             break  # Exit once we find the last column meeting the threshold
     
     # cv2.imwrite('top_and_bottom_of_conveyor.jpg', image)
