@@ -11,6 +11,8 @@ def move_right_conveyor(steps): # steps positive for up, negative for down
     if(steps > 0):
         move_stepper(steps, "CW") # move up
     else:
+        print("Moving down")
+        steps = abs(steps)
         move_stepper(steps, "CCW") # move down
 
 def set_up_right_conveyor():
