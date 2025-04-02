@@ -1,6 +1,6 @@
 import os
 import cv2
-from image_analysis import find_leg_top_conveyor, find_top_and_bottom_of_conveyors, top_barcode_right_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, get_bottom_edge_of_holder, get_top_edge_of_holder
+from image_analysis import find_leg_top_conveyor, find_top_and_bottom_of_conveyors, top_barcode_left_conveyor, top_barcode_right_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, get_bottom_edge_of_holder, get_top_edge_of_holder
 from calibration import TOP_CONVEYOR_SPEED_BACKWARD, TOP_CONVEYOR_SPEED_FORWARD, calibrate_top_conveyor_motor, calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
 from top_conveyor_motor_code import clean_up_top_conveyor, set_up_top_conveyor, step_top_conveyor_backward, step_top_conveyor_forward
 from vertical_conveyor_left_motor_code import move_left_conveyor, set_up_left_conveyor, clean_up_left_conveyor
@@ -44,7 +44,7 @@ conveyor_threshold = get_conveyor_threshold(image) # find threshold between left
 set_up_top_conveyor()
 # calibrate_top_conveyor_motor() # calibrate top conveyor motor
 
-# top_barcode_right_conveyor = top_barcode_right_conveyor(image, conveyor_threshold)
+top_barcode_right_conveyor = top_barcode_right_conveyor(image, conveyor_threshold)
 
 # top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
 # print("Top of conveyor: ", top_conveyor)
@@ -126,15 +126,46 @@ calibration_variables = load_variables()
 # print('finished moving holders together')
 
 # step 5: rotate top conveyor to push tray right to left
+
 top_conveyor_leg_x, top_conveyor_leg_y = find_leg_top_conveyor(image)
-distance_from_conveyor_threshold = top_conveyor_leg_y - conveyor_threshold
-steps_to_take = int((distance_from_conveyor_threshold + ADDITIONAL_DISTANCE_TO_PUSH_TRAY_ACROSS_THRESHOLD) // calibration_variables[TOP_CONVEYOR_SPEED_FORWARD])
-step_top_conveyor_forward(steps_to_take)
+distance_from_target = top_conveyor_leg_y - (conveyor_threshold - ADDITIONAL_DISTANCE_TO_PUSH_TRAY_ACROSS_THRESHOLD)
+# steps_to_take = int((distance_from_conveyor_threshold + ADDITIONAL_DISTANCE_TO_PUSH_TRAY_ACROSS_THRESHOLD) // calibration_variables[TOP_CONVEYOR_SPEED_FORWARD])
+# step_top_conveyor_forward(steps_to_take)
+
+while(abs(distance_from_target) > DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS):
+    steps_to_take = int(pid_control(distance_from_target, Kp=(1/calibration_variables[TOP_CONVEYOR_SPEED_FORWARD])))
+    if(steps_to_take == 0):
+        print("No steps to take")
+        break
+    print("Steps to take: ", steps_to_take)
+    step_top_conveyor_forward(steps_to_take)
+
+    #take new image
+    os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
+    image = cv2.imread(image_path) # read the captured image with opencv
+
+    top_conveyor_leg_x, top_conveyor_leg_y = find_leg_top_conveyor(image)
+
+    distance_from_target = top_conveyor_leg_y - (conveyor_threshold - ADDITIONAL_DISTANCE_TO_PUSH_TRAY_ACROSS_THRESHOLD)
+
+    print("Distance between from top conveyor target: ", distance_from_target)
+
+print('finished moving top conveyor to target')
 
 # step 7: return top conveyor to right side
-steps_to_take = int((distance_from_conveyor_threshold + ADDITIONAL_DISTANCE_TO_PUSH_TRAY_ACROSS_THRESHOLD) // calibration_variables[TOP_CONVEYOR_SPEED_BACKWARD])
+steps_to_take = int((distance_from_target + ADDITIONAL_DISTANCE_TO_PUSH_TRAY_ACROSS_THRESHOLD) // calibration_variables[TOP_CONVEYOR_SPEED_BACKWARD])
 step_top_conveyor_backward(steps_to_take)
 clean_up_top_conveyor()
+
+#TODO: check tray has moved to other conveyor
+print("Was top barcode on right ", top_barcode_right_conveyor) # TODO: get data from this e.g. plant 4
+os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
+image = cv2.imread(image_path) # read the captured image with opencv
+new_top_barcode_left_conveyor = top_barcode_left_conveyor(image, conveyor_threshold) # TODO: get data from this e.g. plant 4
+# TODO: compare the two barcodes to check they are the same. if not do something idk
+
+#TODO: check leg has moved back to right side to be not in the way of the conveyors
+#TODO: print another blue tray
 
 # trickier version - multiple plants on each conveyor. note space plant holders evenly and with few enough plants that when a plant is at the top there's an empty holder at the bottom (and vice versa for right conveyor)
 # step 1: check location of top plant on left conveyor (barcode in top left position) - note distance from top
