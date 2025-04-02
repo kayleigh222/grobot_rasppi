@@ -223,7 +223,7 @@ def find_holders(image):
     print(f"Number of holder contours found: {len(holder_contours)}")
 
     # Find barcodes in the image
-    barcode_centres = find_barcodes(image)
+    barcode_info = find_barcodes(image)
 
     # List to store information about the holders
     holders_info = []
@@ -235,25 +235,26 @@ def find_holders(image):
         print(f"Holder center: {holder_center}")
 
         # Check proximity to barcodes to determine if the holder is empty
-        too_close = False
+        barcode_close = False
 
         # draw a circle representing the max distance between a holder center and its barcode
         # cv2.circle(image, holder_center, MAX_DISTANCE_BETWEEN_HOLDER_CENTER_AND_BARCODE, (0, 0, 255), 2)
 
-        for barcode_centre in barcode_centres:
+        for barcode in barcode_info:
             # Compute Euclidean distance to barcode
-            distance = np.sqrt((holder_center[0] - barcode_centre[0])**2 + 
-                               (holder_center[1] - barcode_centre[1])**2)
+            distance = np.sqrt((holder_center[0] - barcode[1][0])**2 + 
+                               (holder_center[1] - barcode[1][1])**2)
 
             if distance < MAX_DISTANCE_BETWEEN_HOLDER_CENTER_AND_BARCODE:  # Adjust distance threshold based on image scale
-                too_close = True
+                barcode_close = True
                 break  # No need to check further if already too close
         
         # Store the contour, empty status, and barcode (if not empty)
         holder_info = {
             'contour': holder_contour,
-            'is_empty': not too_close,  # If not too close to barcode, it's considered empty
-            'holder_center': holder_center
+            'is_empty': not barcode_close,  # If not too close to barcode, it's considered empty
+            'holder_center': holder_center,
+            'barcode_data': barcode[0] if barcode_close else None  # Store barcode data if not empty
         }
         holders_info.append(holder_info)
 
