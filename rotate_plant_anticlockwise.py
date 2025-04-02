@@ -40,6 +40,7 @@ os.system(f"rpicam-still --output {image_path} --nopreview") # capture image wit
 image = cv2.imread(image_path) # read the captured image with opencv
 conveyor_threshold = get_conveyor_threshold(image) # find threshold between left and right conveyor
 
+set_up_top_conveyor()
 calibrate_top_conveyor_motor() # calibrate top conveyor motor
 # top_barcode_right_conveyor = top_barcode_right_conveyor(image, conveyor_threshold)
 
@@ -126,7 +127,6 @@ print('finished moving holders together')
 top_conveyor_leg_x, top_conveyor_leg_y = find_leg_top_conveyor(image)
 distance_from_conveyor_threshold = top_conveyor_leg_y - conveyor_threshold
 steps_to_take = int(distance_from_conveyor_threshold // calibration_variables[TOP_CONVEYOR_SPEED_FORWARD])
-set_up_top_conveyor()
 step_top_conveyor_forward(steps_to_take)
 
 # step 7: return top conveyor to right side
