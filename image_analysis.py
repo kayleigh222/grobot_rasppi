@@ -3,9 +3,16 @@ import cv2
 import numpy as np
 from pyzbar.pyzbar import decode
 
-# Define holder color range in HSV (currently blue)
-HOLDER_COLOR_LOWER_THRESHOLD_HSV = np.array([100, 150, 50])   # Lower bound of blue
-HOLDER_COLOR_UPPER_THRESHOLD_HSV = np.array([140, 255, 255])  # Upper bound of blue
+# # Define holder color range in HSV (currently blue)
+# HOLDER_COLOR_LOWER_THRESHOLD_HSV = np.array([100, 150, 50])   # Lower bound of blue
+# HOLDER_COLOR_UPPER_THRESHOLD_HSV = np.array([140, 255, 255])  # Upper bound of blue
+
+# Define holder color range in HSV (red) - because red is at both ends of the hue spectrum, need two ranges
+HOLDER_COLOR_LOWER_THRESHOLD_HSV = np.array([0, 150, 50])    # Lower bound of red
+HOLDER_COLOR_UPPER_THRESHOLD_HSV = np.array([10, 255, 255])  # Upper bound of red
+
+HOLDER_COLOR_LOWER_THRESHOLD_HSV_2 = np.array([170, 150, 50])   # Lower bound of red
+HOLDER_COLOR_UPPER_THRESHOLD_HSV_2 = np.array([180, 255, 255])  # Upper bound of red
 
 # Define leg color range in HSV (currently green)
 LEG_COLOR_LOWER_THRESHOLD_HSV = np.array([30, 50, 50])   # Lower bound of green
@@ -211,11 +218,13 @@ def holders_divided_into_conveyors(image, conveyor_threshold):
 def find_holders(image):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)  # Convert the image to HSV color space to detect color easier
     # Create mask
-    mask = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
-    cv2.imwrite('mask.jpg', mask)
+    mask1 = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
+    mask2 = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV_2, HOLDER_COLOR_UPPER_THRESHOLD_HSV_2)
+    red_mask = cv2.bitwise_or(mask1, mask2) # have to combine 2 masks because red appears at top and bottom of spectrum
+    cv2.imwrite('mask.jpg', red_mask)
 
     # Find contours of blue areas
-    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv2.findContours(red_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     # Filter contours based on size
     holder_contours = [cnt for cnt in contours if cv2.contourArea(cnt) > MIN_HOLDER_AREA]
