@@ -1,6 +1,6 @@
 import os
 import cv2
-from image_analysis import find_left_and_right_of_conveyors, find_leg_top_conveyor, find_top_and_bottom_of_conveyors, get_top_barcode_left_conveyor, get_top_barcode_right_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, get_bottom_edge_of_holder, get_top_edge_of_holder
+from image_analysis import find_left_and_right_of_conveyors, find_leg_top_conveyor, find_top_and_bottom_of_conveyors, get_top_barcode_left_conveyor, get_top_barcode_right_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, get_right_edge_of_holder, get_left_edge_of_holder, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
 from calibration import TOP_CONVEYOR_SPEED_BACKWARD, TOP_CONVEYOR_SPEED_FORWARD, calibrate_top_conveyor_motor, calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
 from top_conveyor_motor_code import clean_up_top_conveyor, set_up_top_conveyor, step_top_conveyor_backward, step_top_conveyor_forward
 from vertical_conveyor_left_motor_code import move_left_conveyor, set_up_left_conveyor, clean_up_left_conveyor
@@ -41,19 +41,21 @@ image = cv2.imread(image_path) # read the captured image with opencv
 conveyor_threshold, conveyors_left, conveyors_right = get_conveyor_threshold(image) # find threshold between left and right conveyor
 
 
-top_barcode_right_conveyor = get_top_barcode_right_conveyor(image, conveyor_threshold)
+top_holder_on_right_conveyor = top_holder_with_barcode_right_conveyor(image, conveyor_threshold)
+bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_on_right_conveyor['contour'], image)
+bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyor[0][0]
 
 top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
 print("Top of conveyor: ", top_conveyor)
 
-distance_from_top = top_conveyor - top_barcode_right_conveyor[1][0]
-print("Distance between: ", distance_from_top)
+distance_from_bottom_of_holder_to_top = top_conveyor - bottom_of_top_holder_right_conveyor_x_coord
+print("Distance between: ", distance_from_bottom_of_holder_to_top)
 
 # Draw a vertical line at the top conveyor
 cv2.line(image, (top_conveyor, 0), (top_conveyor, image.shape[0]), (0, 255, 0), 2)  # Green line
 
 # Draw a vertical line at top_barcode_right_conveyor
-cv2.line(image, (int(top_barcode_right_conveyor[1][0]), 0), (int(top_barcode_right_conveyor[1][0]), image.shape[0]), (0, 0, 255), 2)  # Red line
+cv2.line(image, (int(bottom_of_top_holder_right_conveyor_x_coord), 0), (int(bottom_of_top_holder_right_conveyor_x_coord), image.shape[0]), (0, 0, 255), 2)  # Red line
 
 # Show the image
 cv2.imwrite("before_move_right_holder_to_top.png", image)
@@ -61,7 +63,7 @@ cv2.imwrite("before_move_right_holder_to_top.png", image)
 # step 2: rotate right conveyor until plant at top
 calibration_variables = load_variables() 
 
-steps_to_top = int(distance_from_top // calibration_variables[RIGHT_CONVEYOR_SPEED])
+steps_to_top = int((distance_from_bottom_of_holder_to_top * 0.3) // calibration_variables[RIGHT_CONVEYOR_SPEED]) # TODO - this probably won't work - come back and fix so fraction of distance between top and bottom of conveyor from top. (times the distance by 0.3 - don't actually want to go all the way to the top
 set_up_right_conveyor()
 move_right_conveyor(steps_to_top)
 clean_up_right_conveyor()
@@ -75,19 +77,19 @@ image = cv2.imread(image_path) # read the captured image with opencv
 
 top_holder_right = top_holder_right_conveyor(image, conveyor_threshold)
 top_holder_left = top_holder_left_conveyor(image, conveyor_threshold)
-top_edge_right = get_top_edge_of_holder(top_holder_right['contour'], image)
-bottom_edge_left = get_bottom_edge_of_holder(top_holder_left['contour'], image)
+left_edge_right = get_left_edge_of_holder(top_holder_right['contour'], image)
+right_edge_left = get_right_edge_of_holder(top_holder_left['contour'], image)
 
-target_x_value = top_edge_right[0][0]
+target_x_value = left_edge_right[0][0]
 
 #draw the edges on image
 cv2.line(image, (target_x_value, 0), (target_x_value, image.shape[0]), (0, 255, 0), 2)  # Green line
-cv2.line(image, bottom_edge_left[0], bottom_edge_left[1], (0, 0, 255), 3)  # Red line
+cv2.line(image, right_edge_left[0], right_edge_left[1], (0, 0, 255), 3)  # Red line
 
 # draw a dot to mark bottom of left holder
-cv2.circle(image, bottom_edge_left[0], 5, (0, 255, 0), -1)
+cv2.circle(image, right_edge_left[0], 5, (0, 255, 0), -1)
 
-distance_between_holders = target_x_value - bottom_edge_left[0][0]
+distance_between_holders = target_x_value - right_edge_left[0][0]
 
 cv2.imwrite("image_with_holder_edges.jpg", image)
 print("Distance between holders: ", distance_between_holders)
@@ -107,16 +109,16 @@ while(abs(distance_between_holders) > DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS):
     image = cv2.imread(image_path) # read the captured image with opencv
 
     top_holder_left = top_holder_left_conveyor(image, conveyor_threshold)
-    bottom_edge_left = get_bottom_edge_of_holder(top_holder_left['contour'], image)
+    right_edge_left = get_right_edge_of_holder(top_holder_left['contour'], image)
 
     #draw the edges on image
     cv2.line(image, (target_x_value, 0), (target_x_value, image.shape[0]), (0, 255, 0), 2)  # Green line
-    cv2.line(image, bottom_edge_left[0], bottom_edge_left[1], (0, 0, 255), 3)  # Red line
+    cv2.line(image, right_edge_left[0], right_edge_left[1], (0, 0, 255), 3)  # Red line
 
     #draw a circle to mark bottom of left holder
-    cv2.circle(image, bottom_edge_left[0], 5, (0, 255, 0), -1)
+    cv2.circle(image, right_edge_left[0], 5, (0, 255, 0), -1)
 
-    distance_between_holders = target_x_value - bottom_edge_left[0][0]
+    distance_between_holders = target_x_value - right_edge_left[0][0]
     cv2.imwrite("image_with_holder_edges.jpg", image)
     print("Distance between holders: ", distance_between_holders)
 

@@ -127,7 +127,7 @@ def find_left_and_right_of_conveyors(image): # left and right when vertical in r
 
 # -------- HOLDER LOCATIONS -----------------
 
-def get_top_edge_of_holder(holder_contour, image):
+def get_left_edge_of_holder(holder_contour, image):
     # Get bounding box of the contour
     x, y, w, h = cv2.boundingRect(holder_contour)
 
@@ -136,9 +136,22 @@ def get_top_edge_of_holder(holder_contour, image):
     # cv2.imwrite('bounding_box_of_holder.jpg', image)
 
     # The top edge is at y with width w
-    top_edge = [(x, y), (x + w, y)]
-    print(f"Top edge coordinates: {top_edge}")
-    return top_edge
+    left_edge = [(x, y), (x + w, y)]
+    print(f"Top edge coordinates: {left_edge}")
+    return left_edge
+
+def get_right_edge_of_holder(holder_contour, image):
+    # Get bounding box of the contour
+    x, y, w, h = cv2.boundingRect(holder_contour)
+
+    # # draw the bounding box on the image 
+    # cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Green rectangle
+    # cv2.imwrite('bounding_box_of_holder.jpg', image)
+
+    # The bottom edge is at y+h with width w
+    right_edge = [(x, y + h), (x + w, y + h)]
+    print(f"Bottom edge coordinates: {right_edge}")
+    return right_edge
 
 def get_bottom_edge_of_holder(holder_contour, image):
     # Get bounding box of the contour
@@ -149,7 +162,7 @@ def get_bottom_edge_of_holder(holder_contour, image):
     # cv2.imwrite('bounding_box_of_holder.jpg', image)
 
     # The bottom edge is at y+h with width w
-    bottom_edge = [(x, y + h), (x + w, y + h)]
+    bottom_edge = [(x, y), (x, y+h)]
     print(f"Bottom edge coordinates: {bottom_edge}")
     return bottom_edge
 
@@ -179,6 +192,24 @@ def top_holder_right_conveyor(image, conveyor_threshold):
         # Handle the case where there are no barcodes in the right conveyor
         top_holder_right_conveyor = None  # or some default value/message
     print("Top holder right conveyor center:", top_holder_right_conveyor['holder_center'])
+    print("Top holder right conveyor empty:", top_holder_right_conveyor['is_empty'])
+    return top_holder_right_conveyor
+
+def top_holder_with_barcode_right_conveyor(image, conveyor_threshold):
+    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors(image, conveyor_threshold)
+    top_holder_with_barcode = None
+    # Check if there are any barcodes in the right conveyor
+    while(top_holder_with_barcode == None):
+        if right_conveyor_holders:
+            # Find the barcode with the maximum x-coordinate in the right conveyor
+            top_holder_right_conveyor = max(right_conveyor_holders, key=lambda holder: holder['holder_center'][0])
+            if top_holder_right_conveyor['is_empty']:
+                # remove from right_conveyor_holders
+                right_conveyor_holders.remove(top_holder_right_conveyor)
+        else:
+            # Handle the case where there are no barcodes in the right conveyor
+            break
+    print("Top holder right conveyor:", top_holder_right_conveyor)
     print("Top holder right conveyor empty:", top_holder_right_conveyor['is_empty'])
     return top_holder_right_conveyor
 
