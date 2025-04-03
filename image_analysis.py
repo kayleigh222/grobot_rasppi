@@ -76,7 +76,7 @@ def find_top_and_bottom_of_conveyors(image): # top and bottom when vertical in r
         if ones_count >= threshold:
             conveyor_bottom = col_idx
             # draw a vertical green line
-            cv2.line(image, (col_idx, 0), (col_idx, image.shape[0] - 1), (0, 255, 0), 2)
+            # cv2.line(image, (col_idx, 0), (col_idx, image.shape[0] - 1), (0, 255, 0), 2)
             break  # Exit once we find the first column meeting the threshold
             
     # Iterate through the columns from right to left and find the last column with enough dark pixels
@@ -342,6 +342,7 @@ def find_barcodes(image):
         (["Plant 4", (150.5, 200.0)), ("Plant 1", (300.0, 450.0))]
     """
      num_barcodes_found = 0
+     cv2.imwrite('image_to_detect_barcodes.jpg', image) # save the image to detect barcodes
      while(num_barcodes_found != NUM_BARCODES):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         equalized = cv2.equalizeHist(gray)
