@@ -58,3 +58,6 @@ def clean_up_top_conveyor():
     GPIO.cleanup()  # Clean up GPIO settings
     
 
+set_up_top_conveyor()
+step_top_conveyor_forward(100)
+
