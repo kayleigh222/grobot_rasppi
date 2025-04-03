@@ -59,7 +59,7 @@ def get_conveyor_threshold(image):
     distance = conveyor_right - conveyor_left
     threshold = conveyor_right - distance//2
     
-    return threshold
+    return threshold, conveyor_left, conveyor_right
 
 def find_top_and_bottom_of_conveyors(image): # top and bottom when vertical in real world (vertical in image)
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
