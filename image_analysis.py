@@ -202,6 +202,7 @@ def top_holder_with_barcode_right_conveyor(image, conveyor_threshold):
     top_holder_with_barcode = None
     # Check if there are any barcodes in the right conveyor
     while(top_holder_with_barcode == None):
+        print('checking top barcode right conveyor')
         if right_conveyor_holders:
             # Find the barcode with the maximum x-coordinate in the right conveyor
             top_holder_right_conveyor = max(right_conveyor_holders, key=lambda holder: holder['holder_center'][0])
@@ -210,6 +211,7 @@ def top_holder_with_barcode_right_conveyor(image, conveyor_threshold):
                 right_conveyor_holders.remove(top_holder_right_conveyor)
         else:
             # Handle the case where there are no barcodes in the right conveyor
+            print("Error: No barcodes found in right conveyor")
             break
     print("Top holder right conveyor:", top_holder_right_conveyor)
     print("Top holder right conveyor empty:", top_holder_right_conveyor['is_empty'])
