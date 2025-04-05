@@ -73,7 +73,7 @@ def calibrate_vertical_conveyor_motors(num_steps_to_test=400):  # to use, put on
     calibrate_right_conveyor_motor(num_steps_to_test)
     calibrate_left_conveyor_motor(num_steps_to_test)
 
-def calibrate_right_conveyor_motor(num_steps_to_test=400):  # to use, put one barcode on left conveyor somewhere in the middle
+def calibrate_right_conveyor_motor(num_steps_to_test=400):  # to use, put one barcode on right conveyor somewhere in the middle
   # measure initial position
   image_path = "captured_image.jpg"
   os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview

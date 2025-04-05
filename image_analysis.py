@@ -385,7 +385,7 @@ def find_barcodes(image):
     """
      num_barcodes_found = 0
      cv2.imwrite('image_to_detect_barcodes.jpg', image) # save the image to detect barcodes
-     while(num_barcodes_found != NUM_BARCODES):
+     while(num_barcodes_found < NUM_BARCODES):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         equalized = cv2.equalizeHist(gray)
         barcodes = decode(equalized) # detect barcodes
