@@ -49,7 +49,9 @@ target_location_for_top_tray = top_conveyor - (conveyor_height // 8)
 print('finding top holder right conveyor')
 
 top_holder_on_right_conveyor = top_holder_with_barcode_right_conveyor(image, conveyor_threshold)
+print('found top holder on right conveyor')
 bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_on_right_conveyor['contour'], image)
+print('found bottom of top holder on right conveyor')
 bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyor[0][0]
 
 print('Bottom of top holder on right conveyor: ', bottom_of_top_holder_right_conveyor_x_coord)
