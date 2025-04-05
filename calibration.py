@@ -92,7 +92,7 @@ def calibrate_right_conveyor_motor(num_steps_to_test=400):  # to use, put one ba
   os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
   image = cv2.imread(image_path) # read the captured image with opencv
   top_barcode_right_conveyor_new = get_top_barcode_right_conveyor(image, conveyor_threshold)
-  pixels_moved = abs(top_barcode_right_conveyor_new[0] - top_barcode_right_conveyor_original[0])
+  pixels_moved = abs(top_barcode_right_conveyor_new[1][0] - top_barcode_right_conveyor_original[1][0])
   pixels_moved_per_step = pixels_moved/num_steps_to_test
 
   # save new calibration variables
@@ -119,7 +119,7 @@ def calibrate_left_conveyor_motor(num_steps_to_test=400):  # to use, put one bar
     image = cv2.imread(image_path) #
     top_barcode_left_conveyor_new = get_top_barcode_left_conveyor(image, conveyor_threshold)
     # calculate num pixels moved
-    pixels_moved = abs(top_barcode_left_conveyor_new[0] - top_barcode_left_conveyor_original[0])
+    pixels_moved = abs(top_barcode_left_conveyor_new[1][0] - top_barcode_left_conveyor_original[1][0])
     pixels_moved_per_step = pixels_moved/num_steps_to_test
 
     # save new calibration variables
