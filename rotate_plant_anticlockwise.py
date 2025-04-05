@@ -44,7 +44,7 @@ print('Loaded conveyor threshold')
 top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
 
 conveyor_height = top_conveyor - bottom_conveyor
-target_location_for_top_tray = top_conveyor - (conveyor_height // 8)
+target_location_for_top_tray = top_conveyor - (conveyor_height // 10)
 
 print('finding top holder right conveyor')
 
