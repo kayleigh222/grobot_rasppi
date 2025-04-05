@@ -390,7 +390,7 @@ def find_barcodes(image):
         equalized = cv2.equalizeHist(gray)
         barcodes = decode(equalized) # detect barcodes
         num_barcodes_found = len(barcodes)
-        if num_barcodes_found != NUM_BARCODES:
+        if num_barcodes_found < NUM_BARCODES:
             print("Barcodes: ", barcodes)
             print(f"Found {num_barcodes_found} barcodes, expected {NUM_BARCODES}, retrying...")
             image_path = 'retrying_image_to_detect_all_barcodes'
