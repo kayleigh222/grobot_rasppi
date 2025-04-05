@@ -154,8 +154,10 @@ def get_right_edge_of_holder(holder_contour, image):
     return right_edge
 
 def get_bottom_edge_of_holder(holder_contour, image):
+    print('finding bottom edge of holder')
     # Get bounding box of the contour
     x, y, w, h = cv2.boundingRect(holder_contour)
+    print('got bounding rectangle of holder')
 
     # # draw the bounding box on the image 
     # cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Green rectangle
