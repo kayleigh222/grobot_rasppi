@@ -216,8 +216,10 @@ def top_holder_with_barcode_right_conveyor(image, conveyor_threshold):
     return top_holder_right_conveyor
 
 # conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
-def holders_divided_into_conveyors(image, conveyor_threshold):    
+def holders_divided_into_conveyors(image, conveyor_threshold):  
+    print('finding holders divided into conveyors')  
     holders = find_holders(image)  # Get empty holder contours
+    print('found holders')
 
     # Initialize the lists for left and right conveyor barcodes
     left_conveyor_holders = []
