@@ -247,6 +247,8 @@ def holders_divided_into_conveyors(image, conveyor_threshold):
     # Save the image with the drawn contours
     # cv2.imwrite('image_with_divided_conveyors.jpg', image)
 
+    print('divdied holders into left and right')
+
     return left_conveyor_holders, right_conveyor_holders    
 
 # Finds all holders, returns the contours and empty status
@@ -272,7 +274,7 @@ def find_holders(image):
     # List to store information about the holders
     holders_info = []
 
-    # Iterate through blue contours
+    # Iterate through contours
     for holder_contour in holder_contours:
         x, y, w, h = cv2.boundingRect(holder_contour)  # Get bounding box of blue patch
         holder_center = (x + w // 2, y + h // 2)  # Get center of blue patch
