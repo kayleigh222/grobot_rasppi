@@ -34,6 +34,7 @@ def load_variables():
         return {}  # Return empty dict if file doesn't exist or is corrupted
 
 def calibrate_top_conveyor_motor(num_steps_to_test=400):
+    print("Calibrating top conveyor motor...")
     set_up_top_conveyor()  # Set up the top conveyor motor
     # measure initial position
     image_path = "captured_image.jpg"
@@ -70,6 +71,7 @@ def calibrate_top_conveyor_motor(num_steps_to_test=400):
     save_variables(data)  # Save
 
 def calibrate_vertical_conveyor_motors(num_steps_to_test=400):  # to use, put one barcode on left conveyor and one on right conveyor somewhere in the middle
+    print("Calibrating vertical conveyor motors...")
     calibrate_right_conveyor_motor(num_steps_to_test)
     calibrate_left_conveyor_motor(num_steps_to_test)
 
