@@ -74,7 +74,7 @@ while(distance_from_bottom_of_holder_to_target > DISTANCE_BETWEEN_HOLDERS_TO_SLI
     cv2.imwrite("before_move_right_holder_to_top.png", image)
 
     # steps_to_top = int((distance_from_bottom_of_holder_to_top * 0.3) // calibration_variables[RIGHT_CONVEYOR_SPEED]) # TODO - this probably won't work - come back and fix so fraction of distance between top and bottom of conveyor from top. (times the distance by 0.3 - don't actually want to go all the way to the top
-    steps_to_take = pid_control(distance_from_bottom_of_holder_to_target, Kp=(1/calibration_variables[RIGHT_CONVEYOR_SPEED]))
+    steps_to_take = int(pid_control(distance_from_bottom_of_holder_to_target, Kp=(1/calibration_variables[RIGHT_CONVEYOR_SPEED])))
     set_up_right_conveyor()
     move_right_conveyor(steps_to_take)
     clean_up_right_conveyor()
