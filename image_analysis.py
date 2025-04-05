@@ -210,6 +210,8 @@ def top_holder_with_barcode_right_conveyor(image, conveyor_threshold):
                 # remove from right_conveyor_holders
                 print('removing top empty holder from right conveyor')
                 right_conveyor_holders.remove(top_holder_right_conveyor)
+            else:
+                top_holder_with_barcode = top_holder_right_conveyor
         else:
             # Handle the case where there are no barcodes in the right conveyor
             print("Error: No barcodes found in right conveyor")
