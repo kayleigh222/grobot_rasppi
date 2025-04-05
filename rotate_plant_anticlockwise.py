@@ -40,6 +40,7 @@ os.system(f"rpicam-still --output {image_path} --nopreview") # capture image wit
 image = cv2.imread(image_path) # read the captured image with opencv
 conveyor_threshold, conveyors_left, conveyors_right = get_conveyor_threshold(image) # find threshold between left and right conveyor
 calibration_variables = load_variables() 
+print('Loaded conveyor threshold')
 top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
 
 conveyor_height = top_conveyor - bottom_conveyor
