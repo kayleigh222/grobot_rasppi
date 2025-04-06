@@ -215,7 +215,7 @@ def top_holder_with_barcode_right_conveyor(image, conveyor_threshold, conveyors_
 
 # conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
 def holders_divided_into_conveyors(image, conveyor_threshold, conveyors_left, conveyors_right):  
-    max_distance_between_holder_centre_and_barcode = (conveyors_right - conveyors_left) // 3 # half the width of a conveyor - max distance between centre of holder and barcode to be able to slide across is  
+    max_distance_between_holder_centre_and_barcode = (conveyors_right - conveyors_left) // 4 # half the width of a conveyor - max distance between centre of holder and barcode to be able to slide across is  
     holders = find_holders(image, max_distance_between_holder_centre_and_barcode)  # Get empty holder contours
 
     # Initialize the lists for left and right conveyor barcodes
@@ -276,20 +276,22 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=400):
 
     # Iterate through contours
     for holder_contour in holder_contours:
-        x, y, w, h = cv2.boundingRect(holder_contour)  # Get bounding box of blue patch
+        x, y, w, h = cv2.boundingRect(holder_contour)  # Get bounding box of holder
         holder_center = (x + w // 2, y + h // 2)  # Get center of blue patch
         print(f"Holder center: {holder_center}")
+
+        near_barcode = (holder_center[0], holder_center[1] + max_dist_between_holder_center_and_barcode)
 
         # Check proximity to barcodes to determine if the holder is empty
         barcode_close = False
 
         # draw a circle representing the max distance between a holder center and its barcode
-        cv2.circle(image, holder_center, max_dist_between_holder_center_and_barcode, (0, 0, 255), 2)
+        cv2.circle(image, near_barcode, max_dist_between_holder_center_and_barcode, (0, 0, 255), 2)
 
         for barcode in barcode_info:
             # Compute Euclidean distance to barcode
-            distance = np.sqrt((holder_center[0] - barcode[1][0])**2 + 
-                               (holder_center[1] - barcode[1][1])**2)
+            distance = np.sqrt((near_barcode[0] - barcode[1][0])**2 + 
+                               (near_barcode[1] - barcode[1][1])**2)
 
             if distance < max_dist_between_holder_center_and_barcode:  # Adjust distance threshold based on image scale
                 barcode_close = True
