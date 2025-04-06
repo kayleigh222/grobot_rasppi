@@ -291,7 +291,7 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=400):
             distance = np.sqrt((holder_center[0] - barcode[1][0])**2 + 
                                (holder_center[1] - barcode[1][1])**2)
 
-            if distance < MAX_DISTANCE_BETWEEN_HOLDER_CENTER_AND_BARCODE:  # Adjust distance threshold based on image scale
+            if distance < max_dist_between_holder_center_and_barcode:  # Adjust distance threshold based on image scale
                 barcode_close = True
                 break  # No need to check further if already too close
         
