@@ -3,10 +3,6 @@ import cv2
 import numpy as np
 from pyzbar.pyzbar import decode
 
-# # Define holder color range in HSV (currently blue)
-# HOLDER_COLOR_LOWER_THRESHOLD_HSV = np.array([100, 150, 50])   # Lower bound of blue
-# HOLDER_COLOR_UPPER_THRESHOLD_HSV = np.array([140, 255, 255])  # Upper bound of blue
-
 # Define holder color range in HSV (red) - because red is at both ends of the hue spectrum, need two ranges
 HOLDER_COLOR_LOWER_THRESHOLD_HSV = np.array([0, 150, 50])    # Lower bound of red
 HOLDER_COLOR_UPPER_THRESHOLD_HSV = np.array([10, 255, 255])  # Upper bound of red
@@ -19,7 +15,7 @@ LEG_COLOR_LOWER_THRESHOLD_HSV = np.array([30, 50, 50])   # Lower bound of green
 LEG_COLOR_UPPER_THRESHOLD_HSV = np.array([90, 255, 255])  # Upper bound of green
 
 # Define a minimum area threshold for contours to be considered a contour
-MIN_HOLDER_AREA = 10000 
+MIN_HOLDER_AREA = 20000 
 MIN_LEG_AREA = 8000
 
 # max distance between a holder center and its barcode
