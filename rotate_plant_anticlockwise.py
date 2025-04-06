@@ -45,7 +45,7 @@ calibration_variables = load_variables()
 conveyor_threshold, conveyors_left, conveyors_right = get_conveyor_threshold(image) # find threshold between left and right conveyor
 top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
 conveyor_height = top_conveyor - bottom_conveyor
-target_location_for_top_tray = top_conveyor - (conveyor_height // 8.5)
+target_location_for_top_tray = int(top_conveyor - (conveyor_height // 8.5))
 
 # ----------- FIND TOP HOLDER ON RIGHT CONVEYOR ------------------
 top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)

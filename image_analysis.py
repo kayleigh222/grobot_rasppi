@@ -311,7 +311,7 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=400):
     #     color = (255, 0, 0) if holder['is_empty'] else (0, 255, 0)  # Blue for empty, green for not empty
     #     cv2.drawContours(image, [holder['contour']], -1, color, 3)  # Draw each holder's contour with different color
 
-    cv2.imwrite('image_with_all_holders.jpg', image)
+    # cv2.imwrite('image_with_all_holders.jpg', image)
 
     return holders_info
 
