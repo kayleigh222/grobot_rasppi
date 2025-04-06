@@ -86,7 +86,7 @@ while(distance_from_bottom_of_holder_to_target > DISTANCE_BETWEEN_HOLDERS_TO_SLI
 
 print("Finished moving top holder on right conveyor up close enough to slide tray across.")
 
-# --------- MOVE HOLDER ON LEFT CONVEYOR TO ALIGN WITH TOP HOLDER ON RIGHT CONVEYOR -----------
+# --------- FIND DESIRED POSITION FOR LEFT HOLDER -----------
 
 #take new image
 os.system(f"rpicam-still --output {image_path} --nopreview") 
@@ -100,51 +100,51 @@ right_edge_left = get_right_edge_of_holder(top_holder_left['contour'], image)
 
 target_x_value = left_edge_right[0][0]
 
-#draw the edges on image
+# visualize positions on image
 cv2.line(image, (target_x_value, 0), (target_x_value, image.shape[0]), (0, 255, 0), 2)  # Green line
 cv2.line(image, right_edge_left[0], right_edge_left[1], (0, 0, 255), 3)  # Red line
-
-print('Right edge of left holder: ', right_edge_left)
-
-# draw a dot to mark bottom of left holder
-cv2.circle(image, right_edge_left[0], 5, (0, 255, 0), -1)
+cv2.circle(image, right_edge_left[0], 5, (0, 255, 0), -1) # draw a dot to mark bottom of left holder
+cv2.imwrite("image_before_move_left_holder.jpg", image)
 
 distance_between_holders = target_x_value - right_edge_left[0][0]
 
-cv2.imwrite("image_with_holder_edges.jpg", image)
+print('Right edge of left holder: ', right_edge_left)
 print("Distance between holders: ", distance_between_holders)
 
+# ------ USE PID CONTROL TO MOVE LEFT HOLDER TO ALIGN WITH RIGHT HOLDER -----------
 while(abs(distance_between_holders) > DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS):
-    steps_to_take = int(pid_control(distance_between_holders))
+    steps_to_take = int(pid_control(distance_between_holders, Kp=(1/calibration_variables[LEFT_CONVEYOR_SPEED])))
     if(steps_to_take == 0):
         print("No steps to take")
         break
     print("Steps to take: ", steps_to_take)
+
+    # move conveyor
     set_up_left_conveyor()
     move_left_conveyor(steps_to_take)
     clean_up_left_conveyor()
 
     #take new image
-    os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
-    image = cv2.imread(image_path) # read the captured image with opencv
+    os.system(f"rpicam-still --output {image_path} --nopreview") 
+    image = cv2.imread(image_path)
 
+    # find new left holder position
     top_holder_left = top_holder_left_conveyor(image, conveyor_threshold)
     right_edge_left = get_right_edge_of_holder(top_holder_left['contour'], image)
 
-    #draw the edges on image
+    # visualize on image
     cv2.line(image, (target_x_value, 0), (target_x_value, image.shape[0]), (0, 255, 0), 2)  # Green line
     cv2.line(image, right_edge_left[0], right_edge_left[1], (0, 0, 255), 3)  # Red line
+    cv2.circle(image, right_edge_left[0], 5, (0, 255, 0), -1) # draw a circle to mark bottom of left holder
 
-    #draw a circle to mark bottom of left holder
-    cv2.circle(image, right_edge_left[0], 5, (0, 255, 0), -1)
+    cv2.imwrite("image_before_move_left_holder.jpg", image)
 
     distance_between_holders = target_x_value - right_edge_left[0][0]
-    cv2.imwrite("image_with_holder_edges.jpg", image)
     print("Distance between holders: ", distance_between_holders)
 
 print('finished moving holders together')
 
-# step 5: rotate top conveyor to push tray right to left
+# ------- ROTATE TOP CONVEYOR TO SLIDE TRAY ACROSS -----------
 set_up_top_conveyor()
 additional_distance_to_push_tray_across_threshold = (conveyors_right - conveyors_left) // 8 # move an extra quarter of a conveyor across threshold
 top_conveyor_leg_x, top_conveyor_leg_y = find_leg_top_conveyor(image)
@@ -159,21 +159,20 @@ while(abs(distance_from_target) > DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS):
     step_top_conveyor_forward(steps_to_take)
 
     #take new image
-    os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
-    image = cv2.imread(image_path) # read the captured image with opencv
+    os.system(f"rpicam-still --output {image_path} --nopreview") 
+    image = cv2.imread(image_path) 
 
+    # find new position of top conveyor leg
     top_conveyor_leg_x, top_conveyor_leg_y = find_leg_top_conveyor(image)
-
     distance_from_target = top_conveyor_leg_y - (conveyor_threshold - additional_distance_to_push_tray_across_threshold)
 
     print("Distance between from top conveyor target: ", distance_from_target)
 
 print('finished moving top conveyor to target')
 
-# step 7: return top conveyor to right side
-conveyors_left, conveyors_right = find_left_and_right_of_conveyors(image)
+# --------- MOVE TOP CONVEYOR LEG OUT OF THE WAY OF CONVEYORS ----------- # TODO: do this with PID control
 top_conveyor_leg_x, top_conveyor_leg_y = find_leg_top_conveyor(image)
-target_location = conveyors_right + additional_distance_to_push_tray_across_threshold
+target_location = conveyors_right + additional_distance_to_push_tray_across_threshold # TODO - this is sus?
 while(top_conveyor_leg_y < target_location):
     steps_to_take = int((target_location - top_conveyor_leg_y) // calibration_variables[TOP_CONVEYOR_SPEED_BACKWARD])
     if(steps_to_take == 0):
