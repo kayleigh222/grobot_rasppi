@@ -54,7 +54,7 @@ bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyo
 distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
 
 # ------ USE PID CONTROL TO MOVE TOP HOLDER ON RIGHT CONVEYOR UP CLOSE ENOUGH TO SLIDE TRAY ACROSS -----------
-while(distance_from_bottom_of_holder_to_target > DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS):
+while(distance_from_bottom_of_holder_to_target > 25):
     print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
 
     # Draw a vertical line at the target location
