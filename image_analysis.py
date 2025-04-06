@@ -286,7 +286,7 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=400):
         barcode_close = False
 
         # draw a circle representing the max distance between a holder center and its barcode
-        cv2.circle(image, near_barcode, max_dist_between_holder_center_and_barcode, (0, 0, 255), 2)
+        # cv2.circle(image, near_barcode, max_dist_between_holder_center_and_barcode, (0, 0, 255), 2)
 
         for barcode in barcode_info:
             # Compute Euclidean distance to barcode
