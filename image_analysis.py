@@ -248,7 +248,10 @@ def holders_divided_into_conveyors(image, conveyor_threshold):
     # Save the image with the drawn contours
     # cv2.imwrite('image_with_divided_conveyors.jpg', image)
 
-    print('divdied holders into left and right')
+    print('divided holders into left and right')
+
+    print('left conveyor holders: ', left_conveyor_holders)
+    print('right conveyor holders: ', right_conveyor_holders)
 
     return left_conveyor_holders, right_conveyor_holders    
 
