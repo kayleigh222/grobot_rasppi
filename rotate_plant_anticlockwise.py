@@ -53,6 +53,14 @@ bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_with_
 bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyor[0][0]
 distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
 
+# Draw a vertical line at the target location
+cv2.line(image, (target_location_for_top_tray, 0), (target_location_for_top_tray, image.shape[0]), (0, 255, 0), 2)  # Green line
+# Draw a vertical line at bottom of top_barcode_right_conveyor
+cv2.line(image, (int(bottom_of_top_holder_right_conveyor_x_coord), 0), (int(bottom_of_top_holder_right_conveyor_x_coord), image.shape[0]), (0, 0, 255), 2)  # Red line
+cv2.imwrite("before_move_right_holder_to_top.jpg", image)
+
+print("Moving right conveyor up close enough to slide tray across.")
+
 # ------ USE PID CONTROL TO MOVE TOP HOLDER ON RIGHT CONVEYOR UP CLOSE ENOUGH TO SLIDE TRAY ACROSS -----------
 while(distance_from_bottom_of_holder_to_target > 25): # TODO: base target location on end of top conveyor leg for better relability
     print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
@@ -64,7 +72,7 @@ while(distance_from_bottom_of_holder_to_target > 25): # TODO: base target locati
     cv2.line(image, (int(bottom_of_top_holder_right_conveyor_x_coord), 0), (int(bottom_of_top_holder_right_conveyor_x_coord), image.shape[0]), (0, 0, 255), 2)  # Red line
 
     # Save the image
-    cv2.imwrite("before_move_right_holder_to_top.png", image)
+    cv2.imwrite("before_move_right_holder_to_top.jpg", image)
 
     # move conveyor
     steps_to_take = int(pid_control(distance_from_bottom_of_holder_to_target, Kp=(1/calibration_variables[RIGHT_CONVEYOR_SPEED])))
