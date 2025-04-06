@@ -48,7 +48,7 @@ conveyor_height = top_conveyor - bottom_conveyor
 target_location_for_top_tray = top_conveyor - (conveyor_height // 8.5)
 
 # ----------- FIND TOP HOLDER ON RIGHT CONVEYOR ------------------
-top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(image, conveyor_threshold)
+top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
 bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_with_barcode_on_right_conveyor['contour'], image)
 bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyor[0][0]
 distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
@@ -77,7 +77,7 @@ while(distance_from_bottom_of_holder_to_target > 25): # TODO: base target locati
     image = cv2.imread(image_path)
 
     # find new position of top holder
-    top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(image, conveyor_threshold)
+    top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
     bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_with_barcode_on_right_conveyor['contour'], image)
     bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyor[0][0]
 
@@ -93,8 +93,8 @@ os.system(f"rpicam-still --output {image_path} --nopreview")
 image = cv2.imread(image_path) 
 
 # get bounding edges (next to each other) of each holder
-top_holder_right = top_holder_right_conveyor(image, conveyor_threshold)
-top_holder_left = top_holder_left_conveyor(image, conveyor_threshold)
+top_holder_right = top_holder_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
+top_holder_left = top_holder_left_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
 left_edge_right = get_left_edge_of_holder(top_holder_right['contour'], image)
 right_edge_left = get_right_edge_of_holder(top_holder_left['contour'], image)
 
@@ -129,7 +129,7 @@ while(abs(distance_between_holders) > DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS):
     image = cv2.imread(image_path)
 
     # find new left holder position
-    top_holder_left = top_holder_left_conveyor(image, conveyor_threshold)
+    top_holder_left = top_holder_left_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
     right_edge_left = get_right_edge_of_holder(top_holder_left['contour'], image)
 
     # visualize on image
@@ -187,7 +187,7 @@ clean_up_top_conveyor()
 print("Was top barcode on right ", top_holder_with_barcode_on_right_conveyor) # TODO: get data from this e.g. plant 4
 os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
 image = cv2.imread(image_path) # read the captured image with opencv
-new_top_barcode_left_conveyor = get_top_barcode_left_conveyor(image, conveyor_threshold) # TODO: get data from this e.g. plant 4
+new_top_barcode_left_conveyor = get_top_barcode_left_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right) # TODO: get data from this e.g. plant 4
 print("New top barcode on left ", new_top_barcode_left_conveyor) # TODO: get data from this e.g. plant 4
 if(new_top_barcode_left_conveyor[0] == top_holder_with_barcode_on_right_conveyor[0]): # TODO - change indexing here so actually get right data?
     print("Tray moved successfully")

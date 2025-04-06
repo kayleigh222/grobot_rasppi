@@ -18,9 +18,6 @@ LEG_COLOR_UPPER_THRESHOLD_HSV = np.array([90, 255, 255])  # Upper bound of green
 MIN_HOLDER_AREA = 25000 
 MIN_LEG_AREA = 8000
 
-# max distance between a holder center and its barcode
-MAX_DISTANCE_BETWEEN_HOLDER_CENTER_AND_BARCODE = 400
-
 NUM_BARCODES = 1  # Number of barcodes to on conveyors total
 
 # ----------- PUSH LEG LOCATIONS -------------
@@ -165,9 +162,9 @@ def get_bottom_edge_of_holder(holder_contour, image):
     return bottom_edge
 
 #conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
-def top_holder_left_conveyor(image, conveyor_threshold):
+def top_holder_left_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right):
     print('finding top holder left conveyor')
-    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors(image, conveyor_threshold)
+    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors(image, conveyor_threshold, conveyors_left, conveyors_right)
     # Check if there are any barcodes in the right conveyor
     if left_conveyor_holders:
         # Find the barcode with the maximum x-coordinate in the right conveyor
@@ -180,8 +177,8 @@ def top_holder_left_conveyor(image, conveyor_threshold):
     return top_holder_left_conveyor
 
 #conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
-def top_holder_right_conveyor(image, conveyor_threshold):
-    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors(image, conveyor_threshold)
+def top_holder_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right):
+    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors(image, conveyor_threshold, conveyors_left, conveyors_right)
     # Check if there are any barcodes in the right conveyor
     if right_conveyor_holders:
         # Find the barcode with the maximum x-coordinate in the right conveyor
@@ -193,8 +190,8 @@ def top_holder_right_conveyor(image, conveyor_threshold):
     print("Top holder right conveyor empty:", top_holder_right_conveyor['is_empty'])
     return top_holder_right_conveyor
 
-def top_holder_with_barcode_right_conveyor(image, conveyor_threshold):
-    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors(image, conveyor_threshold)
+def top_holder_with_barcode_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right):
+    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors(image, conveyor_threshold, conveyors_left, conveyors_right)
     top_holder_with_barcode = None
     # Check if there are any barcodes in the right conveyor
     while(top_holder_with_barcode == None):
@@ -217,10 +214,9 @@ def top_holder_with_barcode_right_conveyor(image, conveyor_threshold):
     return top_holder_right_conveyor
 
 # conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
-def holders_divided_into_conveyors(image, conveyor_threshold):  
-    print('finding holders divided into conveyors')  
-    holders = find_holders(image)  # Get empty holder contours
-    print('found holders')
+def holders_divided_into_conveyors(image, conveyor_threshold, conveyors_left, conveyors_right):  
+    max_distance_between_holder_centre_and_barcode = (conveyors_right - conveyors_left) // 4 # half the width of a conveyor - max distance between centre of holder and barcode to be able to slide across is  
+    holders = find_holders(image, max_distance_between_holder_centre_and_barcode)  # Get empty holder contours
 
     # Initialize the lists for left and right conveyor barcodes
     left_conveyor_holders = []
@@ -256,7 +252,7 @@ def holders_divided_into_conveyors(image, conveyor_threshold):
     return left_conveyor_holders, right_conveyor_holders    
 
 # Finds all holders, returns the contours and empty status
-def find_holders(image):
+def find_holders(image, max_dist_between_holder_center_and_barcode=400):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)  # Convert the image to HSV color space to detect color easier
     # Create mask
     mask1 = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
