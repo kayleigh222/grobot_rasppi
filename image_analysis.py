@@ -43,7 +43,7 @@ def find_leg_top_conveyor(image):
     leg_contour = max(leg_contours, key=lambda cnt: cv2.boundingRect(cnt)[0])
     x, y, w, h = cv2.boundingRect(leg_contour)  # Get bounding box of the leg 
 
-    return x, y # return the top left corner of the leg contour
+    return x, y, w, h # return the bounding box of the leg contour
 
 
 # ----------- CONVEYOR LOCATIONS -------------

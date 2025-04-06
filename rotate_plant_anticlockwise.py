@@ -45,7 +45,9 @@ calibration_variables = load_variables()
 conveyor_threshold, conveyors_left, conveyors_right = get_conveyor_threshold(image) # find threshold between left and right conveyor
 top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
 conveyor_height = top_conveyor - bottom_conveyor
-target_location_for_top_tray = int(top_conveyor - (conveyor_height // 8.3))
+# target_location_for_top_tray = int(top_conveyor - (conveyor_height // 8.3))
+top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y, top_conveyor_leg_bounding_box_width, top_conveyor_leg_bounding_box_height = find_leg_top_conveyor(image)
+target_location_for_top_tray = int(top_conveyor_leg_top_left_x-top_conveyor_leg_bounding_box_width) 
 
 # ----------- FIND TOP HOLDER ON RIGHT CONVEYOR ------------------
 top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
@@ -155,8 +157,7 @@ print('finished moving holders together')
 # ------- ROTATE TOP CONVEYOR TO SLIDE TRAY ACROSS -----------
 set_up_top_conveyor()
 additional_distance_to_push_tray_across_threshold = (conveyors_right - conveyors_left) // 8 # move an extra quarter of a conveyor across threshold
-top_conveyor_leg_x, top_conveyor_leg_y = find_leg_top_conveyor(image)
-distance_from_target = top_conveyor_leg_y - (conveyor_threshold - additional_distance_to_push_tray_across_threshold)
+distance_from_target = top_conveyor_leg_top_left_y - (conveyor_threshold - additional_distance_to_push_tray_across_threshold)
 
 while(abs(distance_from_target) > DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS):
     steps_to_take = int(pid_control(distance_from_target, Kp=(1/calibration_variables[TOP_CONVEYOR_SPEED_FORWARD])))
@@ -171,18 +172,18 @@ while(abs(distance_from_target) > DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS):
     image = cv2.imread(image_path) 
 
     # find new position of top conveyor leg
-    top_conveyor_leg_x, top_conveyor_leg_y = find_leg_top_conveyor(image)
-    distance_from_target = top_conveyor_leg_y - (conveyor_threshold - additional_distance_to_push_tray_across_threshold)
+    top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y = find_leg_top_conveyor(image)
+    distance_from_target = top_conveyor_leg_top_left_y - (conveyor_threshold - additional_distance_to_push_tray_across_threshold)
 
     print("Distance between from top conveyor target: ", distance_from_target)
 
 print('finished moving top conveyor to target')
 
 # --------- MOVE TOP CONVEYOR LEG OUT OF THE WAY OF CONVEYORS ----------- # TODO: do this with PID control
-top_conveyor_leg_x, top_conveyor_leg_y = find_leg_top_conveyor(image)
+top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y = find_leg_top_conveyor(image)
 target_location = conveyors_right + additional_distance_to_push_tray_across_threshold # TODO - this is sus?
-while(top_conveyor_leg_y < target_location):
-    steps_to_take = int((target_location - top_conveyor_leg_y) // calibration_variables[TOP_CONVEYOR_SPEED_BACKWARD])
+while(top_conveyor_leg_top_left_y < target_location):
+    steps_to_take = int((target_location - top_conveyor_leg_top_left_y) // calibration_variables[TOP_CONVEYOR_SPEED_BACKWARD])
     if(steps_to_take == 0):
         print("No steps to take")
         break
