@@ -46,7 +46,7 @@ conveyor_threshold, conveyors_left, conveyors_right = get_conveyor_threshold(ima
 top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
 conveyor_height = top_conveyor - bottom_conveyor
 # target_location_for_top_tray = int(top_conveyor - (conveyor_height // 8.3))
-top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y, top_conveyor_leg_bounding_box_width, top_conveyor_leg_bounding_box_height = find_leg_top_conveyor(image)
+top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y  = find_leg_top_conveyor(image)
 target_location_for_top_tray = int(top_conveyor_leg_top_left_x) 
 
 # ----------- FIND TOP HOLDER ON RIGHT CONVEYOR ------------------
