@@ -31,8 +31,8 @@ def find_leg_top_conveyor(image):
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 
     # take only the biggest contour
-    leg_contour = sorted(contours, key=cv2.contourArea, reverse=True)[:1]  # Get the largest contour
-
+    leg_contour = max(contours, key=cv2.contourArea)
+    
     # Filter contours based on size
     # leg_contours = [cnt for cnt in contours if cv2.contourArea(cnt) > MIN_LEG_AREA]
     # draw the contours on the image
