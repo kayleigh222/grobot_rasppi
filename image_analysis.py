@@ -44,7 +44,7 @@ def find_leg_top_conveyor(image):
     x, y, w, h = cv2.boundingRect(leg_contour)  # Get bounding box of the leg 
 
     # put a dot at x, y
-    cv2.circle(image, (x, y), radius=3, color=(0, 0, 255), thickness=-1)  # Red filled dot at top left of top conveyor
+    cv2.circle(image, (x, y), radius=10, color=(0, 0, 255), thickness=-1)  # Red filled dot at top left of top conveyor
     # draw bounding box
     cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Green rectangle
     cv2.imwrite('image_with_leg_contours.jpg', image)
