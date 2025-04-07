@@ -32,7 +32,7 @@ def find_leg_top_conveyor(image):
 
     # take only the biggest contour
     leg_contour = max(contours, key=cv2.contourArea)
-    
+
     # Filter contours based on size
     # leg_contours = [cnt for cnt in contours if cv2.contourArea(cnt) > MIN_LEG_AREA]
     # draw the contours on the image
@@ -43,12 +43,6 @@ def find_leg_top_conveyor(image):
     # get the leg contour with the highest x value
     # leg_contour = max(leg_contours, key=lambda cnt: cv2.boundingRect(cnt)[0])
     x, y, w, h = cv2.boundingRect(leg_contour)  # Get bounding box of the leg 
-
-    # put a dot at x, y
-    cv2.circle(image, (x, y), radius=10, color=(0, 0, 255), thickness=-1)  # Red filled dot at top left of top conveyor
-    # draw bounding box
-    cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Green rectangle
-    cv2.imwrite('image_with_leg_contours.jpg', image)
 
     return x, y, w, h # return the bounding box of the leg contour
 
