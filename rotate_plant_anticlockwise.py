@@ -64,7 +64,7 @@ cv2.imwrite("before_move_right_holder_to_top.jpg", image)
 print("Moving right conveyor up close enough to slide tray across.")
 
 # ------ USE PID CONTROL TO MOVE TOP HOLDER ON RIGHT CONVEYOR UP CLOSE ENOUGH TO SLIDE TRAY ACROSS -----------
-while(distance_from_bottom_of_holder_to_target > 25): # TODO: base target location on end of top conveyor leg for better relability
+while(distance_from_bottom_of_holder_to_target > 60): # TODO: base target location on end of top conveyor leg for better relability
     print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
 
     # Draw a vertical line at the target location
