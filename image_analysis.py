@@ -16,7 +16,7 @@ LEG_COLOR_UPPER_THRESHOLD_HSV = np.array([90, 255, 255])  # Upper bound of green
 
 # Define a minimum area threshold for contours to be considered a contour
 MIN_HOLDER_AREA = 25000 
-MIN_LEG_AREA = 4000
+MIN_LEG_AREA = 4500
 
 NUM_BARCODES = 1  # Number of barcodes to on conveyors total
 
