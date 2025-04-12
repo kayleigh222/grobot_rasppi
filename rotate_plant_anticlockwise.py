@@ -183,7 +183,7 @@ print('finished moving top conveyor to target')
 top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y = find_leg_top_conveyor(image)
 target_location = conveyors_right + additional_distance_to_push_tray_across_threshold # TODO - this is sus?
 while(top_conveyor_leg_top_left_y < target_location):
-    steps_to_take = int((target_location - top_conveyor_leg_top_left_y) // calibration_variables[TOP_CONVEYOR_SPEED_BACKWARD])
+    steps_to_take = abs(int((target_location - top_conveyor_leg_top_left_y) // calibration_variables[TOP_CONVEYOR_SPEED_BACKWARD]))
     if(steps_to_take == 0):
         print("No steps to take")
         break
