@@ -6,7 +6,7 @@ from top_conveyor_motor_code import clean_up_top_conveyor, set_up_top_conveyor, 
 from vertical_conveyor_left_motor_code import move_left_conveyor, set_up_left_conveyor, clean_up_left_conveyor
 from vertical_conveyor_right_motor_code import move_right_conveyor, set_up_right_conveyor, clean_up_right_conveyor
 
-DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS = 15 # pixels - max vertical distance between holders to be able to slide across
+DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS = 30 # pixels - max vertical distance between holders to be able to slide across
 
 # variables for PID control - used to move conveyor to align holders before sliding tray across
 previous_error = 0
@@ -116,14 +116,14 @@ cv2.line(image, right_edge_left[0], right_edge_left[1], (0, 0, 255), 3)  # Red l
 cv2.circle(image, right_edge_left[0], 5, (0, 255, 0), -1) # draw a dot to mark bottom of left holder
 cv2.imwrite("image_before_move_left_holder.jpg", image)
 
-distance_between_holders = target_x_value - right_edge_left[0][0]
+distance_below_target = target_x_value - right_edge_left[0][0]
 
 print('Right edge of left holder: ', right_edge_left)
-print("Distance between holders: ", distance_between_holders)
+print("Distance between holders: ", distance_below_target)
 
 # ------ USE PID CONTROL TO MOVE LEFT HOLDER TO ALIGN WITH RIGHT HOLDER -----------
-while(abs(distance_between_holders) > DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS):
-    steps_to_take = int(pid_control(distance_between_holders, Kp=(1/calibration_variables[LEFT_CONVEYOR_SPEED])))
+while(distance_below_target > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS or distance_below_target < 0):
+    steps_to_take = int(pid_control(distance_below_target, Kp=(1/calibration_variables[LEFT_CONVEYOR_SPEED])))
     if(steps_to_take == 0):
         print("No steps to take")
         break
@@ -149,8 +149,8 @@ while(abs(distance_between_holders) > DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS):
 
     cv2.imwrite("image_before_move_left_holder.jpg", image)
 
-    distance_between_holders = target_x_value - right_edge_left[0][0]
-    print("Distance between holders: ", distance_between_holders)
+    distance_below_target = target_x_value - right_edge_left[0][0]
+    print("Distance between holders: ", distance_below_target)
 
 print('finished moving holders together')
 
@@ -159,7 +159,7 @@ set_up_top_conveyor()
 additional_distance_to_push_tray_across_threshold = (conveyors_right - conveyors_left) // 8 # move an extra quarter of a conveyor across threshold
 distance_from_target = top_conveyor_leg_top_left_y - (conveyor_threshold - additional_distance_to_push_tray_across_threshold)
 
-while(abs(distance_from_target) > DISTANCE_BETWEEN_HOLDERS_TO_SLIDE_ACROSS):
+while(abs(distance_from_target) > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS):
     steps_to_take = int(pid_control(distance_from_target, Kp=(1/calibration_variables[TOP_CONVEYOR_SPEED_FORWARD])))
     if(steps_to_take == 0):
         print("No steps to take")
