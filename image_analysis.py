@@ -18,7 +18,8 @@ LEG_COLOR_UPPER_THRESHOLD_HSV = np.array([90, 255, 255])  # Upper bound of green
 MIN_HOLDER_AREA = 50000 
 MIN_LEG_AREA = 4500
 
-NUM_BARCODES = 1  # Number of barcodes to on conveyors total
+NUM_QRCODES = 1  # Set this to however many QR codes you expect
+# NUM_BARCODES = 1  # Number of barcodes to on conveyors total
 
 # ----------- PUSH LEG LOCATIONS -------------
 def find_leg_top_conveyor(image):
@@ -270,7 +271,7 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=400):
     print(f"Number of holder contours found: {len(holder_contours)}")
 
     # Find barcodes in the image
-    barcode_info = find_barcodes(image)
+    barcode_info = find_qrcodes(image)
 
     # List to store information about the holders
     holders_info = []
@@ -347,7 +348,7 @@ def get_top_barcode_left_conveyor(image, conveyor_threshold):
 
 def barcodes_divided_into_conveyors(image, conveyor_threshold):
     
-    barcode_info = find_barcodes(image)  # Get barcode center coordinates
+    barcode_info = find_qrcodes(image)  # Get barcode center coordinates
     if not barcode_info:
         return [], []  # No barcodes found
 
@@ -363,59 +364,110 @@ def barcodes_divided_into_conveyors(image, conveyor_threshold):
         else:
             right_conveyor_barcodes.append(barcode)  # Barcode is below the threshold (right conveyor)
 
-    return left_conveyor_barcodes, right_conveyor_barcodes    
+    return left_conveyor_barcodes, right_conveyor_barcodes   
 
-def find_barcodes(image):
-     """
-    Detects barcodes in an image, retries capturing a new image if the expected number of barcodes is not found, 
-    and returns their center coordinates along with the decoded barcode data.
+def find_qrcodes(image):
+    """
+    Detects QR codes in an image, retries capturing a new image if the expected number of QR codes is not found, 
+    and returns their center coordinates along with the decoded QR code data.
 
     Parameters:
-        image (numpy.ndarray): The input image in which barcodes need to be detected.
+        image (numpy.ndarray): The input image in which QR codes need to be detected.
 
     Returns:
         list of tuples: A list where each tuple contains:
-            - center (tuple): The (x, y) coordinates of the barcode's center.
-            - data (str): The decoded data from the barcode.
-
-    Example Output:
-        (["Plant 4", (150.5, 200.0)), ("Plant 1", (300.0, 450.0))]
+            - data (str): The decoded data from the QR code.
+            - center (tuple): The (x, y) coordinates of the QR code's center.
     """
-     num_barcodes_found = 0
-     cv2.imwrite('image_to_detect_barcodes.jpg', image) # save the image to detect barcodes
-     while(num_barcodes_found < NUM_BARCODES):
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        equalized = cv2.equalizeHist(gray)
-        barcodes = decode(equalized) # detect barcodes
-        num_barcodes_found = len(barcodes)
-        if num_barcodes_found < NUM_BARCODES:
-            print("Barcodes: ", barcodes)
-            print(f"Found {num_barcodes_found} barcodes, expected {NUM_BARCODES}, retrying...")
-            image_path = 'retrying_image_to_detect_all_barcodes'
-            os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
-            image = cv2.imread(image_path) # read the captured image with opencv
+    detector = cv2.QRCodeDetector()
+    num_qrcodes_found = 0
+    qrcode_info = []
+
+    cv2.imwrite('image_to_detect_qrcodes.jpg', image)
+
+    while num_qrcodes_found < NUM_QRCODES:
+        # Detect and decode multiple QR codes
+        retval, decoded_infos, points, _ = detector.detectAndDecodeMulti(image)
+
+        if retval and decoded_infos:
+            qrcode_info = []
+            num_qrcodes_found = sum(1 for info in decoded_infos if info)  # filter out empty ones
+
+            for i, data in enumerate(decoded_infos):
+                if not data:  # Skip undetected data slots
+                    continue
+
+                # Get bounding box and compute center
+                pts = points[i]
+                centre_x = np.mean(pts[:, 0])
+                centre_y = np.mean(pts[:, 1])
+
+                qrcode_info.append((data, (centre_x, centre_y)))
+
+                # IF DEBUGGING
+                print(f"QR Code Data: {data}")
+                print(f"QR Code Center: ({centre_x:.1f}, {centre_y:.1f})")
+
+        if num_qrcodes_found < NUM_QRCODES:
+            print(f"Found {num_qrcodes_found} QR codes, expected {NUM_QRCODES}, retrying...")
+            image_path = 'retrying_image_to_detect_all_qrcodes.jpg'
+            os.system(f"rpicam-still --output {image_path} --nopreview")  # Take another photo
+            image = cv2.imread(image_path)
+
+    print("Correct number of QR codes found.")
+    return qrcode_info 
+
+# def find_barcodes(image):
+#      """
+#     Detects barcodes in an image, retries capturing a new image if the expected number of barcodes is not found, 
+#     and returns their center coordinates along with the decoded barcode data.
+
+#     Parameters:
+#         image (numpy.ndarray): The input image in which barcodes need to be detected.
+
+#     Returns:
+#         list of tuples: A list where each tuple contains:
+#             - center (tuple): The (x, y) coordinates of the barcode's center.
+#             - data (str): The decoded data from the barcode.
+
+#     Example Output:
+#         (["Plant 4", (150.5, 200.0)), ("Plant 1", (300.0, 450.0))]
+#     """
+#      num_barcodes_found = 0
+#      cv2.imwrite('image_to_detect_barcodes.jpg', image) # save the image to detect barcodes
+#      while(num_barcodes_found < NUM_BARCODES):
+#         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+#         equalized = cv2.equalizeHist(gray)
+#         barcodes = decode(equalized) # detect barcodes
+#         num_barcodes_found = len(barcodes)
+#         if num_barcodes_found < NUM_BARCODES:
+#             print("Barcodes: ", barcodes)
+#             print(f"Found {num_barcodes_found} barcodes, expected {NUM_BARCODES}, retrying...")
+#             image_path = 'retrying_image_to_detect_all_barcodes'
+#             os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
+#             image = cv2.imread(image_path) # read the captured image with opencv
             
-     print("Correct number of barcodes found: ", barcodes)
-     barcode_info = []  # List to store center coordinates
+#      print("Correct number of barcodes found: ", barcodes)
+#      barcode_info = []  # List to store center coordinates
 
-    # loop through each detected barcode
-     for barcode in barcodes:
-        # Get the rectangle around the barcode
-        x, y, w, h = barcode.rect
-        centre_x = x + w/2
-        centre_y = y + h/2
+#     # loop through each detected barcode
+#      for barcode in barcodes:
+#         # Get the rectangle around the barcode
+#         x, y, w, h = barcode.rect
+#         centre_x = x + w/2
+#         centre_y = y + h/2
 
-        barcode_data = barcode.data.decode('utf-8')  # Decode barcode data
+#         barcode_data = barcode.data.decode('utf-8')  # Decode barcode data
 
-        barcode_info.append((barcode_data, (centre_x, centre_y)))  # Store center and data as a tuple
+#         barcode_info.append((barcode_data, (centre_x, centre_y)))  # Store center and data as a tuple
 
-        # IF WANT TO VISUALISE:
-        # cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)  # Red rectangle
-        # cv2.circle(image, (int(centre_x), int(centre_y)), radius=3, color=(0, 0, 255), thickness=-1)  # Red filled dot at centre of barcode
-        # cv2.imwrite('captured_image_with_barcodes.jpg', image)
+#         # IF WANT TO VISUALISE:
+#         # cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)  # Red rectangle
+#         # cv2.circle(image, (int(centre_x), int(centre_y)), radius=3, color=(0, 0, 255), thickness=-1)  # Red filled dot at centre of barcode
+#         # cv2.imwrite('captured_image_with_barcodes.jpg', image)
     
-        # IF DEBUGGING:
-        print(f"Barcode Location: (x: {x}, y: {y}, width: {w}, height: {h})")
-        print(f"Barcode Data: {barcode.data.decode('utf-8')}")
+#         # IF DEBUGGING:
+#         print(f"Barcode Location: (x: {x}, y: {y}, width: {w}, height: {h})")
+#         print(f"Barcode Data: {barcode.data.decode('utf-8')}")
     
-     return barcode_info  # Return the list of center coordinates
+#      return barcode_info  # Return the list of center coordinates
