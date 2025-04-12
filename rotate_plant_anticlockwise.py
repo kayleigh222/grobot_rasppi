@@ -156,7 +156,7 @@ print('finished moving holders together')
 
 # ------- ROTATE TOP CONVEYOR TO SLIDE TRAY ACROSS -----------
 set_up_top_conveyor()
-additional_distance_to_push_tray_across_threshold = (conveyors_right - conveyors_left) // 12 # move an extra quarter of a conveyor across threshold
+additional_distance_to_push_tray_across_threshold = (conveyors_right - conveyors_left) // 20 # move an extra quarter of a conveyor across threshold
 distance_from_target = top_conveyor_leg_top_left_y - (conveyor_threshold - additional_distance_to_push_tray_across_threshold)
 
 while(abs(distance_from_target) > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS):
