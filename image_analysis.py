@@ -368,54 +368,51 @@ def barcodes_divided_into_conveyors(image, conveyor_threshold):
 
 def find_qrcodes(image):
     """
-    Detects QR codes in an image, retries capturing a new image if the expected number of QR codes is not found, 
-    and returns their center coordinates along with the decoded QR code data.
+    Detects QR codes in an image using pyzbar, retries capturing a new image if the expected number of QR codes 
+    is not found, and returns their center coordinates along with the decoded QR code data.
 
     Parameters:
         image (numpy.ndarray): The input image in which QR codes need to be detected.
 
     Returns:
-        list of tuples: A list where each tuple contains:
+        list of tuples: Each tuple contains:
             - data (str): The decoded data from the QR code.
             - center (tuple): The (x, y) coordinates of the QR code's center.
     """
-    detector = cv2.QRCodeDetector()
     num_qrcodes_found = 0
     qrcode_info = []
 
     cv2.imwrite('image_to_detect_qrcodes.jpg', image)
 
     while num_qrcodes_found < NUM_QRCODES:
-        # Detect and decode multiple QR codes
-        retval, decoded_infos, points, _ = detector.detectAndDecodeMulti(image)
+        pil_image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+        detected_qrcodes = decode(pil_image)
 
-        if retval and decoded_infos:
-            qrcode_info = []
-            num_qrcodes_found = sum(1 for info in decoded_infos if info)  # filter out empty ones
+        num_qrcodes_found = len(detected_qrcodes)
+        qrcode_info = []
 
-            for i, data in enumerate(decoded_infos):
-                if not data:  # Skip undetected data slots
-                    continue
+        for qr in detected_qrcodes:
+            data = qr.data.decode("utf-8")
 
-                # Get bounding box and compute center
-                pts = points[i]
-                centre_x = np.mean(pts[:, 0])
-                centre_y = np.mean(pts[:, 1])
+            # Get bounding box
+            x, y, w, h = qr.rect
+            centre_x = x + w / 2
+            centre_y = y + h / 2
 
-                qrcode_info.append((data, (centre_x, centre_y)))
+            qrcode_info.append((data, (centre_x, centre_y)))
 
-                # IF DEBUGGING
-                print(f"QR Code Data: {data}")
-                print(f"QR Code Center: ({centre_x:.1f}, {centre_y:.1f})")
+            # Debug
+            print(f"QR Code Data: {data}")
+            print(f"QR Code Center: ({centre_x:.1f}, {centre_y:.1f})")
 
         if num_qrcodes_found < NUM_QRCODES:
             print(f"Found {num_qrcodes_found} QR codes, expected {NUM_QRCODES}, retrying...")
             image_path = 'retrying_image_to_detect_all_qrcodes.jpg'
-            os.system(f"rpicam-still --output {image_path} --nopreview")  # Take another photo
+            os.system(f"rpicam-still --output {image_path} --nopreview")
             image = cv2.imread(image_path)
 
     print("Correct number of QR codes found.")
-    return qrcode_info 
+    return qrcode_info
 
 # def find_barcodes(image):
 #      """
