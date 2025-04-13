@@ -47,7 +47,7 @@ top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
 conveyor_height = top_conveyor - bottom_conveyor
 # target_location_for_top_tray = int(top_conveyor - (conveyor_height // 8.3))
 top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y  = find_leg_top_conveyor(image)
-target_location_for_top_tray = int(top_conveyor_leg_top_left_x) 
+target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 50) # TODO- currently hardcoding this, probably want a better way 
 
 # ----------- FIND TOP HOLDER ON RIGHT CONVEYOR ------------------
 top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
