@@ -146,7 +146,7 @@ cv2.drawContours(image_with_left_contour, [top_holder_left_contour], -1, (255, 2
 right_gray = cv2.cvtColor(image_with_right_contour, cv2.COLOR_BGR2GRAY)
 left_gray = cv2.cvtColor(image_with_left_contour, cv2.COLOR_BGR2GRAY)
 print('converted contours to gray')
-corners_right = cv2.goodFeaturesToTrack(right_gray, maxCorners=16, qualityLevel=0.1, minDistance=10)
+corners_right = cv2.goodFeaturesToTrack(right_gray, maxCorners=16, qualityLevel=0.05, minDistance=10)
 corners_left = cv2.goodFeaturesToTrack(left_gray, maxCorners=8, qualityLevel=0.01, minDistance=20)
 print('got corners')
 # Convert corners to integer values
