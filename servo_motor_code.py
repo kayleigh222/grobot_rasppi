@@ -14,6 +14,7 @@ def set_up_servo(pi):
 def sweep_servo(pi):
     global sweeping  # Reference the global sweeping variable
     print("Starting sweep between 0° and 180°...")
+    print('Sweeping: ', sweeping)
     while sweeping:
         pi.set_servo_pulsewidth(PWM_PIN, 500) # move to 0 degrees
         time.sleep(0.5)  # Delay between moves
