@@ -155,7 +155,7 @@ target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 150) # TODO- cu
 
 # ------- ROTATE TOP CONVEYOR TO SLIDE TRAY ACROSS -----------
 set_up_top_conveyor()
-additional_distance_to_push_tray_across_threshold = 150 # (conveyors_right - conveyors_left) // 20 # move an extra quarter of a conveyor across threshold
+additional_distance_to_push_tray_across_threshold = 100 # (conveyors_right - conveyors_left) // 20 # move an extra quarter of a conveyor across threshold
 distance_from_target = top_conveyor_leg_top_left_y - (conveyor_threshold - additional_distance_to_push_tray_across_threshold)
 # draw a horizontal line at conveyor_threshold
 cv2.line(image, (0, conveyor_threshold), (image.shape[1], conveyor_threshold), (0, 255, 0), 2)  # Green line
