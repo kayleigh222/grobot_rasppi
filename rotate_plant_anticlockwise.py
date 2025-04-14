@@ -133,7 +133,7 @@ holders = find_holders(image)
 holders_divided_into_conveyors = divide_holders_into_conveyors(image, conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
 top_holder_right = top_holder_right_conveyor(holders_divided_into_conveyors) # TODO - this detects all holders twice, make more efficient
 top_holder_left = top_holder_left_conveyor(holders_divided_into_conveyors)
-# image_with_contours = image.copy()
+image_with_contours = image.copy()
 
 print('finding corners for right holder')
 top_holder_right_contour = top_holder_right['contour']
@@ -142,7 +142,7 @@ image_with_right_contour = np.zeros_like(image)
 right_gray = cv2.cvtColor(image_with_right_contour, cv2.COLOR_BGR2GRAY)
 corners_right = cv2.goodFeaturesToTrack(right_gray, maxCorners=16, qualityLevel=0.02, minDistance=10)
 corners_right = np.intp(corners_right)
-# cv2.drawContours(image_with_contours, [top_holder_right_contour], -1, (255, 0, 0), 3) # draw right holder contour in blue
+cv2.drawContours(image_with_contours, [top_holder_right_contour], -1, (255, 0, 0), 3) # draw right holder contour in blue
 
 del top_holder_right_contour
 del image_with_right_contour
@@ -155,28 +155,28 @@ image_with_left_contour = np.zeros_like(image)
 left_gray = cv2.cvtColor(image_with_left_contour, cv2.COLOR_BGR2GRAY)
 corners_left = cv2.goodFeaturesToTrack(left_gray, maxCorners=8, qualityLevel=0.01, minDistance=20)
 corners_left = np.intp(corners_left)
-# cv2.drawContours(image_with_contours, [top_holder_left_contour], -1, (0, 0, 255), 3) # draw left holder contour in red
+cv2.drawContours(image_with_contours, [top_holder_left_contour], -1, (0, 0, 255), 3) # draw left holder contour in red
 
 del top_holder_left_contour
 del image_with_left_contour
 del left_gray
 
-# print('got corners - drawing')
+print('got corners - drawing')
 
-# # Draw the corners on the image
-# for corner in corners_right:
-#     x, y = corner.ravel()
-#     cv2.circle(image_with_contours, (x, y), 10, (255, 0, 0), -1)  # Green circle for right corners
+# Draw the corners on the image
+for corner in corners_right:
+    x, y = corner.ravel()
+    cv2.circle(image_with_contours, (x, y), 10, (255, 0, 0), -1)  # Green circle for right corners
 
-# for corner in corners_left:
-#     x, y = corner.ravel()
-#     cv2.circle(image_with_contours, (x, y), 10, (0, 0, 255), -1)  # Red circle for left corners
+for corner in corners_left:
+    x, y = corner.ravel()
+    cv2.circle(image_with_contours, (x, y), 10, (0, 0, 255), -1)  # Red circle for left corners
 
-# # Save the image with detected corners
-# cv2.imwrite("image_with_corners.jpg", image_with_contours)
-# print("Image with corners saved as image_with_corners.jpg")
+# Save the image with detected corners
+cv2.imwrite("image_with_corners.jpg", image_with_contours)
+print("Image with corners saved as image_with_corners.jpg")
 
-# del image_with_contours
+del image_with_contours
 
 # get two corners with highest y value on left contour
 corners_left = sorted(corners_left, key=lambda x: x[0][1], reverse=True)[:2] # get two corners with highest y value
