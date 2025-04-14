@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 from pyzbar.pyzbar import decode
 from PIL import Image
+from qreader import QReader
 
 
 # Define holder color range in HSV (red) - because red is at both ends of the hue spectrum, need two ranges
@@ -273,7 +274,7 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=400):
     print(f"Number of holder contours found: {len(holder_contours)}")
 
     # Find barcodes in the image
-    barcode_info = find_qrcodes_opencv(image)
+    barcode_info = find_qrcodes(image)
 
     # List to store information about the holders
     holders_info = []
@@ -350,7 +351,7 @@ def get_top_barcode_left_conveyor(image, conveyor_threshold):
 
 def barcodes_divided_into_conveyors(image, conveyor_threshold):
     
-    barcode_info = find_qrcodes_opencv(image)  # Get barcode center coordinates
+    barcode_info = find_qrcodes(image)  # Get barcode center coordinates
     if not barcode_info:
         return [], []  # No barcodes found
 
