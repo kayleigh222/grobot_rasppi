@@ -123,6 +123,17 @@ image = cv2.imread(image_path)
 # get bounding edges (next to each other) of each holder
 top_holder_right = top_holder_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
 top_holder_left = top_holder_left_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
+# get the line of pixels with the lowest y value on top_holder_right['contour']
+top_holder_right_contour = top_holder_right['contour']
+top_holder_left_contour = top_holder_left['contour']
+simplified_right_contour = cv2.approxPolyDP(top_holder_right_contour, 0.01 * cv2.arcLength(top_holder_right_contour, True), True)
+simplified_left_contour = cv2.approxPolyDP(top_holder_left_contour, 0.01 * cv2.arcLength(top_holder_left_contour, True), True)
+# save a copy of the image with simplified right and left contours
+image_with_simplified_contours = image.copy()
+cv2.drawContours(image_with_simplified_contours, [simplified_right_contour], -1, (0, 255, 0), 3)  # Green
+cv2.drawContours(image_with_simplified_contours, [simplified_left_contour], -1, (255, 0, 0), 3)   # Blue
+cv2.imwrite("image_with_contours.jpg", image_with_simplified_contours)
+
 left_edge_right = get_left_edge_of_holder(top_holder_right['contour'], image)
 right_edge_left = get_right_edge_of_holder(top_holder_left['contour'], image)
 
