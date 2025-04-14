@@ -290,7 +290,7 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=400):
         barcode_close = False
 
         # draw a circle representing the max distance between a holder center and its barcode
-        # cv2.circle(image, near_barcode, max_dist_between_holder_center_and_barcode, (0, 0, 255), 2)
+        cv2.circle(image, near_barcode, max_dist_between_holder_center_and_barcode, (0, 0, 255), 2)
 
         for barcode in barcode_info:
             # Compute Euclidean distance to barcode
@@ -315,7 +315,7 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=400):
     #     color = (255, 0, 0) if holder['is_empty'] else (0, 255, 0)  # Blue for empty, green for not empty
     #     cv2.drawContours(image, [holder['contour']], -1, color, 3)  # Draw each holder's contour with different color
 
-    # cv2.imwrite('image_with_all_holders.jpg', image)
+    cv2.imwrite('image_with_all_holders.jpg', image)
 
     return holders_info
 
@@ -389,11 +389,7 @@ def find_qrcodes(image):
     while num_qrcodes_found < NUM_QRCODES:
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         equalized = cv2.equalizeHist(gray)
-        # sharp = cv2.filter2D(gray, -1, np.array([[0,-1,0], [-1,5,-1], [0,-1,0]]))
-        # thresh = cv2.adaptiveThreshold(sharp, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, 
-        #                             cv2.THRESH_BINARY, 11, 2)
         pil_image = Image.fromarray(equalized)
-        # pil_image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
         cv2.imwrite('filtered_image_to_detect_qrcodes.jpg', equalized) # save the image to detect qrcodes
         detected_qrcodes = decode(pil_image)
 
