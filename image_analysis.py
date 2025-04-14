@@ -257,6 +257,7 @@ def holders_divided_into_conveyors(image, conveyor_threshold, conveyors_left, co
 
 # Finds all holders, returns the contours and empty status
 def find_holders(image, max_dist_between_holder_center_and_barcode=400):
+    print('finding holders')
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)  # Convert the image to HSV color space to detect color easier
     # Create mask
     mask1 = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
@@ -315,7 +316,9 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=400):
     #     color = (255, 0, 0) if holder['is_empty'] else (0, 255, 0)  # Blue for empty, green for not empty
     #     cv2.drawContours(image, [holder['contour']], -1, color, 3)  # Draw each holder's contour with different color
 
+    print('saving image with all holders')
     cv2.imwrite('image_with_all_holders.jpg', image)
+    print('finished saving image with all holders')
 
     return holders_info
 
