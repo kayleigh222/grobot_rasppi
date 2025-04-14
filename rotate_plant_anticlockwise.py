@@ -1,6 +1,7 @@
 import os
 import cv2
 import pigpio
+import numpy as np
 import time
 import threading
 from image_analysis import find_left_and_right_of_conveyors, find_leg_top_conveyor, find_top_and_bottom_of_conveyors, get_top_barcode_left_conveyor, get_top_barcode_right_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, get_right_edge_of_holder, get_left_edge_of_holder, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
@@ -50,7 +51,7 @@ servo_thread.start()
 # calibrate_vertical_conveyor_motors()
 # calibrate_top_conveyor_motor() # calibrate top conveyor motor
 
-# ----------- TAKE INITIAL IMAGE AND LOAD CALIBRATION VARIABLES ------------------
+# # ----------- TAKE INITIAL IMAGE AND LOAD CALIBRATION VARIABLES ------------------
 image_path = "captured_image.jpg"
 os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
 image = cv2.imread(image_path) # read the captured image with opencv
@@ -64,55 +65,55 @@ conveyor_height = top_conveyor - bottom_conveyor
 top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y  = find_leg_top_conveyor(image)
 target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 150) # TODO- currently hardcoding this, probably want a better way 
 
-# ----------- FIND TOP HOLDER ON RIGHT CONVEYOR ------------------
-top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
-bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_with_barcode_on_right_conveyor['contour'], image)
-bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyor[0][0]
-distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
+# # ----------- FIND TOP HOLDER ON RIGHT CONVEYOR ------------------
+# top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
+# bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_with_barcode_on_right_conveyor['contour'], image)
+# bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyor[0][0]
+# distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
 
-# Draw a vertical line at the target location
-cv2.line(image, (target_location_for_top_tray, 0), (target_location_for_top_tray, image.shape[0]), (0, 255, 0), 2)  # Green line
-# Draw a vertical line at bottom of top_barcode_right_conveyor
-cv2.line(image, (int(bottom_of_top_holder_right_conveyor_x_coord), 0), (int(bottom_of_top_holder_right_conveyor_x_coord), image.shape[0]), (0, 0, 255), 2)  # Red line
-cv2.imwrite("before_move_right_holder_to_top.jpg", image)
+# # Draw a vertical line at the target location
+# cv2.line(image, (target_location_for_top_tray, 0), (target_location_for_top_tray, image.shape[0]), (0, 255, 0), 2)  # Green line
+# # Draw a vertical line at bottom of top_barcode_right_conveyor
+# cv2.line(image, (int(bottom_of_top_holder_right_conveyor_x_coord), 0), (int(bottom_of_top_holder_right_conveyor_x_coord), image.shape[0]), (0, 0, 255), 2)  # Red line
+# cv2.imwrite("before_move_right_holder_to_top.jpg", image)
 
-print("Moving right conveyor up close enough to slide tray across.")
+# print("Moving right conveyor up close enough to slide tray across.")
 
-# ------ USE PID CONTROL TO MOVE TOP HOLDER ON RIGHT CONVEYOR UP CLOSE ENOUGH TO SLIDE TRAY ACROSS -----------
-while(distance_from_bottom_of_holder_to_target > 100): # TODO: base target location on end of top conveyor leg for better relability
-    print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
+# # ------ USE PID CONTROL TO MOVE TOP HOLDER ON RIGHT CONVEYOR UP CLOSE ENOUGH TO SLIDE TRAY ACROSS -----------
+# while(distance_from_bottom_of_holder_to_target > 100): # TODO: base target location on end of top conveyor leg for better relability
+#     print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
 
-    # Draw a vertical line at the target location
-    cv2.line(image, (target_location_for_top_tray, 0), (target_location_for_top_tray, image.shape[0]), (0, 255, 0), 2)  # Green line
+#     # Draw a vertical line at the target location
+#     cv2.line(image, (target_location_for_top_tray, 0), (target_location_for_top_tray, image.shape[0]), (0, 255, 0), 2)  # Green line
 
-    # Draw a vertical line at bottom of top_barcode_right_conveyor
-    cv2.line(image, (int(bottom_of_top_holder_right_conveyor_x_coord), 0), (int(bottom_of_top_holder_right_conveyor_x_coord), image.shape[0]), (0, 0, 255), 2)  # Red line
+#     # Draw a vertical line at bottom of top_barcode_right_conveyor
+#     cv2.line(image, (int(bottom_of_top_holder_right_conveyor_x_coord), 0), (int(bottom_of_top_holder_right_conveyor_x_coord), image.shape[0]), (0, 0, 255), 2)  # Red line
 
-    # Save the image
-    cv2.imwrite("before_move_right_holder_to_top.jpg", image)
+#     # Save the image
+#     cv2.imwrite("before_move_right_holder_to_top.jpg", image)
 
-    print('right conveyor speed ', calibration_variables[RIGHT_CONVEYOR_SPEED])
-    print('feeding in kp ', (1/calibration_variables[RIGHT_CONVEYOR_SPEED]))
+#     print('right conveyor speed ', calibration_variables[RIGHT_CONVEYOR_SPEED])
+#     print('feeding in kp ', (1/calibration_variables[RIGHT_CONVEYOR_SPEED]))
 
-    # move conveyor
-    steps_to_take = int(pid_control(distance_from_bottom_of_holder_to_target, Kp=(1/calibration_variables[RIGHT_CONVEYOR_SPEED])))
-    set_up_right_conveyor()
-    move_right_conveyor(steps_to_take)
-    clean_up_right_conveyor()
+#     # move conveyor
+#     steps_to_take = int(pid_control(distance_from_bottom_of_holder_to_target, Kp=(1/calibration_variables[RIGHT_CONVEYOR_SPEED])))
+#     set_up_right_conveyor()
+#     move_right_conveyor(steps_to_take)
+#     clean_up_right_conveyor()
 
-    # capture new image
-    os.system(f"rpicam-still --output {image_path} --nopreview") 
-    image = cv2.imread(image_path)
+#     # capture new image
+#     os.system(f"rpicam-still --output {image_path} --nopreview") 
+#     image = cv2.imread(image_path)
 
-    # find new position of top holder
-    top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
-    bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_with_barcode_on_right_conveyor['contour'], image)
-    bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyor[0][0]
+#     # find new position of top holder
+#     top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
+#     bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_with_barcode_on_right_conveyor['contour'], image)
+#     bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyor[0][0]
 
-    # find new distance left to travel
-    distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
+#     # find new distance left to travel
+#     distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
 
-print("Finished moving top holder on right conveyor up close enough to slide tray across.")
+# print("Finished moving top holder on right conveyor up close enough to slide tray across.")
 
 # --------- FIND DESIRED POSITION FOR LEFT HOLDER -----------
 
@@ -126,38 +127,35 @@ top_holder_left = top_holder_left_conveyor(image, conveyor_threshold, conveyors_
 # get the line of pixels with the lowest y value on top_holder_right['contour']
 top_holder_right_contour = top_holder_right['contour']
 top_holder_left_contour = top_holder_left['contour']
+image_with_right_contour = np.zeros_like(image)
+image_with_left_contour = np.zeros_like(image)
+cv2.drawContours(image_with_right_contour, [top_holder_right_contour], -1, (255, 255, 255), 1)
+cv2.drawContours(image_with_left_contour, [top_holder_left_contour], -1, (255, 255, 255), 1)
+right_gray = cv2.cvtColor(image_with_right_contour, cv2.COLOR_BGR2GRAY)
+left_gray = cv2.cvtColor(image_with_left_contour, cv2.COLOR_BGR2GRAY)
+corners_right = cv2.goodFeaturesToTrack(right_gray, maxCorners=8, qualityLevel=0.01, minDistance=10)
+corners_left = cv2.goodFeaturesToTrack(left_gray, maxCorners=8, qualityLevel=0.01, minDistance=10)
+# Convert corners to integer values
+corners_right = np.int0(corners_right)
+corners_left = np.int0(corners_left)
+# Draw the corners on the image
+image_with_contours = image.copy()
+for corner in corners_right:
+    x, y = corner.ravel()
+    cv2.circle(image_with_contours, (x, y), 10, (0, 255, 0), -1)  # Green circle for right corners
+
+for corner in corners_left:
+    x, y = corner.ravel()
+    cv2.circle(image_with_contours, (x, y), 10, (0, 0, 255), -1)  # Red circle for left corners
+
+# Save the image with detected corners
+cv2.imwrite("image_with_corners.jpg", image_with_contours)
+print("Image with corners saved as image_with_corners.jpg")
+
+
 simplified_right_contour = cv2.approxPolyDP(top_holder_right_contour, 0.01 * cv2.arcLength(top_holder_right_contour, True), True)
 simplified_left_contour = cv2.approxPolyDP(top_holder_left_contour, 0.01 * cv2.arcLength(top_holder_left_contour, True), True)
 
-# Save a copy of the image with simplified right and left contours
-image_with_simplified_contours = image.copy()
-cv2.drawContours(image_with_simplified_contours, [simplified_right_contour], -1, (0, 255, 0), 3)  # Green
-cv2.drawContours(image_with_simplified_contours, [simplified_left_contour], -1, (255, 0, 0), 3)   # Blue
-
-# --- Get pixels with lowest y value from simplified_right_contour ---
-right_points = simplified_right_contour[:, 0, :]  # shape (N, 2)
-min_y = right_points[:, 1].min()
-lowest_y_right_points = right_points[right_points[:, 1] == min_y]
-print("Lowest y points on right contour: ", lowest_y_right_points)
-
-# Get the pixel with the lowest x value from lowest_y_right_points
-lowest_x_right_point = lowest_y_right_points[lowest_y_right_points[:, 0].argmin()]
-
-# --- Get pixels with highest y value from simplified_left_contour ---
-left_points = simplified_left_contour[:, 0, :]
-max_y = left_points[:, 1].max()
-highest_y_left_points = left_points[left_points[:, 1] == max_y]
-print("Highest y points on left contour: ", highest_y_left_points)
-
-# Get the pixel with the lowest x value from highest_y_left_points
-lowest_x_left_point = highest_y_left_points[highest_y_left_points[:, 0].argmin()]
-
-# put a dot at lowest_x_left_point and lowest_x_right_point
-cv2.circle(image_with_simplified_contours, tuple(lowest_x_left_point), 10, (0, 255, 0), -1) # draw a dot to mark bottom of left holder
-cv2.circle(image_with_simplified_contours, tuple(lowest_x_right_point), 5, (0, 0, 255), -1) # draw a dot to mark bottom of right holder
-
-cv2.imwrite("image_with_simplified_contours.jpg", image_with_simplified_contours)
-print('SAVED image with simplified contours')
 
 left_edge_right = get_left_edge_of_holder(top_holder_right['contour'], image)
 right_edge_left = get_right_edge_of_holder(top_holder_left['contour'], image)
