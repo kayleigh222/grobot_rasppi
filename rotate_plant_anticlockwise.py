@@ -147,7 +147,7 @@ print('converted corners to int')
 image_with_contours = image.copy()
 for corner in corners_right:
     x, y = corner.ravel()
-    cv2.circle(image_with_contours, (x, y), 10, (0, 255, 0), -1)  # Green circle for right corners
+    cv2.circle(image_with_contours, (x, y), 10, (255, 0, 0), -1)  # Green circle for right corners
 
 for corner in corners_left:
     x, y = corner.ravel()
