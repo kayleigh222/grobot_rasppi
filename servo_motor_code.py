@@ -17,6 +17,11 @@ print("Moving to 0 degrees...")
 pi.set_servo_pulsewidth(PWM_PIN, 500)  # ~60 degrees
 time.sleep(2)
 
+pi.set_servo_pulsewidth(PWM_PIN, 1500)  # Neutral / no movement
+time.sleep(2)
+pi.set_servo_pulsewidth(PWM_PIN, 1000)  # Should rotate continuously if modified
+
+time.sleep(10)
 print("Stopping PWM...")
 pi.set_servo_pulsewidth(PWM_PIN, 0)  # Stop signal
 pi.stop()
