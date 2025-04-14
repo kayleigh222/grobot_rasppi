@@ -70,6 +70,16 @@ bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_with_
 bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyor[0][0]
 distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
 
+# TODO - delete this 
+top_holder_right_contour = top_holder_with_barcode_on_right_conveyor['contour']
+simplified_right_contour = cv2.approxPolyDP(top_holder_right_contour, 0.01 * cv2.arcLength(top_holder_right_contour, True), True)
+# simplified_left_contour = cv2.approxPolyDP(top_holder_left_contour, 0.01 * cv2.arcLength(top_holder_left_contour, True), True)
+# save a copy of the image with simplified right and left contours
+image_with_simplified_contours = image.copy()
+cv2.drawContours(image_with_simplified_contours, [simplified_right_contour], -1, (0, 255, 0), 3)  # Green
+# cv2.drawContours(image_with_simplified_contours, [simplified_left_contour], -1, (255, 0, 0), 3)   # Blue
+cv2.imwrite("image_with_contours.jpg", image_with_simplified_contours)
+
 # Draw a vertical line at the target location
 cv2.line(image, (target_location_for_top_tray, 0), (target_location_for_top_tray, image.shape[0]), (0, 255, 0), 2)  # Green line
 # Draw a vertical line at bottom of top_barcode_right_conveyor
