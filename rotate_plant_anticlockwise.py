@@ -35,8 +35,8 @@ def pid_control(error, Kp=0.7, Ki=0.01, Kd=0.05): # error is the difference betw
 
 # NOTE: have a record of how many plants there are i.e. how many barcodes are visible. therefore if a plant falls off will know because less barcodes visible and can send me a photo
 # calibrate conveyor motors
-# calibrate_vertical_conveyor_motors()
-# calibrate_top_conveyor_motor() # calibrate top conveyor motor
+calibrate_vertical_conveyor_motors()
+calibrate_top_conveyor_motor() # calibrate top conveyor motor
 
 # ----------- TURN ON LIGHTS BY RUNNING SERVO MOTOR IN SEPARATE THREAD TO TRIGGER MOTION SENSOR --------
 pi = pigpio.pi() # Connect to pigpio daemon
