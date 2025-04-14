@@ -389,7 +389,10 @@ def find_qrcodes(image):
     while num_qrcodes_found < NUM_QRCODES:
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         equalized = cv2.equalizeHist(gray)
-        pil_image = Image.fromarray(equalized)
+        thresh = cv2.adaptiveThreshold(equalized, 255,
+                                       cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                       cv2.THRESH_BINARY, 11, 2)
+        pil_image = Image.fromarray(thresh)
         cv2.imwrite('filtered_image_to_detect_qrcodes.jpg', equalized) # save the image to detect qrcodes
         detected_qrcodes = decode(pil_image)
 
