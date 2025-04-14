@@ -49,3 +49,4 @@ def move_stepper(steps, direction="CW", delay=0.001):
 if __name__ == "__main__":
     set_up_right_conveyor()
     move_right_conveyor(500) # Move up 1000 steps
+    clean_up_right_conveyor()
