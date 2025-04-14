@@ -3,7 +3,6 @@ import cv2
 import numpy as np
 from pyzbar.pyzbar import decode
 from PIL import Image
-from qreader import QReader
 
 
 # Define holder color range in HSV (red) - because red is at both ends of the hue spectrum, need two ranges
@@ -412,9 +411,8 @@ def find_qrcodes(image):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray, (3, 3), 0)
         equalized = cv2.equalizeHist(blurred)
-        pil_image = Image.fromarray(equalized)
         cv2.imwrite('filtered_image_to_detect_qrcodes.jpg', equalized) # save the image to detect qrcodes
-        detected_qrcodes = decode(pil_image)
+        detected_qrcodes = decode(equalized)
 
         num_qrcodes_found = len(detected_qrcodes)
         qrcode_info = []
