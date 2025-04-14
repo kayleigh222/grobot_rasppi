@@ -132,7 +132,7 @@ top_holder_left = top_holder_left_conveyor(holders_divided_into_conveyors)
 top_holder_right_contour = top_holder_right['contour']
 top_holder_left_contour = top_holder_left['contour']
 # simplify contours
-top_holder_right_contour = cv2.approxPolyDP(top_holder_right_contour, 0.02 * cv2.arcLength(top_holder_right_contour, True), True)
+top_holder_right_contour = cv2.approxPolyDP(top_holder_right_contour, 0.05 * cv2.arcLength(top_holder_right_contour, True), True)
 top_holder_left_contour = cv2.approxPolyDP(top_holder_left_contour, 0.01 * cv2.arcLength(top_holder_left_contour, True), True)
 print('got top holder contours')
 image_with_right_contour = np.zeros_like(image)
