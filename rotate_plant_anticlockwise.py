@@ -164,6 +164,9 @@ for corner in corners_left:
     cv2.circle(image_with_contours, (x, y), 10, (0, 0, 255), -1)  # Red circle for left corners
 
 # Save the image with detected corners
+# draw top_holder_right_contour on image_with_contours
+cv2.drawContours(image_with_contours, [top_holder_right_contour], -1, (255, 0, 0), 1) # draw right holder contour in blue
+cv2.drawContours(image_with_contours, [top_holder_left_contour], -1, (0, 0, 255), 1) # draw left holder contour in red
 cv2.imwrite("image_with_corners.jpg", image_with_contours)
 print("Image with corners saved as image_with_corners.jpg")
 del top_holder_right_contour

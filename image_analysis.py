@@ -232,13 +232,13 @@ def divide_holders_into_conveyors(image, conveyor_threshold, holders_from_find_h
         else:
             right_conveyor_holders.append(holder)  # Barcode is below the threshold (right conveyor)
 
-        # Draw contours for the left conveyor holders in blue
-    for holder in left_conveyor_holders:
-        cv2.drawContours(image, [holder['contour']], -1, (255, 0, 0), 3)  # Blue color for left conveyor
+    # Draw contours for the left conveyor holders in blue
+    # for holder in left_conveyor_holders:
+    #     cv2.drawContours(image, [holder['contour']], -1, (255, 0, 0), 3)  # Blue color for left conveyor
 
-    # Draw contours for the right conveyor holders in green
-    for holder in right_conveyor_holders:
-        cv2.drawContours(image, [holder['contour']], -1, (0, 255, 0), 3)  # Green color for right conveyor
+    # # Draw contours for the right conveyor holders in green
+    # for holder in right_conveyor_holders:
+    #     cv2.drawContours(image, [holder['contour']], -1, (0, 255, 0), 3)  # Green color for right conveyor
 
     # Draw the conveyor threshold line (horizontal line at the y-coordinate of the threshold)
     # cv2.line(image, (0, conveyor_threshold), (image.shape[1], conveyor_threshold), (0, 0, 255), 2)  # Red line
@@ -289,7 +289,7 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=450):
         barcode_close = False
 
         # draw a circle representing the max distance between a holder center and its barcode
-        cv2.circle(image, near_barcode, max_dist_between_holder_center_and_barcode, (0, 0, 255), 2)
+        # cv2.circle(image, near_barcode, max_dist_between_holder_center_and_barcode, (0, 0, 255), 2)
 
         for barcode in barcode_info:
             # Compute Euclidean distance to barcode
