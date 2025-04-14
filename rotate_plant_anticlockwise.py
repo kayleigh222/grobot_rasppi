@@ -229,7 +229,7 @@ print("Finished moving top conveyor leg out of the way")
 
 
 # --------- WHEN FINISHED, STOP THREAD SPINNING SERVO MOTOR ---------- 
-sweeping = False
+servo_motor_code.sweeping = False
 servo_thread.join()
 clean_up_servo(pi) # Clean up servo motor
 # trickier version - multiple plants on each conveyor. note space plant holders evenly and with few enough plants that when a plant is at the top there's an empty holder at the bottom (and vice versa for right conveyor)

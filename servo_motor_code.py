@@ -17,9 +17,9 @@ def sweep_servo(pi):
     print('Sweeping: ', sweeping)
     while sweeping:
         pi.set_servo_pulsewidth(PWM_PIN, 500) # move to 0 degrees
-        time.sleep(0.5)  # Delay between moves
+        time.sleep(3)  # Delay between moves
         pi.set_servo_pulsewidth(PWM_PIN, 2500) # move to 180 degrees
-        time.sleep(0.5)
+        time.sleep(3)
 
     print("Stopping servo...")
     pi.set_servo_pulsewidth(PWM_PIN, 0)  # Stop signal
