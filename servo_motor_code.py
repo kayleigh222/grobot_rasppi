@@ -10,7 +10,6 @@ def set_up_servo(pi):
     # Set frequency for servo (50Hz typical)
     pi.set_PWM_frequency(PWM_PIN, 50)
 
-
 def sweep_servo(pi):
     global sweeping  # Reference the global sweeping variable
     print("Starting sweep between 0° and 180°...")
