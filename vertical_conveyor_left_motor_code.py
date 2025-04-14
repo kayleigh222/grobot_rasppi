@@ -48,3 +48,7 @@ def move_stepper(steps, direction="CW", delay=0.001):
         time.sleep(delay)
         GPIO.output(STEP_PIN, GPIO.LOW)
         time.sleep(delay)
+
+if __name__ == "__main__":
+    set_up_left_conveyor()
+    move_left_conveyor(1000) # Move up 1000 steps
