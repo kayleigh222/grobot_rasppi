@@ -6,7 +6,7 @@ from top_conveyor_motor_code import clean_up_top_conveyor, set_up_top_conveyor, 
 from vertical_conveyor_left_motor_code import move_left_conveyor, set_up_left_conveyor, clean_up_left_conveyor
 from vertical_conveyor_right_motor_code import move_right_conveyor, set_up_right_conveyor, clean_up_right_conveyor
 
-DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS = 60 # pixels - max vertical distance between holders to be able to slide across
+DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS = 70 # pixels - max vertical distance between holders to be able to slide across
 
 # variables for PID control - used to move conveyor to align holders before sliding tray across
 previous_error = 0
@@ -45,7 +45,6 @@ calibration_variables = load_variables()
 conveyor_threshold, conveyors_left, conveyors_right = get_conveyor_threshold(image) # find threshold between left and right conveyor
 top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
 conveyor_height = top_conveyor - bottom_conveyor
-# target_location_for_top_tray = int(top_conveyor - (conveyor_height // 8.3))
 top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y  = find_leg_top_conveyor(image)
 target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 150) # TODO- currently hardcoding this, probably want a better way 
 
@@ -156,7 +155,7 @@ print('finished moving holders together')
 
 # ------- ROTATE TOP CONVEYOR TO SLIDE TRAY ACROSS -----------
 set_up_top_conveyor()
-additional_distance_to_push_tray_across_threshold = (conveyors_right - conveyors_left) // 20 # move an extra quarter of a conveyor across threshold
+additional_distance_to_push_tray_across_threshold = 0 # (conveyors_right - conveyors_left) // 20 # move an extra quarter of a conveyor across threshold
 distance_from_target = top_conveyor_leg_top_left_y - (conveyor_threshold - additional_distance_to_push_tray_across_threshold)
 
 while(abs(distance_from_target) > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS):
