@@ -157,6 +157,11 @@ print('finished moving holders together')
 set_up_top_conveyor()
 additional_distance_to_push_tray_across_threshold = 0 # (conveyors_right - conveyors_left) // 20 # move an extra quarter of a conveyor across threshold
 distance_from_target = top_conveyor_leg_top_left_y - (conveyor_threshold - additional_distance_to_push_tray_across_threshold)
+# draw a horizontal line at conveyor_threshold
+cv2.line(image, (0, conveyor_threshold), (image.shape[1], conveyor_threshold), (0, 255, 0), 2)  # Green line
+# draw a horizontal line at top_conveyor_leg_top_left_y
+cv2.line(image, (0, top_conveyor_leg_top_left_y), (image.shape[1], top_conveyor_leg_top_left_y), (0, 0, 255), 2)  # Red line
+cv2.imwrite("before_move_top_conveyor.jpg", image)
 
 while(abs(distance_from_target) > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS):
     steps_to_take = int(pid_control(distance_from_target, Kp=(1/calibration_variables[TOP_CONVEYOR_SPEED_FORWARD])))
