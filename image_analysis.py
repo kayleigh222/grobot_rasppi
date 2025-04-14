@@ -273,7 +273,7 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=400):
     print(f"Number of holder contours found: {len(holder_contours)}")
 
     # Find barcodes in the image
-    barcode_info = find_qrcodes(image)
+    barcode_info = find_qrcodes_opencv(image)
 
     # List to store information about the holders
     holders_info = []
@@ -350,7 +350,7 @@ def get_top_barcode_left_conveyor(image, conveyor_threshold):
 
 def barcodes_divided_into_conveyors(image, conveyor_threshold):
     
-    barcode_info = find_qrcodes(image)  # Get barcode center coordinates
+    barcode_info = find_qrcodes_opencv(image)  # Get barcode center coordinates
     if not barcode_info:
         return [], []  # No barcodes found
 
@@ -367,6 +367,27 @@ def barcodes_divided_into_conveyors(image, conveyor_threshold):
             right_conveyor_barcodes.append(barcode)  # Barcode is below the threshold (right conveyor)
 
     return left_conveyor_barcodes, right_conveyor_barcodes   
+
+def find_qrcodes_opencv(image):
+    detector = cv2.QRCodeDetector()
+    retval, decoded_info, points, _ = detector.detectAndDecodeMulti(image)
+
+    qrcode_info = []
+
+    if retval:
+        for data, point in zip(decoded_info, points):
+            if data:
+                # Get center from points
+                center_x = int(point[:, 0].mean())
+                center_y = int(point[:, 1].mean())
+                qrcode_info.append((data, (center_x, center_y)))
+
+                print(f"QR Code Data: {data}")
+                print(f"QR Code Center: ({center_x}, {center_y})")
+    else:
+        print("No QR codes found.")
+
+    return qrcode_info
 
 def find_qrcodes(image):
     """
