@@ -128,7 +128,7 @@ target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 150) # TODO- cu
 
 print('detecting corners')
 
-# get bounding edges (next to each other) of each holder
+# get corners of each holder
 holders = find_holders(image)
 holders_divided_into_conveyors = divide_holders_into_conveyors(image, conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
 top_holder_right = top_holder_right_conveyor(holders_divided_into_conveyors) # TODO - this detects all holders twice, make more efficient
@@ -141,7 +141,6 @@ top_holder_right_contour = cv2.approxPolyDP(top_holder_right_contour, 0.005 * cv
 image_with_right_contour = np.zeros_like(image)
 cv2.drawContours(image_with_right_contour, [top_holder_right_contour], -1, (255, 255, 255), 1)
 right_gray = cv2.cvtColor(image_with_right_contour, cv2.COLOR_BGR2GRAY)
-# cv2.imwrite('right_gray.jpg', right_gray) # save the gray image for debugging
 corners_right = cv2.goodFeaturesToTrack(right_gray, maxCorners=16, qualityLevel=0.02, minDistance=10)
 corners_right = np.intp(corners_right)
 cv2.drawContours(image_with_contours, [top_holder_right_contour], -1, (255, 0, 0), 3) # draw right holder contour in blue
@@ -156,7 +155,6 @@ top_holder_left_contour = cv2.approxPolyDP(top_holder_left_contour, 0.01 * cv2.a
 image_with_left_contour = np.zeros_like(image)
 cv2.drawContours(image_with_left_contour, [top_holder_left_contour], -1, (255, 255, 255), 1)
 left_gray = cv2.cvtColor(image_with_left_contour, cv2.COLOR_BGR2GRAY)
-# cv2.imwrite('left_gray.jpg', left_gray) # save the gray image for debugging
 corners_left = cv2.goodFeaturesToTrack(left_gray, maxCorners=8, qualityLevel=0.01, minDistance=20)
 corners_left = np.intp(corners_left)
 cv2.drawContours(image_with_contours, [top_holder_left_contour], -1, (0, 0, 255), 3) # draw left holder contour in red
@@ -181,6 +179,23 @@ cv2.imwrite("image_with_corners.jpg", image_with_contours)
 print("Image with corners saved as image_with_corners.jpg")
 
 del image_with_contours
+
+# get two corners with highest y value on left contour
+corners_left = sorted(corners_left, key=lambda x: x[0][1], reverse=True)[:2] # get two corners with highest y value
+# of these corners, get the corner with lowest x value
+left_edge_left = min(corners_left, key=lambda x: x[0][0]) # get corner with lowest x value
+# draw a circle in yellow over it
+cv2.circle(image, (left_edge_left[0][0], left_edge_left[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for left edge
+
+# get two corners with lowest y value on right contour
+corners_right = sorted(corners_right, key=lambda x: x[0][1])[:2] # get two corners with lowest y value
+# of these corners, get the corner with lowest x value
+right_edge_right = min(corners_right, key=lambda x: x[0][0]) # get corner with lowest x value
+# draw a circle in yellow over it
+cv2.circle(image, (right_edge_right[0][0], right_edge_right[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for right edge
+
+# save the image
+cv2.imwrite("image_with_yellow_corners.jpg", image)
 
 
 # simplified_right_contour = cv2.approxPolyDP(top_holder_right_contour, 0.01 * cv2.arcLength(top_holder_right_contour, True), True)
