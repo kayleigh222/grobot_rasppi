@@ -124,10 +124,13 @@ image = cv2.imread(image_path)
 print('detecting corners')
 
 # get bounding edges (next to each other) of each holder
-top_holder_right = top_holder_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
+top_holder_right = top_holder_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right) # TODO - this detects all holders twice, make more efficient
 top_holder_left = top_holder_left_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
 top_holder_right_contour = top_holder_right['contour']
 top_holder_left_contour = top_holder_left['contour']
+# simplify contours
+top_holder_right_contour = cv2.approxPolyDP(top_holder_right_contour, 0.01 * cv2.arcLength(top_holder_right_contour, True), True)
+top_holder_left_contour = cv2.approxPolyDP(top_holder_left_contour, 0.01 * cv2.arcLength(top_holder_left_contour, True), True)
 print('got top holder contours')
 image_with_right_contour = np.zeros_like(image)
 image_with_left_contour = np.zeros_like(image)
@@ -140,8 +143,8 @@ corners_right = cv2.goodFeaturesToTrack(right_gray, maxCorners=4, qualityLevel=0
 corners_left = cv2.goodFeaturesToTrack(left_gray, maxCorners=4, qualityLevel=0.01, minDistance=10)
 print('got corners')
 # Convert corners to integer values
-corners_right = np.int0(corners_right)
-corners_left = np.int0(corners_left)
+corners_right = np.intp(corners_right)
+corners_left = np.intp(corners_left)
 print('converted corners to int')
 # Draw the corners on the image
 image_with_contours = image.copy()
