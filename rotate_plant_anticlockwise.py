@@ -142,7 +142,7 @@ image_with_right_contour = np.zeros_like(image)
 cv2.drawContours(image_with_right_contour, [top_holder_right_contour], -1, (255, 255, 255), 1)
 right_gray = cv2.cvtColor(image_with_right_contour, cv2.COLOR_BGR2GRAY)
 # cv2.imwrite('right_gray.jpg', right_gray) # save the gray image for debugging
-corners_right = cv2.goodFeaturesToTrack(right_gray, maxCorners=16, qualityLevel=0.02, minDistance=30)
+corners_right = cv2.goodFeaturesToTrack(right_gray, maxCorners=16, qualityLevel=0.02, minDistance=10)
 corners_right = np.intp(corners_right)
 cv2.drawContours(image_with_contours, [top_holder_right_contour], -1, (255, 0, 0), 3) # draw right holder contour in blue
 
