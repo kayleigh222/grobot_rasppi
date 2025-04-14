@@ -70,17 +70,6 @@ bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_with_
 bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyor[0][0]
 distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
 
-# TODO - delete this 
-top_holder_right_contour = top_holder_with_barcode_on_right_conveyor['contour']
-simplified_right_contour = cv2.approxPolyDP(top_holder_right_contour, 0.01 * cv2.arcLength(top_holder_right_contour, True), True)
-# simplified_left_contour = cv2.approxPolyDP(top_holder_left_contour, 0.01 * cv2.arcLength(top_holder_left_contour, True), True)
-# save a copy of the image with simplified right and left contours
-image_with_simplified_contours = image.copy()
-cv2.drawContours(image_with_simplified_contours, [simplified_right_contour], -1, (0, 255, 0), 3)  # Green
-# cv2.drawContours(image_with_simplified_contours, [simplified_left_contour], -1, (255, 0, 0), 3)   # Blue
-cv2.imwrite("image_with_contours.jpg", image_with_simplified_contours)
-print("SAVED IMAGE WITH CONTOURS")
-
 # Draw a vertical line at the target location
 cv2.line(image, (target_location_for_top_tray, 0), (target_location_for_top_tray, image.shape[0]), (0, 255, 0), 2)  # Green line
 # Draw a vertical line at bottom of top_barcode_right_conveyor
@@ -139,11 +128,33 @@ top_holder_right_contour = top_holder_right['contour']
 top_holder_left_contour = top_holder_left['contour']
 simplified_right_contour = cv2.approxPolyDP(top_holder_right_contour, 0.01 * cv2.arcLength(top_holder_right_contour, True), True)
 simplified_left_contour = cv2.approxPolyDP(top_holder_left_contour, 0.01 * cv2.arcLength(top_holder_left_contour, True), True)
-# save a copy of the image with simplified right and left contours
+
+# Save a copy of the image with simplified right and left contours
 image_with_simplified_contours = image.copy()
 cv2.drawContours(image_with_simplified_contours, [simplified_right_contour], -1, (0, 255, 0), 3)  # Green
 cv2.drawContours(image_with_simplified_contours, [simplified_left_contour], -1, (255, 0, 0), 3)   # Blue
-cv2.imwrite("image_with_contours.jpg", image_with_simplified_contours)
+
+# --- Get pixels with lowest y value from simplified_right_contour ---
+right_points = simplified_right_contour[:, 0, :]  # shape (N, 2)
+min_y = right_points[:, 1].min()
+lowest_y_right_points = right_points[right_points[:, 1] == min_y]
+
+# Get the pixel with the lowest x value from lowest_y_right_points
+lowest_x_right_point = lowest_y_right_points[lowest_y_right_points[:, 0].argmin()]
+
+# --- Get pixels with highest y value from simplified_left_contour ---
+left_points = simplified_left_contour[:, 0, :]
+max_y = left_points[:, 1].max()
+highest_y_left_points = left_points[left_points[:, 1] == max_y]
+
+# Get the pixel with the lowest x value from highest_y_left_points
+lowest_x_left_point = highest_y_left_points[highest_y_left_points[:, 0].argmin()]
+
+# put a dot at lowest_x_left_point and lowest_x_right_point
+cv2.circle(image_with_simplified_contours, tuple(lowest_x_left_point), 5, (0, 255, 0), -1) # draw a dot to mark bottom of left holder
+cv2.circle(image_with_simplified_contours, tuple(lowest_x_right_point), 5, (0, 0, 255), -1) # draw a dot to mark bottom of right holder
+
+cv2.imwrite("image_with_simplified_contours.jpg", image_with_simplified_contours)
 
 left_edge_right = get_left_edge_of_holder(top_holder_right['contour'], image)
 right_edge_left = get_right_edge_of_holder(top_holder_left['contour'], image)
