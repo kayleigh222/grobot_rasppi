@@ -41,117 +41,117 @@ image = cv2.imread(image_path) # read the captured image with opencv
 
 calibration_variables = load_variables() 
 
-# ---------- FIND OUTLINES OF CONVEYOR TO GET TARGET LOCATION FOR TOP TRAY -----------
+# # ---------- FIND OUTLINES OF CONVEYOR TO GET TARGET LOCATION FOR TOP TRAY -----------
 conveyor_threshold, conveyors_left, conveyors_right = get_conveyor_threshold(image) # find threshold between left and right conveyor
 top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
 conveyor_height = top_conveyor - bottom_conveyor
 top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y  = find_leg_top_conveyor(image)
 target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 150) # TODO- currently hardcoding this, probably want a better way 
 
-# ----------- FIND TOP HOLDER ON RIGHT CONVEYOR ------------------
-top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
-bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_with_barcode_on_right_conveyor['contour'], image)
-bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyor[0][0]
-distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
+# # ----------- FIND TOP HOLDER ON RIGHT CONVEYOR ------------------
+# top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
+# bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_with_barcode_on_right_conveyor['contour'], image)
+# bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyor[0][0]
+# distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
 
-# Draw a vertical line at the target location
-cv2.line(image, (target_location_for_top_tray, 0), (target_location_for_top_tray, image.shape[0]), (0, 255, 0), 2)  # Green line
-# Draw a vertical line at bottom of top_barcode_right_conveyor
-cv2.line(image, (int(bottom_of_top_holder_right_conveyor_x_coord), 0), (int(bottom_of_top_holder_right_conveyor_x_coord), image.shape[0]), (0, 0, 255), 2)  # Red line
-cv2.imwrite("before_move_right_holder_to_top.jpg", image)
+# # Draw a vertical line at the target location
+# cv2.line(image, (target_location_for_top_tray, 0), (target_location_for_top_tray, image.shape[0]), (0, 255, 0), 2)  # Green line
+# # Draw a vertical line at bottom of top_barcode_right_conveyor
+# cv2.line(image, (int(bottom_of_top_holder_right_conveyor_x_coord), 0), (int(bottom_of_top_holder_right_conveyor_x_coord), image.shape[0]), (0, 0, 255), 2)  # Red line
+# cv2.imwrite("before_move_right_holder_to_top.jpg", image)
 
-print("Moving right conveyor up close enough to slide tray across.")
+# print("Moving right conveyor up close enough to slide tray across.")
 
-# ------ USE PID CONTROL TO MOVE TOP HOLDER ON RIGHT CONVEYOR UP CLOSE ENOUGH TO SLIDE TRAY ACROSS -----------
-while(distance_from_bottom_of_holder_to_target > 100): # TODO: base target location on end of top conveyor leg for better relability
-    print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
+# # ------ USE PID CONTROL TO MOVE TOP HOLDER ON RIGHT CONVEYOR UP CLOSE ENOUGH TO SLIDE TRAY ACROSS -----------
+# while(distance_from_bottom_of_holder_to_target > 100): # TODO: base target location on end of top conveyor leg for better relability
+#     print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
 
-    # Draw a vertical line at the target location
-    cv2.line(image, (target_location_for_top_tray, 0), (target_location_for_top_tray, image.shape[0]), (0, 255, 0), 2)  # Green line
+#     # Draw a vertical line at the target location
+#     cv2.line(image, (target_location_for_top_tray, 0), (target_location_for_top_tray, image.shape[0]), (0, 255, 0), 2)  # Green line
 
-    # Draw a vertical line at bottom of top_barcode_right_conveyor
-    cv2.line(image, (int(bottom_of_top_holder_right_conveyor_x_coord), 0), (int(bottom_of_top_holder_right_conveyor_x_coord), image.shape[0]), (0, 0, 255), 2)  # Red line
+#     # Draw a vertical line at bottom of top_barcode_right_conveyor
+#     cv2.line(image, (int(bottom_of_top_holder_right_conveyor_x_coord), 0), (int(bottom_of_top_holder_right_conveyor_x_coord), image.shape[0]), (0, 0, 255), 2)  # Red line
 
-    # Save the image
-    cv2.imwrite("before_move_right_holder_to_top.jpg", image)
+#     # Save the image
+#     cv2.imwrite("before_move_right_holder_to_top.jpg", image)
 
-    # move conveyor
-    steps_to_take = int(pid_control(distance_from_bottom_of_holder_to_target, Kp=(1/calibration_variables[RIGHT_CONVEYOR_SPEED])))
-    set_up_right_conveyor()
-    move_right_conveyor(steps_to_take)
-    clean_up_right_conveyor()
+#     # move conveyor
+#     steps_to_take = int(pid_control(distance_from_bottom_of_holder_to_target, Kp=(1/calibration_variables[RIGHT_CONVEYOR_SPEED])))
+#     set_up_right_conveyor()
+#     move_right_conveyor(steps_to_take)
+#     clean_up_right_conveyor()
 
-    # capture new image
-    os.system(f"rpicam-still --output {image_path} --nopreview") 
-    image = cv2.imread(image_path)
+#     # capture new image
+#     os.system(f"rpicam-still --output {image_path} --nopreview") 
+#     image = cv2.imread(image_path)
 
-    # find new position of top holder
-    top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
-    bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_with_barcode_on_right_conveyor['contour'], image)
-    bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyor[0][0]
+#     # find new position of top holder
+#     top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
+#     bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_with_barcode_on_right_conveyor['contour'], image)
+#     bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyor[0][0]
 
-    # find new distance left to travel
-    distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
+#     # find new distance left to travel
+#     distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
 
-print("Finished moving top holder on right conveyor up close enough to slide tray across.")
+# print("Finished moving top holder on right conveyor up close enough to slide tray across.")
 
-# --------- FIND DESIRED POSITION FOR LEFT HOLDER -----------
+# # --------- FIND DESIRED POSITION FOR LEFT HOLDER -----------
 
-#take new image
-os.system(f"rpicam-still --output {image_path} --nopreview") 
-image = cv2.imread(image_path) 
+# #take new image
+# os.system(f"rpicam-still --output {image_path} --nopreview") 
+# image = cv2.imread(image_path) 
 
-# get bounding edges (next to each other) of each holder
-top_holder_right = top_holder_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
-top_holder_left = top_holder_left_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
-left_edge_right = get_left_edge_of_holder(top_holder_right['contour'], image)
-right_edge_left = get_right_edge_of_holder(top_holder_left['contour'], image)
+# # get bounding edges (next to each other) of each holder
+# top_holder_right = top_holder_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
+# top_holder_left = top_holder_left_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
+# left_edge_right = get_left_edge_of_holder(top_holder_right['contour'], image)
+# right_edge_left = get_right_edge_of_holder(top_holder_left['contour'], image)
 
-target_x_value = left_edge_right[0][0]
+# target_x_value = left_edge_right[0][0]
 
-# visualize positions on image
-cv2.line(image, (target_x_value, 0), (target_x_value, image.shape[0]), (0, 255, 0), 2)  # Green line
-cv2.line(image, right_edge_left[0], right_edge_left[1], (0, 0, 255), 3)  # Red line
-cv2.circle(image, right_edge_left[0], 5, (0, 255, 0), -1) # draw a dot to mark bottom of left holder
-cv2.imwrite("image_before_move_left_holder.jpg", image)
+# # visualize positions on image
+# cv2.line(image, (target_x_value, 0), (target_x_value, image.shape[0]), (0, 255, 0), 2)  # Green line
+# cv2.line(image, right_edge_left[0], right_edge_left[1], (0, 0, 255), 3)  # Red line
+# cv2.circle(image, right_edge_left[0], 5, (0, 255, 0), -1) # draw a dot to mark bottom of left holder
+# cv2.imwrite("image_before_move_left_holder.jpg", image)
 
-distance_below_target = target_x_value - right_edge_left[0][0]
+# distance_below_target = target_x_value - right_edge_left[0][0]
 
-print('Right edge of left holder: ', right_edge_left)
-print("Distance between holders: ", distance_below_target)
+# print('Right edge of left holder: ', right_edge_left)
+# print("Distance between holders: ", distance_below_target)
 
-# ------ USE PID CONTROL TO MOVE LEFT HOLDER TO ALIGN WITH RIGHT HOLDER -----------
-while(distance_below_target > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS or distance_below_target < 0):
-    steps_to_take = int(pid_control(distance_below_target, Kp=(1/calibration_variables[LEFT_CONVEYOR_SPEED])))
-    if(steps_to_take == 0):
-        print("No steps to take")
-        break
-    print("Steps to take: ", steps_to_take)
+# # ------ USE PID CONTROL TO MOVE LEFT HOLDER TO ALIGN WITH RIGHT HOLDER -----------
+# while(distance_below_target > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS or distance_below_target < 0):
+#     steps_to_take = int(pid_control(distance_below_target, Kp=(1/calibration_variables[LEFT_CONVEYOR_SPEED])))
+#     if(steps_to_take == 0):
+#         print("No steps to take")
+#         break
+#     print("Steps to take: ", steps_to_take)
 
-    # move conveyor
-    set_up_left_conveyor()
-    move_left_conveyor(steps_to_take)
-    clean_up_left_conveyor()
+#     # move conveyor
+#     set_up_left_conveyor()
+#     move_left_conveyor(steps_to_take)
+#     clean_up_left_conveyor()
 
-    #take new image
-    os.system(f"rpicam-still --output {image_path} --nopreview") 
-    image = cv2.imread(image_path)
+#     #take new image
+#     os.system(f"rpicam-still --output {image_path} --nopreview") 
+#     image = cv2.imread(image_path)
 
-    # find new left holder position
-    top_holder_left = top_holder_left_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
-    right_edge_left = get_right_edge_of_holder(top_holder_left['contour'], image)
+#     # find new left holder position
+#     top_holder_left = top_holder_left_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
+#     right_edge_left = get_right_edge_of_holder(top_holder_left['contour'], image)
 
-    # visualize on image
-    cv2.line(image, (target_x_value, 0), (target_x_value, image.shape[0]), (0, 255, 0), 2)  # Green line
-    cv2.line(image, right_edge_left[0], right_edge_left[1], (0, 0, 255), 3)  # Red line
-    cv2.circle(image, right_edge_left[0], 5, (0, 255, 0), -1) # draw a circle to mark bottom of left holder
+#     # visualize on image
+#     cv2.line(image, (target_x_value, 0), (target_x_value, image.shape[0]), (0, 255, 0), 2)  # Green line
+#     cv2.line(image, right_edge_left[0], right_edge_left[1], (0, 0, 255), 3)  # Red line
+#     cv2.circle(image, right_edge_left[0], 5, (0, 255, 0), -1) # draw a circle to mark bottom of left holder
 
-    cv2.imwrite("image_before_move_left_holder.jpg", image)
+#     cv2.imwrite("image_before_move_left_holder.jpg", image)
 
-    distance_below_target = target_x_value - right_edge_left[0][0]
-    print("Distance between holders: ", distance_below_target)
+#     distance_below_target = target_x_value - right_edge_left[0][0]
+#     print("Distance between holders: ", distance_below_target)
 
-print('finished moving holders together')
+# print('finished moving holders together')
 
 # ------- ROTATE TOP CONVEYOR TO SLIDE TRAY ACROSS -----------
 set_up_top_conveyor()
