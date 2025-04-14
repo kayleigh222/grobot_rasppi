@@ -213,7 +213,6 @@ def top_holder_with_barcode_right_conveyor(image, conveyor_threshold, conveyors_
             # Handle the case where there are no barcodes in the right conveyor
             print("Error: No barcodes found in right conveyor")
             break
-    print("Top holder right conveyor:", top_holder_right_conveyor)
     print("Top holder right conveyor empty:", top_holder_right_conveyor['is_empty'])
     return top_holder_right_conveyor
 
@@ -250,13 +249,13 @@ def holders_divided_into_conveyors(image, conveyor_threshold, conveyors_left, co
 
     print('divided holders into left and right')
 
-    print('left conveyor holders: ', left_conveyor_holders)
-    print('right conveyor holders: ', right_conveyor_holders)
+    # print('left conveyor holders: ', left_conveyor_holders)
+    # print('right conveyor holders: ', right_conveyor_holders)
 
     return left_conveyor_holders, right_conveyor_holders    
 
 # Finds all holders, returns the contours and empty status
-def find_holders(image, max_dist_between_holder_center_and_barcode=400):
+def find_holders(image, max_dist_between_holder_center_and_barcode=600):
     print('finding holders')
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)  # Convert the image to HSV color space to detect color easier
     # Create mask
