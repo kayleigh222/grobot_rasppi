@@ -182,7 +182,7 @@ cv2.line(image, (0, conveyor_threshold), (image.shape[1], conveyor_threshold), (
 cv2.line(image, (0, top_conveyor_leg_top_left_y), (image.shape[1], top_conveyor_leg_top_left_y), (0, 0, 255), 2)  # Red line
 cv2.imwrite("before_move_top_conveyor.jpg", image)
 
-while(distance_from_target > 50):
+while(distance_from_target > 0):
     steps_to_take = int(pid_control(distance_from_target, Kp=(1/calibration_variables[TOP_CONVEYOR_SPEED_FORWARD])))
     if(steps_to_take == 0):
         print("No steps to take")
