@@ -47,8 +47,8 @@ servo_thread = threading.Thread(target=sweep_servo, args=(pi,)) # Create thread 
 servo_thread.start()
 
 # calibrate conveyor motors
-calibrate_vertical_conveyor_motors()
-calibrate_top_conveyor_motor() # calibrate top conveyor motor
+# calibrate_vertical_conveyor_motors()
+# calibrate_top_conveyor_motor() # calibrate top conveyor motor
 
 # ----------- TAKE INITIAL IMAGE AND LOAD CALIBRATION VARIABLES ------------------
 image_path = "captured_image.jpg"
@@ -79,6 +79,7 @@ image_with_simplified_contours = image.copy()
 cv2.drawContours(image_with_simplified_contours, [simplified_right_contour], -1, (0, 255, 0), 3)  # Green
 # cv2.drawContours(image_with_simplified_contours, [simplified_left_contour], -1, (255, 0, 0), 3)   # Blue
 cv2.imwrite("image_with_contours.jpg", image_with_simplified_contours)
+print("SAVED IMAGE WITH CONTOURS")
 
 # Draw a vertical line at the target location
 cv2.line(image, (target_location_for_top_tray, 0), (target_location_for_top_tray, image.shape[0]), (0, 255, 0), 2)  # Green line
