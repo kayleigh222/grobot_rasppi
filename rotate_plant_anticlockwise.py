@@ -163,7 +163,7 @@ cv2.line(image, (0, conveyor_threshold), (image.shape[1], conveyor_threshold), (
 cv2.line(image, (0, top_conveyor_leg_top_left_y), (image.shape[1], top_conveyor_leg_top_left_y), (0, 0, 255), 2)  # Red line
 cv2.imwrite("before_move_top_conveyor.jpg", image)
 
-while(abs(distance_from_target) > 50):
+while(distance_from_target > 50):
     steps_to_take = int(pid_control(distance_from_target, Kp=(1/calibration_variables[TOP_CONVEYOR_SPEED_FORWARD])))
     if(steps_to_take == 0):
         print("No steps to take")
@@ -185,7 +185,7 @@ print('finished moving top conveyor to target')
 
 # --------- MOVE TOP CONVEYOR LEG OUT OF THE WAY OF CONVEYORS ----------- # TODO: do this with PID control
 top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y = find_leg_top_conveyor(image)
-target_location = conveyors_right + additional_distance_to_push_tray_across_threshold # TODO - this is sus?
+target_location = conveyors_right # + additional_distance_to_push_tray_across_threshold # TODO - this is sus?
 while(top_conveyor_leg_top_left_y < target_location):
     steps_to_take = abs(int((target_location - top_conveyor_leg_top_left_y) // calibration_variables[TOP_CONVEYOR_SPEED_BACKWARD]))
     if(steps_to_take == 0):
@@ -193,8 +193,16 @@ while(top_conveyor_leg_top_left_y < target_location):
         break
     print("Steps to take: ", steps_to_take)
     step_top_conveyor_backward(steps_to_take)
+
+    #take new image
+    os.system(f"rpicam-still --output {image_path} --nopreview") 
+    image = cv2.imread(image_path) 
+
+    # find new position of top conveyor leg
+    top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y = find_leg_top_conveyor(image)
     
 clean_up_top_conveyor()
+print("Finished moving top conveyor leg out of the way")
 
 # check tray has moved to other conveyor
 print("Was top barcode on right ", top_holder_with_barcode_on_right_conveyor) # TODO: get data from this e.g. plant 4
