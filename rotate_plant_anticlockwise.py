@@ -138,6 +138,7 @@ cv2.drawContours(image_with_simplified_contours, [simplified_left_contour], -1, 
 right_points = simplified_right_contour[:, 0, :]  # shape (N, 2)
 min_y = right_points[:, 1].min()
 lowest_y_right_points = right_points[right_points[:, 1] == min_y]
+print("Lowest y points on right contour: ", lowest_y_right_points)
 
 # Get the pixel with the lowest x value from lowest_y_right_points
 lowest_x_right_point = lowest_y_right_points[lowest_y_right_points[:, 0].argmin()]
@@ -146,12 +147,13 @@ lowest_x_right_point = lowest_y_right_points[lowest_y_right_points[:, 0].argmin(
 left_points = simplified_left_contour[:, 0, :]
 max_y = left_points[:, 1].max()
 highest_y_left_points = left_points[left_points[:, 1] == max_y]
+print("Highest y points on left contour: ", highest_y_left_points)
 
 # Get the pixel with the lowest x value from highest_y_left_points
 lowest_x_left_point = highest_y_left_points[highest_y_left_points[:, 0].argmin()]
 
 # put a dot at lowest_x_left_point and lowest_x_right_point
-cv2.circle(image_with_simplified_contours, tuple(lowest_x_left_point), 5, (0, 255, 0), -1) # draw a dot to mark bottom of left holder
+cv2.circle(image_with_simplified_contours, tuple(lowest_x_left_point), 10, (0, 255, 0), -1) # draw a dot to mark bottom of left holder
 cv2.circle(image_with_simplified_contours, tuple(lowest_x_right_point), 5, (0, 0, 255), -1) # draw a dot to mark bottom of right holder
 
 cv2.imwrite("image_with_simplified_contours.jpg", image_with_simplified_contours)
