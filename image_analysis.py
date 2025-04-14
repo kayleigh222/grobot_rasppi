@@ -371,28 +371,7 @@ def barcodes_divided_into_conveyors(image, conveyor_threshold):
             right_conveyor_barcodes.append(barcode)  # Barcode is below the threshold (right conveyor)
 
     return left_conveyor_barcodes, right_conveyor_barcodes   
-
-def find_qrcodes_opencv(image):
-    detector = cv2.QRCodeDetector()
-    retval, decoded_info, points, _ = detector.detectAndDecodeMulti(image)
-
-    qrcode_info = []
-
-    if retval:
-        for data, point in zip(decoded_info, points):
-            if data:
-                # Get center from points
-                center_x = int(point[:, 0].mean())
-                center_y = int(point[:, 1].mean())
-                qrcode_info.append((data, (center_x, center_y)))
-
-                print(f"QR Code Data: {data}")
-                print(f"QR Code Center: ({center_x}, {center_y})")
-    else:
-        print("No QR codes found.")
-
-    return qrcode_info
-
+ 
 def find_qrcodes(image):
     """
     Detects QR codes in an image using pyzbar, retries capturing a new image if the expected number of QR codes 
