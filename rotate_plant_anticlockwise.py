@@ -91,6 +91,9 @@ while(distance_from_bottom_of_holder_to_target > 100): # TODO: base target locat
     # Save the image
     cv2.imwrite("before_move_right_holder_to_top.jpg", image)
 
+    print('right conveyor speed ', calibration_variables[RIGHT_CONVEYOR_SPEED])
+    print('feeding in kp ', (1/calibration_variables[RIGHT_CONVEYOR_SPEED]))
+
     # move conveyor
     steps_to_take = int(pid_control(distance_from_bottom_of_holder_to_target, Kp=(1/calibration_variables[RIGHT_CONVEYOR_SPEED])))
     set_up_right_conveyor()
