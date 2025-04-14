@@ -66,7 +66,9 @@ top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y  = find_leg_top_conveyo
 target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 150) # TODO- currently hardcoding this, probably want a better way 
 
 # # ----------- FIND TOP HOLDER ON RIGHT CONVEYOR ------------------
-# top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
+# holders = find_holders(image)
+# holders_divided_into_conveyors = divide_holders_into_conveyors(image, conveyor_threshold, holders_from_find_holders=holders)
+# top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(holders_divided_into_conveyors)
 # bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_with_barcode_on_right_conveyor['contour'], image)
 # bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyor[0][0]
 # distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
@@ -106,7 +108,9 @@ target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 150) # TODO- cu
 #     image = cv2.imread(image_path)
 
 #     # find new position of top holder
-#     top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
+    # holders = find_holders(image)
+#     holders_divided_into_conveyors = divide_holders_into_conveyors(image, conveyor_threshold, holders_from_find_holders=holders)
+#     top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(holders_divided_into_conveyors)
 #     bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_with_barcode_on_right_conveyor['contour'], image)
 #     bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyor[0][0]
 
@@ -132,7 +136,7 @@ top_holder_left = top_holder_left_conveyor(holders_divided_into_conveyors)
 top_holder_right_contour = top_holder_right['contour']
 top_holder_left_contour = top_holder_left['contour']
 # simplify contours
-top_holder_right_contour = cv2.approxPolyDP(top_holder_right_contour, 0.05 * cv2.arcLength(top_holder_right_contour, True), True)
+top_holder_right_contour = cv2.approxPolyDP(top_holder_right_contour, 0.1 * cv2.arcLength(top_holder_right_contour, True), True)
 top_holder_left_contour = cv2.approxPolyDP(top_holder_left_contour, 0.01 * cv2.arcLength(top_holder_left_contour, True), True)
 print('got top holder contours')
 image_with_right_contour = np.zeros_like(image)
@@ -143,7 +147,7 @@ right_gray = cv2.cvtColor(image_with_right_contour, cv2.COLOR_BGR2GRAY)
 left_gray = cv2.cvtColor(image_with_left_contour, cv2.COLOR_BGR2GRAY)
 print('converted contours to gray')
 corners_right = cv2.goodFeaturesToTrack(right_gray, maxCorners=16, qualityLevel=0.01, minDistance=10)
-corners_left = cv2.goodFeaturesToTrack(left_gray, maxCorners=4, qualityLevel=0.01, minDistance=10)
+corners_left = cv2.goodFeaturesToTrack(left_gray, maxCorners=4, qualityLevel=0.01, minDistance=20)
 print('got corners')
 # Convert corners to integer values
 corners_right = np.intp(corners_right)
@@ -162,10 +166,15 @@ for corner in corners_left:
 # Save the image with detected corners
 cv2.imwrite("image_with_corners.jpg", image_with_contours)
 print("Image with corners saved as image_with_corners.jpg")
+del top_holder_right_contour
+del top_holder_left_contour
+del image_with_left_contour
+del image_with_right_contour
+del image_with_contours
 
 
-simplified_right_contour = cv2.approxPolyDP(top_holder_right_contour, 0.01 * cv2.arcLength(top_holder_right_contour, True), True)
-simplified_left_contour = cv2.approxPolyDP(top_holder_left_contour, 0.01 * cv2.arcLength(top_holder_left_contour, True), True)
+# simplified_right_contour = cv2.approxPolyDP(top_holder_right_contour, 0.01 * cv2.arcLength(top_holder_right_contour, True), True)
+# simplified_left_contour = cv2.approxPolyDP(top_holder_left_contour, 0.01 * cv2.arcLength(top_holder_left_contour, True), True)
 
 
 # left_edge_right = get_left_edge_of_holder(top_holder_right['contour'], image)
