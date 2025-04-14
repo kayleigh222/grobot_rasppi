@@ -1,6 +1,7 @@
 import os
 import cv2
 import pigpio
+import time
 import threading
 from image_analysis import find_left_and_right_of_conveyors, find_leg_top_conveyor, find_top_and_bottom_of_conveyors, get_top_barcode_left_conveyor, get_top_barcode_right_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, get_right_edge_of_holder, get_left_edge_of_holder, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
 from calibration import TOP_CONVEYOR_SPEED_BACKWARD, TOP_CONVEYOR_SPEED_FORWARD, calibrate_top_conveyor_motor, calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
@@ -34,6 +35,8 @@ def pid_control(error, Kp=0.7, Ki=0.01, Kd=0.05): # error is the difference betw
     return adjustment
 
 # ----------- TURN ON LIGHTS BY RUNNING SERVO MOTOR IN SEPARATE THREAD TO TRIGGER MOTION SENSOR --------
+os.system("sudo pigpiod")
+time.sleep(1)  # Give it a second to start
 pi = pigpio.pi() # Connect to pigpio daemon
 set_up_servo(pi) # Set up servo motor
 servo_motor_code.sweeping = True # Control flag
