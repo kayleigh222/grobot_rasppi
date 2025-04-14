@@ -4,8 +4,8 @@ import time
 # Define GPIO pins for ULN2003 driver
 IN1 = 26
 IN2 = 19
-IN3 = 13
-IN4 = 6
+IN3 = 6
+IN4 = 5
 
 # Define constants
 DEG_PER_STEP = 1.8
