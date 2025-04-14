@@ -133,17 +133,16 @@ holders = find_holders(image)
 holders_divided_into_conveyors = divide_holders_into_conveyors(image, conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
 top_holder_right = top_holder_right_conveyor(holders_divided_into_conveyors) # TODO - this detects all holders twice, make more efficient
 top_holder_left = top_holder_left_conveyor(holders_divided_into_conveyors)
-image_with_contours = image.copy()
+# image_with_contours = image.copy()
 
 print('finding corners for right holder')
 top_holder_right_contour = top_holder_right['contour']
 top_holder_right_contour = cv2.approxPolyDP(top_holder_right_contour, 0.005 * cv2.arcLength(top_holder_right_contour, True), True)
 image_with_right_contour = np.zeros_like(image)
-cv2.drawContours(image_with_right_contour, [top_holder_right_contour], -1, (255, 255, 255), 1)
 right_gray = cv2.cvtColor(image_with_right_contour, cv2.COLOR_BGR2GRAY)
 corners_right = cv2.goodFeaturesToTrack(right_gray, maxCorners=16, qualityLevel=0.02, minDistance=10)
 corners_right = np.intp(corners_right)
-cv2.drawContours(image_with_contours, [top_holder_right_contour], -1, (255, 0, 0), 3) # draw right holder contour in blue
+# cv2.drawContours(image_with_contours, [top_holder_right_contour], -1, (255, 0, 0), 3) # draw right holder contour in blue
 
 del top_holder_right_contour
 del image_with_right_contour
@@ -153,103 +152,105 @@ print('finding corners for left contour')
 top_holder_left_contour = top_holder_left['contour']
 top_holder_left_contour = cv2.approxPolyDP(top_holder_left_contour, 0.01 * cv2.arcLength(top_holder_left_contour, True), True)
 image_with_left_contour = np.zeros_like(image)
-cv2.drawContours(image_with_left_contour, [top_holder_left_contour], -1, (255, 255, 255), 1)
 left_gray = cv2.cvtColor(image_with_left_contour, cv2.COLOR_BGR2GRAY)
 corners_left = cv2.goodFeaturesToTrack(left_gray, maxCorners=8, qualityLevel=0.01, minDistance=20)
 corners_left = np.intp(corners_left)
-cv2.drawContours(image_with_contours, [top_holder_left_contour], -1, (0, 0, 255), 3) # draw left holder contour in red
+# cv2.drawContours(image_with_contours, [top_holder_left_contour], -1, (0, 0, 255), 3) # draw left holder contour in red
 
 del top_holder_left_contour
 del image_with_left_contour
 del left_gray
 
-print('got corners - drawing')
+# print('got corners - drawing')
 
-# Draw the corners on the image
-for corner in corners_right:
-    x, y = corner.ravel()
-    cv2.circle(image_with_contours, (x, y), 10, (255, 0, 0), -1)  # Green circle for right corners
+# # Draw the corners on the image
+# for corner in corners_right:
+#     x, y = corner.ravel()
+#     cv2.circle(image_with_contours, (x, y), 10, (255, 0, 0), -1)  # Green circle for right corners
 
-for corner in corners_left:
-    x, y = corner.ravel()
-    cv2.circle(image_with_contours, (x, y), 10, (0, 0, 255), -1)  # Red circle for left corners
+# for corner in corners_left:
+#     x, y = corner.ravel()
+#     cv2.circle(image_with_contours, (x, y), 10, (0, 0, 255), -1)  # Red circle for left corners
 
-# Save the image with detected corners
-cv2.imwrite("image_with_corners.jpg", image_with_contours)
-print("Image with corners saved as image_with_corners.jpg")
+# # Save the image with detected corners
+# cv2.imwrite("image_with_corners.jpg", image_with_contours)
+# print("Image with corners saved as image_with_corners.jpg")
 
-del image_with_contours
+# del image_with_contours
 
 # get two corners with highest y value on left contour
 corners_left = sorted(corners_left, key=lambda x: x[0][1], reverse=True)[:2] # get two corners with highest y value
 # of these corners, get the corner with lowest x value
-left_edge_left = min(corners_left, key=lambda x: x[0][0]) # get corner with lowest x value
-# draw a circle in yellow over it
-cv2.circle(image, (left_edge_left[0][0], left_edge_left[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for left edge
+bottom_left_corner_left_holder = min(corners_left, key=lambda x: x[0][0]) # get corner with lowest x value
+del corners_left
 
 # get two corners with lowest y value on right contour
 corners_right = sorted(corners_right, key=lambda x: x[0][1])[:2] # get two corners with lowest y value
 # of these corners, get the corner with lowest x value
-right_edge_right = min(corners_right, key=lambda x: x[0][0]) # get corner with lowest x value
-# draw a circle in yellow over it
-cv2.circle(image, (right_edge_right[0][0], right_edge_right[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for right edge
+top_left_corner_right_holder = min(corners_right, key=lambda x: x[0][0]) # get corner with lowest x value
+del corners_right
 
-# save the image
-cv2.imwrite("image_with_yellow_corners.jpg", image)
+target_x_value = top_left_corner_right_holder[0]
+
+# visualize positions on image
+cv2.circle(image, (bottom_left_corner_left_holder[0][0], bottom_left_corner_left_holder[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for left edge
+cv2.circle(image, (top_left_corner_right_holder[0][0], top_left_corner_right_holder[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for right edge
+cv2.imwrite("image_before_move_left_holder.jpg", image)
+
+distance_below_target = target_x_value - bottom_left_corner_left_holder[0]
+
+print("Distance between holders: ", distance_below_target)
+
+# ------ USE PID CONTROL TO MOVE LEFT HOLDER TO ALIGN WITH RIGHT HOLDER -----------
+while(distance_below_target > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS or distance_below_target < 0):
+    steps_to_take = int(pid_control(distance_below_target, Kp=(1/calibration_variables[LEFT_CONVEYOR_SPEED])))
+    if(steps_to_take == 0):
+        print("No steps to take")
+        break
+    print("Steps to take: ", steps_to_take)
+
+    # move conveyor
+    set_up_left_conveyor()
+    move_left_conveyor(steps_to_take)
+    clean_up_left_conveyor()
+
+    #take new image
+    os.system(f"rpicam-still --output {image_path} --nopreview") 
+    image = cv2.imread(image_path)
+
+    # find new left holder position
+    holders = find_holders(image)
+    holders_divided_into_conveyors = divide_holders_into_conveyors(image, conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
+    top_holder_left = top_holder_left_conveyor(holders_divided_into_conveyors)
+
+    print('finding corners for left contour')
+    top_holder_left_contour = top_holder_left['contour']
+    top_holder_left_contour = cv2.approxPolyDP(top_holder_left_contour, 0.01 * cv2.arcLength(top_holder_left_contour, True), True)
+    image_with_left_contour = np.zeros_like(image)
+    left_gray = cv2.cvtColor(image_with_left_contour, cv2.COLOR_BGR2GRAY)
+    corners_left = cv2.goodFeaturesToTrack(left_gray, maxCorners=8, qualityLevel=0.01, minDistance=20)
+    corners_left = np.intp(corners_left)
+
+    # get two corners with highest y value on left contour
+    corners_left = sorted(corners_left, key=lambda x: x[0][1], reverse=True)[:2] # get two corners with highest y value
+    # of these corners, get the corner with lowest x value
+    bottom_left_corner_left_holder = min(corners_left, key=lambda x: x[0][0]) # get corner with lowest x value
+
+    del top_holder_left_contour
+    del image_with_left_contour
+    del left_gray
+    del corners_left
+
+    # visualize on image
+    cv2.circle(image, (bottom_left_corner_left_holder[0][0], bottom_left_corner_left_holder[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for left edge
+    cv2.circle(image, (top_left_corner_right_holder[0][0], top_left_corner_right_holder[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for right edge
+    cv2.imwrite("image_before_move_left_holder.jpg", image)
 
 
-# simplified_right_contour = cv2.approxPolyDP(top_holder_right_contour, 0.01 * cv2.arcLength(top_holder_right_contour, True), True)
-# simplified_left_contour = cv2.approxPolyDP(top_holder_left_contour, 0.01 * cv2.arcLength(top_holder_left_contour, True), True)
+    distance_below_target = target_x_value - bottom_left_corner_left_holder[0]
+    print("Distance between holders: ", distance_below_target)
 
-
-# left_edge_right = get_left_edge_of_holder(top_holder_right['contour'], image)
-# right_edge_left = get_right_edge_of_holder(top_holder_left['contour'], image)
-
-# target_x_value = left_edge_right[0][0]
-
-# # visualize positions on image
-# cv2.line(image, (target_x_value, 0), (target_x_value, image.shape[0]), (0, 255, 0), 2)  # Green line
-# cv2.line(image, right_edge_left[0], right_edge_left[1], (0, 0, 255), 3)  # Red line
-# cv2.circle(image, right_edge_left[0], 5, (0, 255, 0), -1) # draw a dot to mark bottom of left holder
-# cv2.imwrite("image_before_move_left_holder.jpg", image)
-
-# distance_below_target = target_x_value - right_edge_left[0][0]
-
-# print('Right edge of left holder: ', right_edge_left)
-# print("Distance between holders: ", distance_below_target)
-
-# # ------ USE PID CONTROL TO MOVE LEFT HOLDER TO ALIGN WITH RIGHT HOLDER -----------
-# while(distance_below_target > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS or distance_below_target < 0):
-#     steps_to_take = int(pid_control(distance_below_target, Kp=(1/calibration_variables[LEFT_CONVEYOR_SPEED])))
-#     if(steps_to_take == 0):
-#         print("No steps to take")
-#         break
-#     print("Steps to take: ", steps_to_take)
-
-#     # move conveyor
-#     set_up_left_conveyor()
-#     move_left_conveyor(steps_to_take)
-#     clean_up_left_conveyor()
-
-#     #take new image
-#     os.system(f"rpicam-still --output {image_path} --nopreview") 
-#     image = cv2.imread(image_path)
-
-#     # find new left holder position
-#     top_holder_left = top_holder_left_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
-#     right_edge_left = get_right_edge_of_holder(top_holder_left['contour'], image)
-
-#     # visualize on image
-#     cv2.line(image, (target_x_value, 0), (target_x_value, image.shape[0]), (0, 255, 0), 2)  # Green line
-#     cv2.line(image, right_edge_left[0], right_edge_left[1], (0, 0, 255), 3)  # Red line
-#     cv2.circle(image, right_edge_left[0], 5, (0, 255, 0), -1) # draw a circle to mark bottom of left holder
-
-#     cv2.imwrite("image_before_move_left_holder.jpg", image)
-
-#     distance_below_target = target_x_value - right_edge_left[0][0]
-#     print("Distance between holders: ", distance_below_target)
-
-# print('finished moving holders together')
+print('finished moving holders together')
 
 # # ------- ROTATE TOP CONVEYOR TO SLIDE TRAY ACROSS -----------
 # set_up_top_conveyor()
