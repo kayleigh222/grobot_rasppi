@@ -166,9 +166,9 @@ def get_bottom_edge_of_holder(holder_contour, image):
     return bottom_edge
 
 #conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
-def top_holder_left_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right):
+def top_holder_left_conveyor(holders_divided_into_conveyors):
     print('finding top holder left conveyor')
-    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors(image, conveyor_threshold, conveyors_left, conveyors_right)
+    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors # holders_divided_into_conveyors(image, conveyor_threshold, conveyors_left, conveyors_right)
     # Check if there are any barcodes in the right conveyor
     if left_conveyor_holders:
         # Find the barcode with the maximum x-coordinate in the right conveyor
@@ -181,8 +181,8 @@ def top_holder_left_conveyor(image, conveyor_threshold, conveyors_left, conveyor
     return top_holder_left_conveyor
 
 #conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
-def top_holder_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right):
-    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors(image, conveyor_threshold, conveyors_left, conveyors_right)
+def top_holder_right_conveyor(holders_divided_into_conveyors):
+    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors # holders_divided_into_conveyors(image, conveyor_threshold, conveyors_left, conveyors_right)
     # Check if there are any barcodes in the right conveyor
     if right_conveyor_holders:
         # Find the barcode with the maximum x-coordinate in the right conveyor
@@ -194,8 +194,8 @@ def top_holder_right_conveyor(image, conveyor_threshold, conveyors_left, conveyo
     print("Top holder right conveyor empty:", top_holder_right_conveyor['is_empty'])
     return top_holder_right_conveyor
 
-def top_holder_with_barcode_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right):
-    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors(image, conveyor_threshold, conveyors_left, conveyors_right)
+def top_holder_with_barcode_right_conveyor(holders_divided_into_conveyors):
+    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors # holders_divided_into_conveyors(image, conveyor_threshold, conveyors_left, conveyors_right)
     top_holder_with_barcode = None
     # Check if there are any barcodes in the right conveyor
     while(top_holder_with_barcode == None):
@@ -217,15 +217,15 @@ def top_holder_with_barcode_right_conveyor(image, conveyor_threshold, conveyors_
     return top_holder_right_conveyor
 
 # conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
-def holders_divided_into_conveyors(image, conveyor_threshold, conveyors_left, conveyors_right):  
-    holders = find_holders(image)  # Get empty holder contours
+def divide_holders_into_conveyors(image, conveyor_threshold, holders_from_find_holders):  
+    # holders_from_find_holders = find_holders(image)  # Get empty holder contours
 
     # Initialize the lists for left and right conveyor barcodes
     left_conveyor_holders = []
     right_conveyor_holders = []
 
     # Iterate through the barcode centers and classify them based on their y values
-    for holder in holders:
+    for holder in holders_from_find_holders:
         x, y = holder['holder_center']  # Unpack the barcode center coordinates
         if y < conveyor_threshold:
             left_conveyor_holders.append(holder)  # Barcode is above the threshold (left conveyor)

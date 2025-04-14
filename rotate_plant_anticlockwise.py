@@ -4,7 +4,7 @@ import pigpio
 import numpy as np
 import time
 import threading
-from image_analysis import find_left_and_right_of_conveyors, find_leg_top_conveyor, find_top_and_bottom_of_conveyors, get_top_barcode_left_conveyor, get_top_barcode_right_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, get_right_edge_of_holder, get_left_edge_of_holder, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
+from image_analysis import divide_holders_into_conveyors, find_holders, find_left_and_right_of_conveyors, find_leg_top_conveyor, find_top_and_bottom_of_conveyors, get_top_barcode_left_conveyor, get_top_barcode_right_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, get_right_edge_of_holder, get_left_edge_of_holder, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder, holders_divided_into_conveyors
 from calibration import TOP_CONVEYOR_SPEED_BACKWARD, TOP_CONVEYOR_SPEED_FORWARD, calibrate_top_conveyor_motor, calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
 from servo_motor_code import clean_up_servo, set_up_servo, sweep_servo
 import servo_motor_code
@@ -117,6 +117,7 @@ target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 150) # TODO- cu
 
 # --------- FIND DESIRED POSITION FOR LEFT HOLDER -----------
 
+# TODO - fix references to top holders so find holders and holders divided into conveyors first
 #take new image
 os.system(f"rpicam-still --output {image_path} --nopreview") 
 image = cv2.imread(image_path) 
@@ -124,8 +125,10 @@ image = cv2.imread(image_path)
 print('detecting corners')
 
 # get bounding edges (next to each other) of each holder
-top_holder_right = top_holder_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right) # TODO - this detects all holders twice, make more efficient
-top_holder_left = top_holder_left_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
+holders = find_holders(image)
+holders_divided_into_conveyors = divide_holders_into_conveyors(image, conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
+top_holder_right = top_holder_right_conveyor(holders_divided_into_conveyors) # TODO - this detects all holders twice, make more efficient
+top_holder_left = top_holder_left_conveyor(holders_divided_into_conveyors)
 top_holder_right_contour = top_holder_right['contour']
 top_holder_left_contour = top_holder_left['contour']
 # simplify contours
