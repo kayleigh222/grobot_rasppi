@@ -136,7 +136,7 @@ top_holder_left = top_holder_left_conveyor(holders_divided_into_conveyors)
 top_holder_right_contour = top_holder_right['contour']
 top_holder_left_contour = top_holder_left['contour']
 # simplify contours
-top_holder_right_contour = cv2.approxPolyDP(top_holder_right_contour, 0.1 * cv2.arcLength(top_holder_right_contour, True), True)
+top_holder_right_contour = cv2.approxPolyDP(top_holder_right_contour, 1 * cv2.arcLength(top_holder_right_contour, True), True)
 top_holder_left_contour = cv2.approxPolyDP(top_holder_left_contour, 0.01 * cv2.arcLength(top_holder_left_contour, True), True)
 print('got top holder contours')
 image_with_right_contour = np.zeros_like(image)
@@ -147,7 +147,7 @@ right_gray = cv2.cvtColor(image_with_right_contour, cv2.COLOR_BGR2GRAY)
 left_gray = cv2.cvtColor(image_with_left_contour, cv2.COLOR_BGR2GRAY)
 print('converted contours to gray')
 corners_right = cv2.goodFeaturesToTrack(right_gray, maxCorners=16, qualityLevel=0.1, minDistance=10)
-corners_left = cv2.goodFeaturesToTrack(left_gray, maxCorners=4, qualityLevel=0.01, minDistance=20)
+corners_left = cv2.goodFeaturesToTrack(left_gray, maxCorners=8, qualityLevel=0.01, minDistance=20)
 print('got corners')
 # Convert corners to integer values
 corners_right = np.intp(corners_right)
