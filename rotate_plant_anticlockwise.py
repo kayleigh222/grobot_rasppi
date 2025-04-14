@@ -123,8 +123,8 @@ target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 150) # TODO- cu
 
 # TODO - fix references to top holders so find holders and holders divided into conveyors first
 #take new image
-os.system(f"rpicam-still --output {image_path} --nopreview") 
-image = cv2.imread(image_path) 
+# os.system(f"rpicam-still --output {image_path} --nopreview") 
+# image = cv2.imread(image_path) 
 
 print('detecting corners')
 
@@ -137,7 +137,7 @@ image_with_contours = image.copy()
 
 print('finding corners for right holder')
 top_holder_right_contour = top_holder_right['contour']
-top_holder_right_contour = cv2.approxPolyDP(top_holder_right_contour, 1 * cv2.arcLength(top_holder_right_contour, True), True)
+top_holder_right_contour = cv2.approxPolyDP(top_holder_right_contour, 0.01 * cv2.arcLength(top_holder_right_contour, True), True)
 image_with_right_contour = np.zeros_like(image)
 cv2.drawContours(image_with_right_contour, [top_holder_right_contour], -1, (255, 255, 255), 1)
 right_gray = cv2.cvtColor(image_with_right_contour, cv2.COLOR_BGR2GRAY)
@@ -159,7 +159,6 @@ left_gray = cv2.cvtColor(image_with_left_contour, cv2.COLOR_BGR2GRAY)
 corners_left = cv2.goodFeaturesToTrack(left_gray, maxCorners=8, qualityLevel=0.01, minDistance=20)
 corners_left = np.intp(corners_left)
 cv2.drawContours(image_with_contours, [top_holder_left_contour], -1, (0, 0, 255), 1) # draw left holder contour in red
-
 
 del top_holder_left_contour
 del image_with_left_contour
