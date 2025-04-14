@@ -28,6 +28,9 @@ def pid_control(error, Kp=0.7, Ki=0.01, Kd=0.05): # error is the difference betw
 
     print('Integral: ', integral)
     print('Derivative: ', derivative)
+    print('K_p:', Kp)
+    print('K_i:', Ki)
+    print('K_d:', Kd)
 
     # Calculate how much to move the conveyor
     adjustment = Kp * error + Ki * integral + Kd * derivative
