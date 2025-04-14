@@ -342,9 +342,11 @@ def get_top_barcode_left_conveyor(image, conveyor_threshold):
     left_conveyor_barcodes, right_conveyor_barcodes = barcodes_divided_into_conveyors(image, conveyor_threshold)
     # Check if there are any barcodes in the right conveyor
     if left_conveyor_barcodes:
+        print('have left conveyor barcodes')
         # Find the barcode with the maximum x-coordinate in the right conveyor
         top_barcode_left_conveyor = max(left_conveyor_barcodes, key=lambda barcode: barcode[1][0])
     else:
+        print('no left conveyor barcodes')
         # Handle the case where there are no barcodes in the right conveyor
         top_barcode_left_conveyor = None  # or some default value/message
     print("Top barcode left conveyor:", top_barcode_left_conveyor)
