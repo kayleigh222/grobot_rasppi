@@ -44,8 +44,8 @@ servo_thread = threading.Thread(target=sweep_servo, args=(pi,)) # Create thread 
 servo_thread.start()
 
 # calibrate conveyor motors
-calibrate_vertical_conveyor_motors()
-calibrate_top_conveyor_motor() # calibrate top conveyor motor
+# calibrate_vertical_conveyor_motors()
+# calibrate_top_conveyor_motor() # calibrate top conveyor motor
 
 # ----------- TAKE INITIAL IMAGE AND LOAD CALIBRATION VARIABLES ------------------
 image_path = "captured_image.jpg"
