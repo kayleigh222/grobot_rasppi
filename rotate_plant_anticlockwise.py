@@ -157,6 +157,7 @@ cv2.circle(image_with_simplified_contours, tuple(lowest_x_left_point), 10, (0, 2
 cv2.circle(image_with_simplified_contours, tuple(lowest_x_right_point), 5, (0, 0, 255), -1) # draw a dot to mark bottom of right holder
 
 cv2.imwrite("image_with_simplified_contours.jpg", image_with_simplified_contours)
+print('SAVED image with simplified contours')
 
 left_edge_right = get_left_edge_of_holder(top_holder_right['contour'], image)
 right_edge_left = get_right_edge_of_holder(top_holder_left['contour'], image)
