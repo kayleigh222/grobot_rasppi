@@ -121,10 +121,11 @@ target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 150) # TODO- cu
 os.system(f"rpicam-still --output {image_path} --nopreview") 
 image = cv2.imread(image_path) 
 
+print('detecting corners')
+
 # get bounding edges (next to each other) of each holder
 top_holder_right = top_holder_right_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
 top_holder_left = top_holder_left_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right)
-# get the line of pixels with the lowest y value on top_holder_right['contour']
 top_holder_right_contour = top_holder_right['contour']
 top_holder_left_contour = top_holder_left['contour']
 image_with_right_contour = np.zeros_like(image)
