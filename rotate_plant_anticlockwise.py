@@ -33,17 +33,16 @@ def pid_control(error, Kp=0.7, Ki=0.01, Kd=0.05): # error is the difference betw
     print("Adjustment: ", adjustment)
     return adjustment
 
-# NOTE: have a record of how many plants there are i.e. how many barcodes are visible. therefore if a plant falls off will know because less barcodes visible and can send me a photo
-# calibrate conveyor motors
-calibrate_vertical_conveyor_motors()
-calibrate_top_conveyor_motor() # calibrate top conveyor motor
-
 # ----------- TURN ON LIGHTS BY RUNNING SERVO MOTOR IN SEPARATE THREAD TO TRIGGER MOTION SENSOR --------
 pi = pigpio.pi() # Connect to pigpio daemon
 set_up_servo(pi) # Set up servo motor
 servo_motor_code.sweeping = True # Control flag
 servo_thread = threading.Thread(target=sweep_servo, args=(pi,)) # Create thread to run servo motor
 servo_thread.start()
+
+# calibrate conveyor motors
+calibrate_vertical_conveyor_motors()
+calibrate_top_conveyor_motor() # calibrate top conveyor motor
 
 # ----------- TAKE INITIAL IMAGE AND LOAD CALIBRATION VARIABLES ------------------
 image_path = "captured_image.jpg"
