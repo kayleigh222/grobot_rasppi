@@ -1,12 +1,17 @@
 import os
 import cv2
+import pigpio
+import threading
 from image_analysis import find_left_and_right_of_conveyors, find_leg_top_conveyor, find_top_and_bottom_of_conveyors, get_top_barcode_left_conveyor, get_top_barcode_right_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, get_right_edge_of_holder, get_left_edge_of_holder, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
 from calibration import TOP_CONVEYOR_SPEED_BACKWARD, TOP_CONVEYOR_SPEED_FORWARD, calibrate_top_conveyor_motor, calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
+from servo_motor_code import sweep_servo
 from top_conveyor_motor_code import clean_up_top_conveyor, set_up_top_conveyor, step_top_conveyor_backward, step_top_conveyor_forward
 from vertical_conveyor_left_motor_code import move_left_conveyor, set_up_left_conveyor, clean_up_left_conveyor
 from vertical_conveyor_right_motor_code import move_right_conveyor, set_up_right_conveyor, clean_up_right_conveyor
 
 DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS = 70 # pixels - max vertical distance between holders to be able to slide across
+
+triggering_light = False # set to true when thread is running to spin servo motor and trigger motion sensor light
 
 # variables for PID control - used to move conveyor to align holders before sliding tray across
 previous_error = 0
@@ -33,6 +38,12 @@ def pid_control(error, Kp=0.7, Ki=0.01, Kd=0.05): # error is the difference betw
 # calibrate conveyor motors
 # calibrate_vertical_conveyor_motors()
 # calibrate_top_conveyor_motor() # calibrate top conveyor motor
+
+# ----------- TURN ON LIGHTS BY RUNNING SERVO MOTOR IN SEPARATE THREAD TO TRIGGER MOTION SENSOR --------
+pi = pigpio.pi() # Connect to pigpio daemon
+sweeping = True # Control flag
+servo_thread = threading.Thread(target=sweep_servo)
+servo_thread.start()
 
 # ----------- TAKE INITIAL IMAGE AND LOAD CALIBRATION VARIABLES ------------------
 image_path = "captured_image.jpg"
@@ -204,17 +215,22 @@ while(top_conveyor_leg_top_left_y < target_location):
 clean_up_top_conveyor()
 print("Finished moving top conveyor leg out of the way")
 
-# check tray has moved to other conveyor
-print("Was top barcode on right ", top_holder_with_barcode_on_right_conveyor) # TODO: get data from this e.g. plant 4
-os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
-image = cv2.imread(image_path) # read the captured image with opencv
-new_top_barcode_left_conveyor = get_top_barcode_left_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right) # TODO: get data from this e.g. plant 4
-print("New top barcode on left ", new_top_barcode_left_conveyor) # TODO: get data from this e.g. plant 4
-if(new_top_barcode_left_conveyor[0] == top_holder_with_barcode_on_right_conveyor[0]): # TODO - change indexing here so actually get right data?
-    print("Tray moved successfully")
-else:
-    print("Error: Tray not moved successfully")
+# # check tray has moved to other conveyor
+# print("Was top barcode on right ", top_holder_with_barcode_on_right_conveyor) # TODO: get data from this e.g. plant 4
+# os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
+# image = cv2.imread(image_path) # read the captured image with opencv
+# new_top_barcode_left_conveyor = get_top_barcode_left_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right) # TODO: get data from this e.g. plant 4
+# print("New top barcode on left ", new_top_barcode_left_conveyor) # TODO: get data from this e.g. plant 4
+# if(new_top_barcode_left_conveyor[0] == top_holder_with_barcode_on_right_conveyor[0]): # TODO - change indexing here so actually get right data?
+#     print("Tray moved successfully")
+# else:
+#     print("Error: Tray not moved successfully")
 
+
+
+# --------- WHEN FINISHED, STOP THREAD SPINNING SERVO MOTOR ---------- 
+sweeping = False
+servo_thread.join()
 # trickier version - multiple plants on each conveyor. note space plant holders evenly and with few enough plants that when a plant is at the top there's an empty holder at the bottom (and vice versa for right conveyor)
 # step 1: check location of top plant on left conveyor (barcode in top left position) - note distance from top
 # step 2: check location of bottom plant on right conveyor (bottom right position) - note distance from bottom
