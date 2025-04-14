@@ -254,7 +254,7 @@ def holders_divided_into_conveyors(image, conveyor_threshold, conveyors_left, co
     return left_conveyor_holders, right_conveyor_holders    
 
 # Finds all holders, returns the contours and empty status
-def find_holders(image, max_dist_between_holder_center_and_barcode=400):
+def find_holders(image, max_dist_between_holder_center_and_barcode=500):
     print('finding holders')
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)  # Convert the image to HSV color space to detect color easier
     # Create mask
