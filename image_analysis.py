@@ -388,6 +388,7 @@ def find_qrcodes(image):
 
     while num_qrcodes_found < NUM_QRCODES:
         pil_image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+        cv2.imwrite('filtered_image_to_detect_qrcodes.jpg', pil_image) # save the image to detect qrcodes
         detected_qrcodes = decode(pil_image)
 
         num_qrcodes_found = len(detected_qrcodes)
