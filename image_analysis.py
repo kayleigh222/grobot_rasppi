@@ -161,118 +161,103 @@ def divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders)
 
 # Finds all holders, returns the contours and empty status
 def find_holders(image, max_dist_between_holder_center_and_barcode=450):
-    print('finding holders')
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)  # Convert the image to HSV color space to detect color easier
-    # Create mask
+    """
+    Detects holder regions (red-colored contours) in the input image and determines whether 
+    each holder is empty or occupied based on proximity to a detected QR code.
+
+    Parameters:
+        image (numpy.ndarray): A BGR image (as read by OpenCV) in which holders and barcodes are to be detected.
+        max_dist_between_holder_center_and_barcode (int): The maximum allowed distance (in pixels) between 
+            the holder's center and a nearby barcode for the holder to be considered "occupied".
+
+    Returns:
+        holders_info (list of dict): A list where each dictionary contains information about a detected holder:
+            - 'contour' (numpy.ndarray): The contour of the holder region.
+            - 'is_empty' (bool): True if no barcode was found near the holder, otherwise False.
+            - 'holder_center' (tuple of int): The (x, y) coordinates of the center of the holder's bounding box.
+            - 'barcode_data' (str or None): The decoded string from the nearby barcode if present; otherwise None.
+    """
+    # Convert image to HSV for better color filtering
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+
+    # Mask red hues (both ends of HSV spectrum for red)
     mask1 = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
     mask2 = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV_2, HOLDER_COLOR_UPPER_THRESHOLD_HSV_2)
-    red_mask = cv2.bitwise_or(mask1, mask2) # have to combine 2 masks because red appears at top and bottom of spectrum
-    cv2.imwrite('mask.jpg', red_mask)
+    red_mask = cv2.bitwise_or(mask1, mask2)
 
-    # Find contours of blue areas
+    # Find contours of red areas (potential holders)
     contours, _ = cv2.findContours(red_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-
-    # Filter contours based on size
     holder_contours = [cnt for cnt in contours if cv2.contourArea(cnt) > MIN_HOLDER_AREA]
-     # print number of holder contours
     print(f"Number of holder contours found: {len(holder_contours)}")
 
-    # Find barcodes in the image
-    barcode_info = find_qrcodes(image)
+    # Detect barcodes
+    qrcodes = find_qrcodes(image)
 
-    # List to store information about the holders
     holders_info = []
 
-    # Iterate through contours
+    # Analyze each potential holder
     for holder_contour in holder_contours:
-        x, y, w, h = cv2.boundingRect(holder_contour)  # Get bounding box of holder
-        holder_center = (x + w // 2, y + h // 2)  # Get center of blue patch
+        x, y, w, h = cv2.boundingRect(holder_contour)
+        holder_center = (x + w // 2, y + h // 2)
         print(f"Holder center: {holder_center}")
 
         near_barcode = (holder_center[0], holder_center[1] + max_dist_between_holder_center_and_barcode)
 
-        # Check proximity to barcodes to determine if the holder is empty
+        # Determine if a barcode is nearby
         barcode_close = False
+        closest_barcode = None
 
-        # draw a circle representing the max distance between a holder center and its barcode
-        # cv2.circle(image, near_barcode, max_dist_between_holder_center_and_barcode, (0, 0, 255), 2)
-
-        for barcode in barcode_info:
-            # Compute Euclidean distance to barcode
-            distance = np.sqrt((near_barcode[0] - barcode[1][0])**2 + 
-                               (near_barcode[1] - barcode[1][1])**2)
-
-            if distance < max_dist_between_holder_center_and_barcode:  # Adjust distance threshold based on image scale
+        for barcode in qrcodes:
+            distance = np.linalg.norm(np.array(near_barcode) - np.array(barcode[1]))
+            if distance < max_dist_between_holder_center_and_barcode:
                 barcode_close = True
-                break  # No need to check further if already too close
-        
-        # Store the contour, empty status, and barcode (if not empty)
-        holder_info = {
+                closest_barcode = barcode
+                break
+
+        # Save holder info
+        holders_info.append({
             'contour': holder_contour,
-            'is_empty': not barcode_close,  # If not too close to barcode, it's considered empty
+            'is_empty': not barcode_close,
             'holder_center': holder_center,
-            'barcode_data': barcode[0] if barcode_close else None  # Store barcode data if not empty
-        }
-        holders_info.append(holder_info)
-
-    # Optionally, draw contours for all holders
-    # for holder in holders_info:
-    #     color = (255, 0, 0) if holder['is_empty'] else (0, 255, 0)  # Blue for empty, green for not empty
-    #     cv2.drawContours(image, [holder['contour']], -1, color, 3)  # Draw each holder's contour with different color
-
-    cv2.imwrite('image_with_all_holders.jpg', image)
+            'barcode_data': closest_barcode[0] if barcode_close else None
+        })
 
     return holders_info
 
-
-# -------- BARCODE LOCATIONS ----------------
-# conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
-def get_top_barcode_right_conveyor(image, conveyor_threshold):
-    left_conveyor_barcodes, right_conveyor_barcodes = barcodes_divided_into_conveyors(image, conveyor_threshold)
-    # Check if there are any barcodes in the right conveyor
+# -------- QR CODE DETECTION ----------------
+def get_top_qr_right_conveyor(image, conveyor_threshold):
+    """
+    Finds the top-right barcode on the bottom conveyor (y > threshold), based on the highest x-position.
+    """
+    _, right_conveyor_barcodes = qrs_divided_into_conveyors(image, conveyor_threshold)
     if right_conveyor_barcodes:
-        # Find the barcode with the maximum x-coordinate in the right conveyor
-        top_barcode_right_conveyor = max(right_conveyor_barcodes, key=lambda barcode: barcode[1][0])
-    else:
-        # Handle the case where there are no barcodes in the right conveyor
-        top_barcode_right_conveyor = None  # or some default value/message
-    print("Top barcode right conveyor:", top_barcode_right_conveyor)
-    return top_barcode_right_conveyor
+        return max(right_conveyor_barcodes, key=lambda b: b[1][0])
+    print("No right conveyor barcodes found.")
+    return None
 
-#conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
-def get_top_barcode_left_conveyor(image, conveyor_threshold):
-    left_conveyor_barcodes, right_conveyor_barcodes = barcodes_divided_into_conveyors(image, conveyor_threshold)
-    # Check if there are any barcodes in the right conveyor
+
+def get_top_qr_left_conveyor(image, conveyor_threshold):
+    """
+    Finds the top-left barcode on the top conveyor (y < threshold), based on the highest x-position.
+    """
+    left_conveyor_barcodes, _ = qrs_divided_into_conveyors(image, conveyor_threshold)
     if left_conveyor_barcodes:
-        print('have left conveyor barcodes')
-        # Find the barcode with the maximum x-coordinate in the right conveyor
-        top_barcode_left_conveyor = max(left_conveyor_barcodes, key=lambda barcode: barcode[1][0])
-    else:
-        print('no left conveyor barcodes')
-        # Handle the case where there are no barcodes in the right conveyor
-        top_barcode_left_conveyor = None  # or some default value/message
-    print("Top barcode left conveyor:", top_barcode_left_conveyor)
-    return top_barcode_left_conveyor
+        return max(left_conveyor_barcodes, key=lambda b: b[1][0])
+    print("No left conveyor barcodes found.")
+    return None
 
-def barcodes_divided_into_conveyors(image, conveyor_threshold):
-    
-    barcode_info = find_qrcodes(image)  # Get barcode center coordinates
-    if not barcode_info:
-        return [], []  # No barcodes found
+def qrs_divided_into_conveyors(image, conveyor_threshold):
+    """
+    Divides detected barcodes into top and bottom conveyor based on their y-position.
+    Returns two lists of (data, center) tuples.
+    """
+    qrcodes = find_qrcodes(image)
+    if not qrcodes:
+        return [], []
 
-    # Initialize the lists for left and right conveyor barcodes
-    left_conveyor_barcodes = []
-    right_conveyor_barcodes = []
-
-    # Iterate through the barcode centers and classify them based on their y values
-    for barcode in barcode_info:
-        x, y = barcode[1]  # Unpack the barcode center coordinates
-        if y < conveyor_threshold:
-            left_conveyor_barcodes.append(barcode)  # Barcode is above the threshold (left conveyor)
-        else:
-            right_conveyor_barcodes.append(barcode)  # Barcode is below the threshold (right conveyor)
-
-    return left_conveyor_barcodes, right_conveyor_barcodes   
+    left = [b for b in qrcodes if b[1][1] < conveyor_threshold]
+    right = [b for b in qrcodes if b[1][1] >= conveyor_threshold]
+    return left, right 
  
 def find_qrcodes(image):
     """
@@ -290,31 +275,25 @@ def find_qrcodes(image):
     num_qrcodes_found = 0
     qrcode_info = []
 
-    cv2.imwrite('image_to_detect_qrcodes.jpg', image)
-
     while num_qrcodes_found < NUM_QRCODES:
+        # Preprocess for better QR detection
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray, (3, 3), 0)
         equalized = cv2.equalizeHist(blurred)
-        cv2.imwrite('filtered_image_to_detect_qrcodes.jpg', equalized) # save the image to detect qrcodes
-        detected_qrcodes = decode(equalized)
 
+        # Decode QR codes
+        detected_qrcodes = decode(equalized)
         num_qrcodes_found = len(detected_qrcodes)
         qrcode_info = []
 
         for qr in detected_qrcodes:
             data = qr.data.decode("utf-8")
-
-            # Get bounding box
             x, y, w, h = qr.rect
-            centre_x = x + w / 2
-            centre_y = y + h / 2
+            center = (x + w / 2, y + h / 2)
+            qrcode_info.append((data, center))
 
-            qrcode_info.append((data, (centre_x, centre_y)))
-
-            # Debug
             print(f"QR Code Data: {data}")
-            print(f"QR Code Center: ({centre_x:.1f}, {centre_y:.1f})")
+            print(f"QR Code Center: ({center[0]:.1f}, {center[1]:.1f})")
 
         if num_qrcodes_found < NUM_QRCODES:
             print(f"Found {num_qrcodes_found} QR codes, expected {NUM_QRCODES}, retrying...")

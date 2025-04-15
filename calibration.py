@@ -1,5 +1,5 @@
 import json
-from image_analysis import find_leg_top_conveyor, get_conveyor_threshold, get_top_barcode_right_conveyor, get_top_barcode_left_conveyor
+from image_analysis import find_leg_top_conveyor, get_conveyor_threshold, get_top_qr_right_conveyor, get_top_qr_left_conveyor
 import os
 import cv2
 from top_conveyor_motor_code import set_up_top_conveyor, step_top_conveyor_backward, step_top_conveyor_forward
@@ -81,7 +81,7 @@ def calibrate_right_conveyor_motor(num_steps_to_test=400):  # to use, put one ba
   os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
   image = cv2.imread(image_path) # read the captured image with opencv
   conveyor_threshold = get_conveyor_threshold(image)[0] # find threshold between left and right conveyor
-  top_barcode_right_conveyor_original = get_top_barcode_right_conveyor(image, conveyor_threshold)
+  top_barcode_right_conveyor_original = get_top_qr_right_conveyor(image, conveyor_threshold)
 
   print("Original position: ", top_barcode_right_conveyor_original)
 
@@ -93,7 +93,7 @@ def calibrate_right_conveyor_motor(num_steps_to_test=400):  # to use, put one ba
   # measure new position
   os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
   image = cv2.imread(image_path) # read the captured image with opencv
-  top_barcode_right_conveyor_new = get_top_barcode_right_conveyor(image, conveyor_threshold)
+  top_barcode_right_conveyor_new = get_top_qr_right_conveyor(image, conveyor_threshold)
   pixels_moved = abs(top_barcode_right_conveyor_new[1][0] - top_barcode_right_conveyor_original[1][0])
   pixels_moved_per_step = pixels_moved/num_steps_to_test
 
@@ -109,7 +109,7 @@ def calibrate_left_conveyor_motor(num_steps_to_test=400):  # to use, put one bar
     os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
     image = cv2.imread(image_path) # read the captured image with opencv
     conveyor_threshold = get_conveyor_threshold(image)[0] # find threshold between left and right conveyor
-    top_barcode_left_conveyor_original = get_top_barcode_left_conveyor(image, conveyor_threshold)
+    top_barcode_left_conveyor_original = get_top_qr_left_conveyor(image, conveyor_threshold)
 
     # move motor
     set_up_left_conveyor()
@@ -119,7 +119,7 @@ def calibrate_left_conveyor_motor(num_steps_to_test=400):  # to use, put one bar
     # measure new position
     os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
     image = cv2.imread(image_path) #
-    top_barcode_left_conveyor_new = get_top_barcode_left_conveyor(image, conveyor_threshold)
+    top_barcode_left_conveyor_new = get_top_qr_left_conveyor(image, conveyor_threshold)
     # calculate num pixels moved
     pixels_moved = abs(top_barcode_left_conveyor_new[1][0] - top_barcode_left_conveyor_original[1][0])
     pixels_moved_per_step = pixels_moved/num_steps_to_test

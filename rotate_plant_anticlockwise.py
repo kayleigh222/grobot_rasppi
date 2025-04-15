@@ -6,7 +6,7 @@ import gc
 import numpy as np
 import time
 import threading
-from image_analysis import divide_holders_into_conveyors, find_holders, find_leg_top_conveyor, find_top_and_bottom_of_conveyors, get_top_barcode_left_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
+from image_analysis import divide_holders_into_conveyors, find_holders, find_leg_top_conveyor, find_top_and_bottom_of_conveyors, get_top_qr_left_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
 from calibration import TOP_CONVEYOR_SPEED_BACKWARD, TOP_CONVEYOR_SPEED_FORWARD, calibrate_top_conveyor_motor, calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
 from servo_motor_code import clean_up_servo, set_up_servo, sweep_servo
 import servo_motor_code
@@ -313,7 +313,7 @@ print("Finished moving top conveyor leg out of the way")
 
 # check tray has moved to other conveyor
 print("Was top barcode on right ", top_holder_with_barcode_on_right_conveyor) # TODO: get data from this e.g. plant 4
-new_top_barcode_left_conveyor = get_top_barcode_left_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right) # TODO: get data from this e.g. plant 4
+new_top_barcode_left_conveyor = get_top_qr_left_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right) # TODO: get data from this e.g. plant 4
 print("New top barcode on left ", new_top_barcode_left_conveyor) # TODO: get data from this e.g. plant 4
 if(new_top_barcode_left_conveyor[0] == top_holder_with_barcode_on_right_conveyor[0]): # TODO - change indexing here so actually get right data?
     print("Tray moved successfully")
