@@ -131,7 +131,7 @@ print('detecting corners')
 # get corners of each holder
 holders = find_holders(image)
 holders_divided_into_conveyors = divide_holders_into_conveyors(image, conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
-top_holder_right = top_holder_right_conveyor(holders_divided_into_conveyors) # TODO - this detects all holders twice, make more efficient
+top_holder_right = top_holder_right_conveyor(holders_divided_into_conveyors)
 top_holder_left = top_holder_left_conveyor(holders_divided_into_conveyors)
 image_with_contours = image.copy()
 
@@ -139,12 +139,10 @@ print('finding corners for right holder')
 top_holder_right_contour = top_holder_right['contour']
 top_holder_right_contour = cv2.approxPolyDP(top_holder_right_contour, 0.005 * cv2.arcLength(top_holder_right_contour, True), True)
 image_with_right_contour = np.zeros_like(image)
+cv2.drawContours(image_with_right_contour, [top_holder_right_contour], -1, (255, 255, 255), 1)
 right_gray = cv2.cvtColor(image_with_right_contour, cv2.COLOR_BGR2GRAY)
-cv2.imwrite("gray_image_right_contour.jpg", right_gray)
 corners_right = cv2.goodFeaturesToTrack(right_gray, maxCorners=16, qualityLevel=0.02, minDistance=10)
-print('num right corners ', len(corners_right))
 corners_right = np.intp(corners_right)
-cv2.drawContours(image_with_contours, [top_holder_right_contour], -1, (255, 0, 0), 3) # draw right holder contour in blue
 
 del top_holder_right_contour
 del image_with_right_contour
@@ -154,10 +152,10 @@ print('finding corners for left contour')
 top_holder_left_contour = top_holder_left['contour']
 top_holder_left_contour = cv2.approxPolyDP(top_holder_left_contour, 0.01 * cv2.arcLength(top_holder_left_contour, True), True)
 image_with_left_contour = np.zeros_like(image)
+cv2.drawContours(image_with_left_contour, [top_holder_left_contour], -1, (255, 255, 255), 1)
 left_gray = cv2.cvtColor(image_with_left_contour, cv2.COLOR_BGR2GRAY)
 corners_left = cv2.goodFeaturesToTrack(left_gray, maxCorners=8, qualityLevel=0.01, minDistance=20)
 corners_left = np.intp(corners_left)
-cv2.drawContours(image_with_contours, [top_holder_left_contour], -1, (0, 0, 255), 3) # draw left holder contour in red
 
 del top_holder_left_contour
 del image_with_left_contour
@@ -229,6 +227,7 @@ while(distance_below_target > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS or di
     top_holder_left_contour = top_holder_left['contour']
     top_holder_left_contour = cv2.approxPolyDP(top_holder_left_contour, 0.01 * cv2.arcLength(top_holder_left_contour, True), True)
     image_with_left_contour = np.zeros_like(image)
+    cv2.drawContours(image_with_left_contour, [top_holder_left_contour], -1, (255, 255, 255), 1)
     left_gray = cv2.cvtColor(image_with_left_contour, cv2.COLOR_BGR2GRAY)
     corners_left = cv2.goodFeaturesToTrack(left_gray, maxCorners=8, qualityLevel=0.01, minDistance=20)
     corners_left = np.intp(corners_left)
