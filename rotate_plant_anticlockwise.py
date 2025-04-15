@@ -58,6 +58,15 @@ def update_top_right_plant_position(image, conveyor_threshold):
     bottom = get_bottom_edge_of_holder(top_holder['contour'])
     return bottom[0][0]
 
+def extract_holder_corners(image, contour, num_corners=8, quality_level=0.01, min_distance=20):
+    approx = cv2.approxPolyDP(contour, 0.01 * cv2.arcLength(contour, True), True)
+    blank_image = np.zeros_like(image)
+    cv2.drawContours(blank_image, [approx], -1, (255, 255, 255), 1)
+    gray = cv2.cvtColor(blank_image, cv2.COLOR_BGR2GRAY)
+    corners = cv2.goodFeaturesToTrack(gray, maxCorners=num_corners, qualityLevel=quality_level, minDistance=min_distance)
+    return np.intp(corners) if corners is not None else []
+
+
 # ----------- TURN ON LIGHTS BY RUNNING SERVO MOTOR IN SEPARATE THREAD TO TRIGGER MOTION SENSOR --------
 try:
     GPIO.cleanup()  # Clean up GPIO settings
@@ -119,9 +128,9 @@ try:
         distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
 
     print("Finished moving top holder on right conveyor up close enough to slide tray across.")
+    gc.collect() # run garbage collector to free up memory
 
     # --------- FIND DESIRED POSITION FOR LEFT HOLDER -----------
-    gc.collect() # run garbage collector to free up memory
     #take new image
     os.system(f"rpicam-still --output {image_path} --nopreview") 
     image = cv2.imread(image_path) 
@@ -136,30 +145,12 @@ try:
     image_with_contours = image.copy()
 
     print('finding corners for right holder')
-    top_holder_right_contour = top_holder_right['contour']
-    top_holder_right_contour = cv2.approxPolyDP(top_holder_right_contour, 0.005 * cv2.arcLength(top_holder_right_contour, True), True)
-    image_with_right_contour = np.zeros_like(image)
-    cv2.drawContours(image_with_right_contour, [top_holder_right_contour], -1, (255, 255, 255), 1)
-    right_gray = cv2.cvtColor(image_with_right_contour, cv2.COLOR_BGR2GRAY)
-    corners_right = cv2.goodFeaturesToTrack(right_gray, maxCorners=16, qualityLevel=0.02, minDistance=10)
-    corners_right = np.intp(corners_right)
+    corners_right = extract_holder_corners(image, top_holder_right['contour'], 16, 0.02, 10)
 
-    del top_holder_right_contour
-    del image_with_right_contour
-    del right_gray
+    gc.collect() # run garbage collector to free up memory
 
     print('finding corners for left contour')
-    top_holder_left_contour = top_holder_left['contour']
-    top_holder_left_contour = cv2.approxPolyDP(top_holder_left_contour, 0.01 * cv2.arcLength(top_holder_left_contour, True), True)
-    image_with_left_contour = np.zeros_like(image)
-    cv2.drawContours(image_with_left_contour, [top_holder_left_contour], -1, (255, 255, 255), 1)
-    left_gray = cv2.cvtColor(image_with_left_contour, cv2.COLOR_BGR2GRAY)
-    corners_left = cv2.goodFeaturesToTrack(left_gray, maxCorners=8, qualityLevel=0.01, minDistance=20)
-    corners_left = np.intp(corners_left)
-
-    del top_holder_left_contour
-    del image_with_left_contour
-    del left_gray
+    corners_left = extract_holder_corners(image, top_holder_left['contour'], 8, 0.01, 20)
 
     gc.collect() # run garbage collector to free up memory
 
