@@ -140,7 +140,7 @@ top_holder_right_contour = top_holder_right['contour']
 top_holder_right_contour = cv2.approxPolyDP(top_holder_right_contour, 0.005 * cv2.arcLength(top_holder_right_contour, True), True)
 image_with_right_contour = np.zeros_like(image)
 right_gray = cv2.cvtColor(image_with_right_contour, cv2.COLOR_BGR2GRAY)
-cv2.imwrite("gray_image_right_contour", right_gray)
+cv2.imwrite("gray_image_right_contour.jpg", right_gray)
 corners_right = cv2.goodFeaturesToTrack(right_gray, maxCorners=16, qualityLevel=0.02, minDistance=10)
 print('num right corners ', len(corners_right))
 corners_right = np.intp(corners_right)
