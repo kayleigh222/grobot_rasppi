@@ -1,4 +1,3 @@
-import os
 import cv2
 import numpy as np
 from pyzbar.pyzbar import decode
@@ -137,8 +136,7 @@ def top_holder_with_barcode_right_conveyor(holders_divided_into_conveyors):
             top_holder_with_barcode = top_candidate
 
     if top_holder_with_barcode:
-        print("Top holder with qrcode
-:", top_holder_with_barcode['holder_center'])
+        print("Top holder with qrcode: ", top_holder_with_barcode['holder_center'])
     return top_holder_with_barcode
 
 def divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders):
@@ -204,19 +202,15 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=450):
 
         near_barcode = (holder_center[0], holder_center[1] + max_dist_between_holder_center_and_barcode)
 
-        # Determine if a qrcode
-         is nearby
+        # Determine if a qrcode is nearby
         barcode_close = False
         closest_barcode = None
 
-        for qrcode
- in qrcodes:
-            distance = np.linalg.norm(np.array(near_barcode) - np.array(qrcode
-    [1]))
+        for qrcode in qrcodes:
+            distance = np.linalg.norm(np.array(near_barcode) - np.array(qrcode[1]))
             if distance < max_dist_between_holder_center_and_barcode:
                 barcode_close = True
                 closest_barcode = qrcode
-        
                 break
 
         # Save holder info
