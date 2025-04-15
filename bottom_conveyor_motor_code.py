@@ -61,6 +61,5 @@ if __name__ == "__main__":
     print("Moving bottom conveyor backward")
     clean_up_bottom_conveyor()  # Clean up any previous settings
     set_up_bottom_conveyor()
-    print('set up bottom conveyor')
     step_bottom_conveyor_backward(1000)
-    print("Finished moving top conveyor backward")
+    clean_up_bottom_conveyor()
