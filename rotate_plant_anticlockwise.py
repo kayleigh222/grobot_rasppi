@@ -190,16 +190,16 @@ corners_right = sorted(corners_right, key=lambda x: x[0][1])[:2] # get two corne
 top_left_corner_right_holder = min(corners_right, key=lambda x: x[0][0]) # get corner with lowest x value
 del corners_right
 
-target_x_value = top_left_corner_right_holder[0]
+target_x_value = top_left_corner_right_holder[0][0]
 print("Target x value: ", target_x_value)
-print("Bottom left corner left holder: ", bottom_left_corner_left_holder[0])
+print("Bottom left corner left holder: ", bottom_left_corner_left_holder[0][0])
 
 # visualize positions on image
 cv2.circle(image, (bottom_left_corner_left_holder[0][0], bottom_left_corner_left_holder[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for left edge
 cv2.circle(image, (top_left_corner_right_holder[0][0], top_left_corner_right_holder[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for right edge
 cv2.imwrite("image_before_move_left_holder.jpg", image)
 
-distance_below_target = target_x_value - bottom_left_corner_left_holder[0]
+distance_below_target = target_x_value - bottom_left_corner_left_holder[0][0]
 
 print("Distance between holders: ", distance_below_target)
 
@@ -250,7 +250,7 @@ while(distance_below_target > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS or di
     cv2.imwrite("image_before_move_left_holder.jpg", image)
 
 
-    distance_below_target = target_x_value - bottom_left_corner_left_holder[0]
+    distance_below_target = target_x_value - bottom_left_corner_left_holder[0][0]
     print("Distance between holders: ", distance_below_target)
 
 print('finished moving holders together')
