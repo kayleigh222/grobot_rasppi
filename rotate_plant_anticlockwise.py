@@ -209,6 +209,7 @@ print("Distance between holders: ", distance_below_target)
 
 # ------ USE PID CONTROL TO MOVE LEFT HOLDER TO ALIGN WITH RIGHT HOLDER -----------
 while(distance_below_target > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS or distance_below_target < 0):
+    del image
     gc.collect() # run garbage collector to free up memory
     steps_to_take = int(pid_control(distance_below_target, Kp=(1/calibration_variables[LEFT_CONVEYOR_SPEED])))
     if(steps_to_take == 0):
@@ -253,7 +254,6 @@ while(distance_below_target > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS or di
     cv2.circle(image, (bottom_left_corner_left_holder[0][0], bottom_left_corner_left_holder[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for left edge
     cv2.circle(image, (top_left_corner_right_holder[0][0], top_left_corner_right_holder[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for right edge
     cv2.imwrite("image_before_move_left_holder.jpg", image)
-
 
     distance_below_target = target_x_value - bottom_left_corner_left_holder[0][0]
     print("Distance between holders: ", distance_below_target)
