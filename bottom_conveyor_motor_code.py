@@ -60,7 +60,7 @@ def clean_up_bottom_conveyor():
 if __name__ == "__main__":
 
     # Replace these with the GPIO pins you connected to IN1–IN4
-    pins = [17, 18, 27, 22]  # IN1 = GPIO17, IN2 = GPIO18, etc.
+    pins = [14, 15, 18, 23]  # IN1 = GPIO17, IN2 = GPIO18, etc.
 
     GPIO.setmode(GPIO.BCM)
     for pin in pins:
