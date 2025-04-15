@@ -142,40 +142,22 @@ def top_holder_with_barcode_right_conveyor(holders_divided_into_conveyors):
         print("Top holder with barcode:", top_holder_with_barcode['holder_center'])
     return top_holder_with_barcode
 
-# conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
-def divide_holders_into_conveyors(image, conveyor_threshold, holders_from_find_holders):  
-    # Initialize the lists for left and right conveyor barcodes
+def divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders):
+    """
+    Divides detected holders into left or right conveyors based on y-coordinate.
+    Returns: (left_holders, right_holders)
+    """
     left_conveyor_holders = []
     right_conveyor_holders = []
 
-    # Iterate through the barcode centers and classify them based on their y values
     for holder in holders_from_find_holders:
-        x, y = holder['holder_center']  # Unpack the barcode center coordinates
+        _, y = holder['holder_center']
         if y < conveyor_threshold:
-            left_conveyor_holders.append(holder)  # Barcode is above the threshold (left conveyor)
+            left_conveyor_holders.append(holder)
         else:
-            right_conveyor_holders.append(holder)  # Barcode is below the threshold (right conveyor)
+            right_conveyor_holders.append(holder)
 
-    # Draw contours for the left conveyor holders in blue
-    # for holder in left_conveyor_holders:
-    #     cv2.drawContours(image, [holder['contour']], -1, (255, 0, 0), 3)  # Blue color for left conveyor
-
-    # # Draw contours for the right conveyor holders in green
-    # for holder in right_conveyor_holders:
-    #     cv2.drawContours(image, [holder['contour']], -1, (0, 255, 0), 3)  # Green color for right conveyor
-
-    # Draw the conveyor threshold line (horizontal line at the y-coordinate of the threshold)
-    # cv2.line(image, (0, conveyor_threshold), (image.shape[1], conveyor_threshold), (0, 0, 255), 2)  # Red line
-
-    # Save the image with the drawn contours
-    # cv2.imwrite('image_with_divided_conveyors.jpg', image)
-
-    print('divided holders into left and right')
-
-    # print('left conveyor holders: ', left_conveyor_holders)
-    # print('right conveyor holders: ', right_conveyor_holders)
-
-    return left_conveyor_holders, right_conveyor_holders    
+    return left_conveyor_holders, right_conveyor_holders
 
 # Finds all holders, returns the contours and empty status
 def find_holders(image, max_dist_between_holder_center_and_barcode=450):

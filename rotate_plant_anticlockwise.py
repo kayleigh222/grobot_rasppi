@@ -70,7 +70,7 @@ target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 150) # TODO- cu
 
 # ----------- FIND TOP HOLDER ON RIGHT CONVEYOR ------------------
 holders = find_holders(image)
-holders_divided_into_conveyors = divide_holders_into_conveyors(image, conveyor_threshold, holders_from_find_holders=holders)
+holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders)
 top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(holders_divided_into_conveyors)
 bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_with_barcode_on_right_conveyor['contour'])
 bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyor[0][0]
@@ -112,7 +112,7 @@ while(distance_from_bottom_of_holder_to_target > 100): # TODO: base target locat
 
     # find new position of top holder
     holders = find_holders(image)
-    holders_divided_into_conveyors = divide_holders_into_conveyors(image, conveyor_threshold, holders_from_find_holders=holders)
+    holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders)
     top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(holders_divided_into_conveyors)
     bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_with_barcode_on_right_conveyor['contour'])
     bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyor[0][0]
@@ -132,7 +132,7 @@ print('detecting corners')
 
 # get corners of each holder
 holders = find_holders(image)
-holders_divided_into_conveyors = divide_holders_into_conveyors(image, conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
+holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
 top_holder_right = top_holder_right_conveyor(holders_divided_into_conveyors)
 top_holder_left = top_holder_left_conveyor(holders_divided_into_conveyors)
 image_with_contours = image.copy()
@@ -228,7 +228,7 @@ while(distance_below_target > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS or di
 
     # find new left holder position
     holders = find_holders(image)
-    holders_divided_into_conveyors = divide_holders_into_conveyors(image, conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
+    holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
     top_holder_left = top_holder_left_conveyor(holders_divided_into_conveyors)
 
     print('finding corners for left contour')
