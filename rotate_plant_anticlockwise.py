@@ -1,6 +1,7 @@
 import os
 import cv2
 import pigpio
+import RPi.GPIO as GPIO
 import numpy as np
 import time
 import threading
