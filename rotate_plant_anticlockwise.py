@@ -2,6 +2,7 @@ import os
 import cv2
 import pigpio
 import RPi.GPIO as GPIO
+import argparse
 import gc
 import numpy as np
 import time
@@ -13,6 +14,11 @@ import servo_motor_code
 from top_conveyor_motor_code import clean_up_top_conveyor, set_up_top_conveyor, step_top_conveyor_backward, step_top_conveyor_forward
 from vertical_conveyor_left_motor_code import move_left_conveyor, set_up_left_conveyor, clean_up_left_conveyor
 from vertical_conveyor_right_motor_code import move_right_conveyor, set_up_right_conveyor, clean_up_right_conveyor
+
+# running with flag --calibrate in command line will trigger calibration before movement
+parser = argparse.ArgumentParser(description="Run plant position updater with optional calibration.")
+parser.add_argument('--calibrate', action='store_true', help='Run motor calibration before starting.')
+args = parser.parse_args()
 
 DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS = 40 # pixels - max vertical distance between holders to be able to slide across
 
@@ -51,12 +57,13 @@ def update_top_right_plant_position(image, conveyor_threshold):
 
     Returns:
         int: X-coordinate of the bottom edge of the topmost right conveyor holder with a barcode.
+        id (str or None): The decoded string from the holder's QR code if present; otherwise None.
     """
     holders = find_holders(image)
     holders_divided = divide_holders_into_conveyors(conveyor_threshold, holders)
-    top_holder = top_holder_with_barcode_right_conveyor(holders_divided)
-    bottom = get_bottom_edge_of_holder(top_holder['contour'])
-    return bottom[0][0]
+    top_plant = top_holder_with_barcode_right_conveyor(holders_divided)
+    bottom = get_bottom_edge_of_holder(top_plant['contour'])
+    return bottom[0][0], top_plant['id']
 
 def extract_holder_corners(image, contour, num_corners=8, quality_level=0.01, min_distance=20):
     approx = cv2.approxPolyDP(contour, 0.01 * cv2.arcLength(contour, True), True)
@@ -81,9 +88,13 @@ try:
     servo_thread = threading.Thread(target=sweep_servo, args=(pi,)) # Create thread to run servo motor
     servo_thread.start()
 
-    # calibrate conveyor motors
-    # calibrate_vertical_conveyor_motors()
-    # calibrate_top_conveyor_motor() # calibrate top conveyor motor
+    if args.calibrate:
+        print("Running motor calibration...")
+        calibrate_vertical_conveyor_motors()
+        calibrate_top_conveyor_motor()
+        print("Calibration complete.")
+    else:
+        print("Skipping calibration.")
 
     # # ----------- TAKE INITIAL IMAGE AND LOAD CALIBRATION VARIABLES ------------------
     image = capture_image()
@@ -97,7 +108,7 @@ try:
     target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 150) # TODO- currently hardcoding this, probably want a better way 
 
     # ----------- FIND TOP HOLDER ON RIGHT CONVEYOR ------------------
-    bottom_of_top_holder_right_conveyor_x_coord = update_top_right_plant_position(image, conveyor_threshold)
+    bottom_of_top_holder_right_conveyor_x_coord, top_right_plant_id = update_top_right_plant_position(image, conveyor_threshold)
     distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
 
     print("Moving right conveyor up close enough to slide tray across.")
@@ -121,7 +132,7 @@ try:
         image = capture_image()
 
         # find new position of top holder
-        bottom_of_top_holder_right_conveyor_x_coord = update_top_right_plant_position(image, conveyor_threshold)
+        bottom_of_top_holder_right_conveyor_x_coord, top_right_plant_id = update_top_right_plant_position(image, conveyor_threshold)
 
         # find new distance left to travel
         distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
@@ -293,10 +304,10 @@ try:
     print("Finished moving top conveyor leg out of the way")
 
     # check tray has moved to other conveyor
-    print("Was top barcode on right ", top_holder_with_barcode_on_right_conveyor) # TODO: get data from this e.g. plant 4
-    new_top_barcode_left_conveyor = get_top_qr_left_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right) # TODO: get data from this e.g. plant 4
-    print("New top barcode on left ", new_top_barcode_left_conveyor) # TODO: get data from this e.g. plant 4
-    if(new_top_barcode_left_conveyor[0] == top_holder_with_barcode_on_right_conveyor[0]): # TODO - change indexing here so actually get right data?
+    print("Was top plant on right ", top_right_plant_id) # TODO: get data from this e.g. plant 4
+    new_top_plant_left_conveyor = get_top_qr_left_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right) # TODO: get data from this e.g. plant 4
+    print("New top plant on left ", new_top_plant_left_conveyor) # TODO: get data from this e.g. plant 4
+    if(new_top_plant_left_conveyor[0] == top_right_plant_id): # TODO - change indexing here so actually get right data?
         print("Tray moved successfully")
     else:
         print("Error: Tray not moved successfully")
