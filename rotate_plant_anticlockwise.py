@@ -2,6 +2,7 @@ import os
 import cv2
 import pigpio
 import RPi.GPIO as GPIO
+import gc
 import numpy as np
 import time
 import threading
@@ -122,6 +123,7 @@ while(distance_from_bottom_of_holder_to_target > 100): # TODO: base target locat
 print("Finished moving top holder on right conveyor up close enough to slide tray across.")
 
 # --------- FIND DESIRED POSITION FOR LEFT HOLDER -----------
+gc.collect() # run garbage collector to free up memory
 #take new image
 os.system(f"rpicam-still --output {image_path} --nopreview") 
 image = cv2.imread(image_path) 
@@ -160,6 +162,8 @@ corners_left = np.intp(corners_left)
 del top_holder_left_contour
 del image_with_left_contour
 del left_gray
+
+gc.collect() # run garbage collector to free up memory
 
 print('got corners - drawing')
 
@@ -202,6 +206,8 @@ cv2.imwrite("image_before_move_left_holder.jpg", image)
 distance_below_target = target_x_value - bottom_left_corner_left_holder[0][0]
 
 print("Distance between holders: ", distance_below_target)
+
+gc.collect() # run garbage collector to free up memory
 
 # ------ USE PID CONTROL TO MOVE LEFT HOLDER TO ALIGN WITH RIGHT HOLDER -----------
 while(distance_below_target > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS or distance_below_target < 0):
