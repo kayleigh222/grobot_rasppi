@@ -45,76 +45,47 @@ def find_leg_top_conveyor(image):
     x, y, w, h = cv2.boundingRect(leg_contour)
     return x, y
 
-# ----------- CONVEYOR LOCATIONS -------------
+# ----------- CONVEYOR DETECTION -------------
 def get_conveyor_threshold(image):
+    """
+    Returns the vertical threshold that splits the top and bottom conveyors.
+    Uses vertical bounds from `find_left_and_right_of_conveyors`.
+    Returns: threshold, left, right bounds.
+    """
     conveyor_left, conveyor_right = find_left_and_right_of_conveyors(image)
     distance = conveyor_right - conveyor_left
-    threshold = conveyor_right - distance//2
-    
+    threshold = conveyor_right - distance // 2
     return threshold, conveyor_left, conveyor_right
 
-def find_top_and_bottom_of_conveyors(image): # top and bottom when vertical in real world (vertical in image)
+def find_top_and_bottom_of_conveyors(image):
+    """
+    Finds top and bottom edges of conveyors by scanning columns for darkness.
+    Returns: (top, bottom) column indices.
+    """
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    # Create a binary mask where intensity < 50 is set to 1, and others are set to 0
-    binary_mask = np.where(gray < 50, 1, 0)
+    binary_mask = np.where(gray < 50, 1, 0) # Create a binary mask where intensity < 50 is set to 1, and others are set to 0
+    threshold = 500
 
-    conveyor_top = 0
-    conveyor_bottom = 0
+    # Bottom (leftmost dark column)
+    conveyor_bottom = next((i for i, col in enumerate(binary_mask.T) if np.sum(col) >= threshold), 0)
 
-    # Iterate through the columns and find the first column with enough dark pixels (top of conveyors)
-    threshold = 500  # Minimum number of ones required in a row to consider it to be part of the conveyor
-    for col_idx, col in enumerate(binary_mask.T):  # Transpose to iterate over columns
-        ones_count = np.sum(col)  # Count the number of ones in the current column
-        if ones_count >= threshold:
-            conveyor_bottom = col_idx
-            # draw a vertical green line
-            # cv2.line(image, (col_idx, 0), (col_idx, image.shape[0] - 1), (0, 255, 0), 2)
-            break  # Exit once we find the first column meeting the threshold
-            
-    # Iterate through the columns from right to left and find the last column with enough dark pixels
-    for col_idx in range(binary_mask.shape[1] - 1, -1, -1):  # Start from the last column
-        col = binary_mask[:, col_idx]  # Select the column
-        ones_count = np.sum(col)  # Count the number of ones in the current column
-        if ones_count >= threshold:
-            conveyor_top = col_idx
-             # draw a vertical green line
-            # cv2.line(image, (col_idx, 0), (col_idx, image.shape[0] - 1), (0, 255, 0), 2)
-            break  # Exit once we find the last column meeting the threshold
-    
-    # cv2.imwrite('top_and_bottom_of_conveyor.jpg', image)
+    # Top (rightmost dark column)
+    conveyor_top = next((i for i in range(binary_mask.shape[1] - 1, -1, -1)
+                         if np.sum(binary_mask[:, i]) >= threshold), 0)
     return conveyor_top, conveyor_bottom
 
-def find_left_and_right_of_conveyors(image): # left and right when vertical in real world (horizontal in image)
+def find_left_and_right_of_conveyors(image):
+    """
+    Finds left and right edges of conveyors by scanning rows for darkness.
+    Returns: (left, right) row indices.
+    """
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    # Create a binary mask where intensity < 50 is set to 1, and others are set to 0
-    binary_mask = np.where(gray < 50, 1, 0)
+    binary_mask = np.where(gray < 50, 1, 0) # Create a binary mask where intensity < 50 is set to 1, and others are set to 0
+    threshold = 2000
 
-    conveyor_left = 0
-    conveyor_right = 0
-
-    # Iterate through the rows and find the first row with enough dark pixels (top of conveyors)
-    threshold = 2000  # Minimum number of ones required in a row to consider it to be part of the conveyor
-    for row_idx, row in enumerate(binary_mask):
-        ones_count = np.sum(row)  # Count the number of ones in the current row
-        if ones_count >= threshold:
-            conveyor_left = row_idx
-            # print(f"The first row with at least {threshold} ones is row {row_idx}")
-            # # Draw a horizontal green line along the y-coordinate of the found row
-            # cv2.line(image, (0, row_idx), (image.shape[1] - 1, row_idx), (0, 255, 0), 2)
-            break  # Exit the loop once we find the row
-
-    # Iterate through the rows and find the last row with enough dark pixels (bottom of conveyors)
-    for row_idx in range(binary_mask.shape[0] - 1, -1, -1):  # Start from the last row
-        row = binary_mask[row_idx]
-        ones_count = np.sum(row)  # Count the number of ones in the current row
-        if ones_count >= threshold:
-            conveyor_right = row_idx
-            # print(f"The first row from the bottom with at least {threshold} ones is row {row_idx}")
-            # # Draw a horizontal green line along the y-coordinate of the found row
-            # cv2.line(image, (0, row_idx), (image.shape[1] - 1, row_idx), (0, 255, 0), 2)
-            break  # Exit the loop once we find the row
-
-    # cv2.imwrite('left_and_right_of_conveyor.jpg', image)
+    conveyor_left = next((i for i, row in enumerate(binary_mask) if np.sum(row) >= threshold), 0)
+    conveyor_right = next((i for i in range(binary_mask.shape[0] - 1, -1, -1)
+                           if np.sum(binary_mask[i]) >= threshold), 0)
     return conveyor_left, conveyor_right
 
 # -------- HOLDER LOCATIONS -----------------
