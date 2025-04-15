@@ -23,32 +23,27 @@ MIN_LEG_AREA = 4500
 NUM_QRCODES = 1  # Set this to however many QR codes you expect
 # NUM_BARCODES = 1  # Number of barcodes to on conveyors total
 
-# ----------- PUSH LEG LOCATIONS -------------
+# ----------- LEG DETECTION -------------
 def find_leg_top_conveyor(image):
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)  # Convert the image to HSV color space to detect color easier
-    # Create mask
+    """
+    Detects the top-left corner of the largest leg contour on the conveyor.
+    - Assumes legs are green and defined by a color mask.
+    - Draws and saves the mask and contour outline.
+    Returns: (x, y) coordinate of top-left corner of bounding box.
+    """
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv, LEG_COLOR_LOWER_THRESHOLD_HSV, LEG_COLOR_UPPER_THRESHOLD_HSV)
-    cv2.imwrite('mask.jpg', mask)
 
-    # Find contours of leg areas
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if not contours:
+        raise ValueError("No leg contours found.")
 
-    # take only the biggest contour
     leg_contour = max(contours, key=cv2.contourArea)
-
-    # Filter contours based on size
-    # leg_contours = [cnt for cnt in contours if cv2.contourArea(cnt) > MIN_LEG_AREA]
-    # draw the contours on the image
-    # for leg_contour in leg_contours:
     cv2.drawContours(image, [leg_contour], -1, (0, 255, 0), 3)
-    cv2.imwrite('image_with_leg_contours.jpg', image)    
+    cv2.imwrite('image_with_leg_contours.jpg', image)
 
-    # get the leg contour with the highest x value
-    # leg_contour = max(leg_contours, key=lambda cnt: cv2.boundingRect(cnt)[0])
-    x, y, w, h = cv2.boundingRect(leg_contour)  # Get bounding box of the leg 
-
-    return x, y # return the top left corner of the leg contour
-
+    x, y, w, h = cv2.boundingRect(leg_contour)
+    return x, y
 
 # ----------- CONVEYOR LOCATIONS -------------
 def get_conveyor_threshold(image):
@@ -142,7 +137,7 @@ def get_bottom_edge_of_holder(holder_contour, image):
 #conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
 def top_holder_left_conveyor(holders_divided_into_conveyors):
     print('finding top holder left conveyor')
-    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors # holders_divided_into_conveyors(image, conveyor_threshold, conveyors_left, conveyors_right)
+    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors
     # Check if there are any barcodes in the right conveyor
     if left_conveyor_holders:
         # Find the barcode with the maximum x-coordinate in the right conveyor
@@ -156,7 +151,7 @@ def top_holder_left_conveyor(holders_divided_into_conveyors):
 
 #conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
 def top_holder_right_conveyor(holders_divided_into_conveyors):
-    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors # holders_divided_into_conveyors(image, conveyor_threshold, conveyors_left, conveyors_right)
+    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors
     # Check if there are any barcodes in the right conveyor
     if right_conveyor_holders:
         # Find the barcode with the maximum x-coordinate in the right conveyor
@@ -169,8 +164,7 @@ def top_holder_right_conveyor(holders_divided_into_conveyors):
     return top_holder_right_conveyor
 
 def top_holder_with_barcode_right_conveyor(holders_divided_into_conveyors):
-    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors # holders_divided_into_conveyors(image, conveyor_threshold, conveyors_left, conveyors_right)
-    top_holder_with_barcode = None
+    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors
     # Check if there are any barcodes in the right conveyor
     while(top_holder_with_barcode == None):
         print('checking top barcode right conveyor')
@@ -192,8 +186,6 @@ def top_holder_with_barcode_right_conveyor(holders_divided_into_conveyors):
 
 # conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
 def divide_holders_into_conveyors(image, conveyor_threshold, holders_from_find_holders):  
-    # holders_from_find_holders = find_holders(image)  # Get empty holder contours
-
     # Initialize the lists for left and right conveyor barcodes
     left_conveyor_holders = []
     right_conveyor_holders = []
@@ -392,58 +384,3 @@ def find_qrcodes(image):
 
     print("Correct number of QR codes found.")
     return qrcode_info
-
-# def find_barcodes(image):
-#      """
-#     Detects barcodes in an image, retries capturing a new image if the expected number of barcodes is not found, 
-#     and returns their center coordinates along with the decoded barcode data.
-
-#     Parameters:
-#         image (numpy.ndarray): The input image in which barcodes need to be detected.
-
-#     Returns:
-#         list of tuples: A list where each tuple contains:
-#             - center (tuple): The (x, y) coordinates of the barcode's center.
-#             - data (str): The decoded data from the barcode.
-
-#     Example Output:
-#         (["Plant 4", (150.5, 200.0)), ("Plant 1", (300.0, 450.0))]
-#     """
-#      num_barcodes_found = 0
-#      cv2.imwrite('image_to_detect_barcodes.jpg', image) # save the image to detect barcodes
-#      while(num_barcodes_found < NUM_BARCODES):
-#         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-#         equalized = cv2.equalizeHist(gray)
-#         barcodes = decode(equalized) # detect barcodes
-#         num_barcodes_found = len(barcodes)
-#         if num_barcodes_found < NUM_BARCODES:
-#             print("Barcodes: ", barcodes)
-#             print(f"Found {num_barcodes_found} barcodes, expected {NUM_BARCODES}, retrying...")
-#             image_path = 'retrying_image_to_detect_all_barcodes'
-#             os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
-#             image = cv2.imread(image_path) # read the captured image with opencv
-            
-#      print("Correct number of barcodes found: ", barcodes)
-#      barcode_info = []  # List to store center coordinates
-
-#     # loop through each detected barcode
-#      for barcode in barcodes:
-#         # Get the rectangle around the barcode
-#         x, y, w, h = barcode.rect
-#         centre_x = x + w/2
-#         centre_y = y + h/2
-
-#         barcode_data = barcode.data.decode('utf-8')  # Decode barcode data
-
-#         barcode_info.append((barcode_data, (centre_x, centre_y)))  # Store center and data as a tuple
-
-#         # IF WANT TO VISUALISE:
-#         # cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)  # Red rectangle
-#         # cv2.circle(image, (int(centre_x), int(centre_y)), radius=3, color=(0, 0, 255), thickness=-1)  # Red filled dot at centre of barcode
-#         # cv2.imwrite('captured_image_with_barcodes.jpg', image)
-    
-#         # IF DEBUGGING:
-#         print(f"Barcode Location: (x: {x}, y: {y}, width: {w}, height: {h})")
-#         print(f"Barcode Data: {barcode.data.decode('utf-8')}")
-    
-#      return barcode_info  # Return the list of center coordinates
