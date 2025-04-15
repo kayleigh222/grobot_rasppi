@@ -124,32 +124,6 @@ def find_left_and_right_of_conveyors(image): # left and right when vertical in r
 
 # -------- HOLDER LOCATIONS -----------------
 
-def get_left_edge_of_holder(holder_contour, image):
-    # Get bounding box of the contour
-    x, y, w, h = cv2.boundingRect(holder_contour)
-
-    # # draw the bounding box on the image 
-    # cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Green rectangle
-    # cv2.imwrite('bounding_box_of_holder.jpg', image)
-
-    # The top edge is at y with width w
-    left_edge = [(x, y), (x + w, y)]
-    print(f"Top edge coordinates: {left_edge}")
-    return left_edge
-
-def get_right_edge_of_holder(holder_contour, image):
-    # Get bounding box of the contour
-    x, y, w, h = cv2.boundingRect(holder_contour)
-
-    # # draw the bounding box on the image 
-    # cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Green rectangle
-    # cv2.imwrite('bounding_box_of_holder.jpg', image)
-
-    # The bottom edge is at y+h with width w
-    right_edge = [(x, y + h), (x + w, y + h)]
-    print(f"Bottom edge coordinates: {right_edge}")
-    return right_edge
-
 def get_bottom_edge_of_holder(holder_contour, image):
     print('finding bottom edge of holder')
     # Get bounding box of the contour
@@ -320,8 +294,7 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=450):
 
 
 # -------- BARCODE LOCATIONS ----------------
-
-#conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
+# conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
 def get_top_barcode_right_conveyor(image, conveyor_threshold):
     left_conveyor_barcodes, right_conveyor_barcodes = barcodes_divided_into_conveyors(image, conveyor_threshold)
     # Check if there are any barcodes in the right conveyor
