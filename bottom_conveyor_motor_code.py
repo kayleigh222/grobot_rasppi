@@ -58,9 +58,26 @@ def clean_up_bottom_conveyor():
     GPIO.cleanup()  # Clean up GPIO settings
     
 if __name__ == "__main__":
-    print("Moving bottom conveyor backward")
-    clean_up_bottom_conveyor()  # Clean up any previous settings
-    set_up_bottom_conveyor()
-    print('set up bottom conveyor')
-    step_bottom_conveyor_backward(1000)
-    print("Finished moving top conveyor backward")
+
+    # Replace these with the GPIO pins you connected to IN1–IN4
+    pins = [17, 18, 27, 22]  # IN1 = GPIO17, IN2 = GPIO18, etc.
+
+    GPIO.setmode(GPIO.BCM)
+    for pin in pins:
+        GPIO.setup(pin, GPIO.OUT)
+
+    # Light up each one for a second
+    for pin in pins:
+        GPIO.output(pin, GPIO.HIGH)
+        print(f"Turning ON pin {pin}")
+        time.sleep(1)
+        GPIO.output(pin, GPIO.LOW)
+
+    GPIO.cleanup()
+
+    # print("Moving bottom conveyor backward")
+    # clean_up_bottom_conveyor()  # Clean up any previous settings
+    # set_up_bottom_conveyor()
+    # print('set up bottom conveyor')
+    # step_bottom_conveyor_backward(1000)
+    # print("Finished moving top conveyor backward")
