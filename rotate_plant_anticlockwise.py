@@ -39,6 +39,7 @@ def pid_control(error, Kp=0.7, Ki=0.01, Kd=0.05): # error is the difference betw
     return adjustment
 
 # ----------- TURN ON LIGHTS BY RUNNING SERVO MOTOR IN SEPARATE THREAD TO TRIGGER MOTION SENSOR --------
+GPIO.cleanup()  # Clean up GPIO settings
 os.system("sudo pigpiod")
 time.sleep(1)  # Give it a second to start
 pi = pigpio.pi() # Connect to pigpio daemon
