@@ -57,10 +57,10 @@ def step_bottom_conveyor_backward(steps, delay=0.001):
 def clean_up_bottom_conveyor():
     GPIO.cleanup()  # Clean up GPIO settings
     
-
 if __name__ == "__main__":
     print("Moving bottom conveyor backward")
     clean_up_bottom_conveyor()  # Clean up any previous settings
     set_up_bottom_conveyor()
-    step_bottom_conveyor_backward(300)
+    print('set up bottom conveyor')
+    step_bottom_conveyor_backward(1000)
     print("Finished moving top conveyor backward")
