@@ -41,14 +41,14 @@ def step(delay, step_sequence):
     time.sleep(delay)
 
 # Function to move the stepper motor forward
-def step_bottom_conveyor_forward(steps, delay=0.001):
+def step_bottom_conveyor_backward(steps, delay=0.001):
     """Moves the motor forward by a given number of steps."""
     for _ in range(steps):
         for step_seq in seq:  # Iterate through the sequence
             step(delay, step_seq)
 
 # Function to move the stepper motor backward
-def step_bottom_conveyor_backward(steps, delay=0.001):
+def step_bottom_conveyor_forward(steps, delay=0.001):
     """Moves the motor backward by a given number of steps."""
     for _ in range(steps):
         for step_seq in reversed(seq):  # Iterate in reverse
