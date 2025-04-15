@@ -191,6 +191,8 @@ top_left_corner_right_holder = min(corners_right, key=lambda x: x[0][0]) # get c
 del corners_right
 
 target_x_value = top_left_corner_right_holder[0]
+print("Target x value: ", target_x_value)
+print("Bottom left corner left holder: ", bottom_left_corner_left_holder[0])
 
 # visualize positions on image
 cv2.circle(image, (bottom_left_corner_left_holder[0][0], bottom_left_corner_left_holder[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for left edge
