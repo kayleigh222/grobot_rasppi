@@ -88,8 +88,6 @@ def find_left_and_right_of_conveyors(image):
                            if np.sum(binary_mask[i]) >= threshold), 0)
     return conveyor_left, conveyor_right
 
-# -------- HOLDER LOCATIONS -----------------
-
 # ----------- HOLDER DETECTION -------------
 def get_bottom_edge_of_holder(holder_contour):
     """
@@ -122,25 +120,27 @@ def top_holder_right_conveyor(holders_divided_into_conveyors):
     return top_holder
 
 def top_holder_with_barcode_right_conveyor(holders_divided_into_conveyors):
-    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors
-    # Check if there are any barcodes in the right conveyor
-    while(top_holder_with_barcode == None):
-        print('checking top barcode right conveyor')
-        if right_conveyor_holders:
-            # Find the barcode with the maximum x-coordinate in the right conveyor
-            top_holder_right_conveyor = max(right_conveyor_holders, key=lambda holder: holder['holder_center'][0])
-            if top_holder_right_conveyor['is_empty']:
-                # remove from right_conveyor_holders
-                print('removing top empty holder from right conveyor')
-                right_conveyor_holders.remove(top_holder_right_conveyor)
-            else:
-                top_holder_with_barcode = top_holder_right_conveyor
-        else:
-            # Handle the case where there are no barcodes in the right conveyor
+    """
+    Loops through right conveyor holders and returns the top-most non-empty holder.
+    Removes empty holders from the list.
+    """
+    _, right_conveyor_holders = holders_divided_into_conveyors
+    top_holder_with_barcode = None
+
+    while top_holder_with_barcode is None:
+        if not right_conveyor_holders:
             print("Error: No barcodes found in right conveyor")
             break
-    print("Top holder right conveyor empty:", top_holder_right_conveyor['is_empty'])
-    return top_holder_right_conveyor
+
+        top_candidate = max(right_conveyor_holders, key=lambda h: h['holder_center'][0])
+        if top_candidate['is_empty']:
+            right_conveyor_holders.remove(top_candidate)
+        else:
+            top_holder_with_barcode = top_candidate
+
+    if top_holder_with_barcode:
+        print("Top holder with barcode:", top_holder_with_barcode['holder_center'])
+    return top_holder_with_barcode
 
 # conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
 def divide_holders_into_conveyors(image, conveyor_threshold, holders_from_find_holders):  
