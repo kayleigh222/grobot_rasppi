@@ -66,6 +66,9 @@ def extract_holder_corners(image, contour, num_corners=8, quality_level=0.01, mi
     corners = cv2.goodFeaturesToTrack(gray, maxCorners=num_corners, qualityLevel=quality_level, minDistance=min_distance)
     return np.intp(corners) if corners is not None else []
 
+def capture_image(path="captured_image.jpg"):
+    os.system(f"rpicam-still --output {path} --nopreview")
+    return cv2.imread(path)
 
 # ----------- TURN ON LIGHTS BY RUNNING SERVO MOTOR IN SEPARATE THREAD TO TRIGGER MOTION SENSOR --------
 try:
@@ -83,10 +86,7 @@ try:
     # calibrate_top_conveyor_motor() # calibrate top conveyor motor
 
     # # ----------- TAKE INITIAL IMAGE AND LOAD CALIBRATION VARIABLES ------------------
-    image_path = "captured_image.jpg"
-    os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
-    image = cv2.imread(image_path) # read the captured image with opencv
-
+    image = capture_image()
     calibration_variables = load_variables() 
 
     # # ---------- FIND OUTLINES OF CONVEYOR TO GET TARGET LOCATION FOR TOP TRAY -----------
@@ -118,8 +118,7 @@ try:
         clean_up_right_conveyor()
 
         # capture new image
-        os.system(f"rpicam-still --output {image_path} --nopreview") 
-        image = cv2.imread(image_path)
+        image = capture_image()
 
         # find new position of top holder
         bottom_of_top_holder_right_conveyor_x_coord = update_top_right_plant_position(image, conveyor_threshold)
@@ -131,9 +130,7 @@ try:
     gc.collect() # run garbage collector to free up memory
 
     # --------- FIND DESIRED POSITION FOR LEFT HOLDER -----------
-    #take new image
-    os.system(f"rpicam-still --output {image_path} --nopreview") 
-    image = cv2.imread(image_path) 
+    image = capture_image()
 
     print('detecting corners')
 
@@ -212,8 +209,7 @@ try:
         clean_up_left_conveyor()
 
         #take new image
-        os.system(f"rpicam-still --output {image_path} --nopreview") 
-        image = cv2.imread(image_path)
+        image = capture_image()
 
         # find new left holder position
         holders = find_holders(image)
@@ -267,9 +263,7 @@ try:
         print("Steps to take: ", steps_to_take)
         step_top_conveyor_forward(steps_to_take)
 
-        #take new image
-        os.system(f"rpicam-still --output {image_path} --nopreview") 
-        image = cv2.imread(image_path) 
+        image = capture_image()
 
         # find new position of top conveyor leg
         top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y = find_leg_top_conveyor(image)
@@ -290,9 +284,7 @@ try:
         print("Steps to take: ", steps_to_take)
         step_top_conveyor_backward(steps_to_take)
 
-        #take new image
-        os.system(f"rpicam-still --output {image_path} --nopreview") 
-        image = cv2.imread(image_path) 
+        image = capture_image()
 
         # find new position of top conveyor leg
         top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y = find_leg_top_conveyor(image)
