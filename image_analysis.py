@@ -2,7 +2,6 @@ import os
 import cv2
 import numpy as np
 from pyzbar.pyzbar import decode
-from PIL import Image
 
 
 # Define holder color range in HSV (red) - because red is at both ends of the hue spectrum, need two ranges
@@ -21,7 +20,6 @@ MIN_HOLDER_AREA = 80000
 MIN_LEG_AREA = 4500
 
 NUM_QRCODES = 1  # Set this to however many QR codes you expect
-# NUM_BARCODES = 1  # Number of barcodes to on conveyors total
 
 # ----------- LEG DETECTION -------------
 def find_leg_top_conveyor(image):
