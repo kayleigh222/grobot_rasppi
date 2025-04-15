@@ -64,7 +64,7 @@ def find_top_and_bottom_of_conveyors(image):
     """
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     binary_mask = np.where(gray < 50, 1, 0) # Create a binary mask where intensity < 50 is set to 1, and others are set to 0
-    threshold = 500
+    threshold = 500 # minimum number of dark pixels for a column to be part of a conveyor
 
     # Bottom (leftmost dark column)
     conveyor_bottom = next((i for i, col in enumerate(binary_mask.T) if np.sum(col) >= threshold), 0)
@@ -81,7 +81,7 @@ def find_left_and_right_of_conveyors(image):
     """
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     binary_mask = np.where(gray < 50, 1, 0) # Create a binary mask where intensity < 50 is set to 1, and others are set to 0
-    threshold = 2000
+    threshold = 2000 # minimum number of dark pixels for a row to be considered part of the conveyor
 
     conveyor_left = next((i for i, row in enumerate(binary_mask) if np.sum(row) >= threshold), 0)
     conveyor_right = next((i for i in range(binary_mask.shape[0] - 1, -1, -1)
@@ -90,49 +90,36 @@ def find_left_and_right_of_conveyors(image):
 
 # -------- HOLDER LOCATIONS -----------------
 
-def get_bottom_edge_of_holder(holder_contour, image):
-    print('finding bottom edge of holder')
-    # Get bounding box of the contour
+# ----------- HOLDER DETECTION -------------
+def get_bottom_edge_of_holder(holder_contour):
+    """
+    Returns the bottom edge of a holder's bounding box.
+    """
     x, y, w, h = cv2.boundingRect(holder_contour)
-    print('got bounding rectangle of holder')
-
-    # # draw the bounding box on the image 
-    # cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Green rectangle
-    # cv2.imwrite('bounding_box_of_holder.jpg', image)
-
-    # The bottom edge is at y+h with width w
-    bottom_edge = [(x, y), (x, y+h)]
-    print(f"Bottom edge coordinates: {bottom_edge}")
+    bottom_edge = [(x, y), (x, y + h)]
     return bottom_edge
 
-#conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
 def top_holder_left_conveyor(holders_divided_into_conveyors):
-    print('finding top holder left conveyor')
-    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors
-    # Check if there are any barcodes in the right conveyor
-    if left_conveyor_holders:
-        # Find the barcode with the maximum x-coordinate in the right conveyor
-        top_holder_left_conveyor = max(left_conveyor_holders, key=lambda holder: holder['holder_center'][0])
-    else:
-        # Handle the case where there are no barcodes in the right conveyor
-        top_holder_left_conveyor = None  # or some default value/message
-    print("Top holder left conveyor center:", top_holder_left_conveyor['holder_center'])
-    print("Top holder left conveyor empty:", top_holder_left_conveyor['is_empty'])
-    return top_holder_left_conveyor
+    """
+    Returns the holder on the left conveyor with the largest x (i.e., furthest right in the image, closest to top of conveyors in real life).
+    """
+    left_conveyor_holders, _ = holders_divided_into_conveyors
+    if not left_conveyor_holders:
+        return None
 
-#conveyor_threshold: the y-coordinate threshold that divides the top and bottom conveyors
+    top_holder = max(left_conveyor_holders, key=lambda h: h['holder_center'][0])
+    return top_holder
+
 def top_holder_right_conveyor(holders_divided_into_conveyors):
-    left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors
-    # Check if there are any barcodes in the right conveyor
-    if right_conveyor_holders:
-        # Find the barcode with the maximum x-coordinate in the right conveyor
-        top_holder_right_conveyor = max(right_conveyor_holders, key=lambda holder: holder['holder_center'][0])
-    else:
-        # Handle the case where there are no barcodes in the right conveyor
-        top_holder_right_conveyor = None  # or some default value/message
-    print("Top holder right conveyor center:", top_holder_right_conveyor['holder_center'])
-    print("Top holder right conveyor empty:", top_holder_right_conveyor['is_empty'])
-    return top_holder_right_conveyor
+    """
+    Returns the holder on the right conveyor with the largest x (i.e., furthest right in the image, closest to top of conveyors in real life).
+    """
+    _, right_conveyor_holders = holders_divided_into_conveyors
+    if not right_conveyor_holders:
+        return None
+
+    top_holder = max(right_conveyor_holders, key=lambda h: h['holder_center'][0])
+    return top_holder
 
 def top_holder_with_barcode_right_conveyor(holders_divided_into_conveyors):
     left_conveyor_holders, right_conveyor_holders = holders_divided_into_conveyors

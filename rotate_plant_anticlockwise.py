@@ -72,7 +72,7 @@ target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 150) # TODO- cu
 holders = find_holders(image)
 holders_divided_into_conveyors = divide_holders_into_conveyors(image, conveyor_threshold, holders_from_find_holders=holders)
 top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(holders_divided_into_conveyors)
-bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_with_barcode_on_right_conveyor['contour'], image)
+bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_with_barcode_on_right_conveyor['contour'])
 bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyor[0][0]
 distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
 
@@ -114,7 +114,7 @@ while(distance_from_bottom_of_holder_to_target > 100): # TODO: base target locat
     holders = find_holders(image)
     holders_divided_into_conveyors = divide_holders_into_conveyors(image, conveyor_threshold, holders_from_find_holders=holders)
     top_holder_with_barcode_on_right_conveyor = top_holder_with_barcode_right_conveyor(holders_divided_into_conveyors)
-    bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_with_barcode_on_right_conveyor['contour'], image)
+    bottom_of_top_holder_right_conveyor = get_bottom_edge_of_holder(top_holder_with_barcode_on_right_conveyor['contour'])
     bottom_of_top_holder_right_conveyor_x_coord = bottom_of_top_holder_right_conveyor[0][0]
 
     # find new distance left to travel
