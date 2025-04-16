@@ -112,11 +112,11 @@ try:
     distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
 
     print("Moving right conveyor up close enough to slide tray across.")
+    print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
+
 
     # ------ USE PID CONTROL TO MOVE TOP HOLDER ON RIGHT CONVEYOR UP CLOSE ENOUGH TO SLIDE TRAY ACROSS -----------
     while(distance_from_bottom_of_holder_to_target > 100): # TODO: base target location on end of top conveyor leg for better relability
-        print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
-
         # Visualise current (red) and target (green) location
         cv2.line(image, (target_location_for_top_tray, 0), (target_location_for_top_tray, image.shape[0]), (0, 255, 0), 2)  
         cv2.line(image, (int(bottom_of_top_holder_right_conveyor_x_coord), 0), (int(bottom_of_top_holder_right_conveyor_x_coord), image.shape[0]), (0, 0, 255), 2) 
@@ -135,12 +135,15 @@ try:
         bottom_of_top_holder_right_conveyor_x_coord, top_right_plant_id = update_top_right_plant_position(image, conveyor_threshold)
 
         # find new distance left to travel
+        print("target location: ", target_location_for_top_tray)
+        print("bottom of top holder right conveyor: ", bottom_of_top_holder_right_conveyor_x_coord)
         distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
+        print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
 
     print("Finished moving top holder on right conveyor up close enough to slide tray across. Distance to target location now ", distance_from_bottom_of_holder_to_target)
     gc.collect() # run garbage collector to free up memory
 
-    # --------- FIND DESIRED POSITION FOR LEFT HOLDER -----------
+    # --------- FIND DESIRED POSITION FOR TOP LEFT HOLDER -----------
     image = capture_image()
 
     print('detecting corners')

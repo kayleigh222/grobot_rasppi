@@ -24,7 +24,28 @@ NUM_QRCODES = 1  # Set this to however many QR codes you expect
 # ----------- LEG DETECTION -------------
 def find_leg_top_conveyor(image):
     """
-    Detects the top-left corner of the largest leg contour on the conveyor.
+    Detects the top-left corner of the top leg contour on the conveyor.
+    - Assumes legs are green and defined by a color mask.
+    - Draws and saves the mask and contour outline.
+    Returns: (x, y) coordinate of top-left corner of bounding box.
+    """
+    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+    mask = cv2.inRange(hsv, LEG_COLOR_LOWER_THRESHOLD_HSV, LEG_COLOR_UPPER_THRESHOLD_HSV)
+
+    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if not contours:
+        raise ValueError("No leg contours found.")  
+    
+    leg_contour = max(contours, key=lambda c: cv2.boundingRect(c)[0]) # pick the leg with the greatest x value
+    cv2.drawContours(image, [leg_contour], -1, (0, 255, 0), 3)
+    cv2.imwrite('image_with_leg_contours.jpg', image)
+
+    x, y, w, h = cv2.boundingRect(leg_contour)
+    return x, y
+
+def find_leg_bottom_conveyor(image):
+    """
+    Detects the top-right corner of the bottom leg contour on the conveyor.
     - Assumes legs are green and defined by a color mask.
     - Draws and saves the mask and contour outline.
     Returns: (x, y) coordinate of top-left corner of bounding box.
@@ -36,12 +57,15 @@ def find_leg_top_conveyor(image):
     if not contours:
         raise ValueError("No leg contours found.")
 
-    leg_contour = max(contours, key=cv2.contourArea)
+    leg_contour = min(contours, key=cv2.contourArea)
     cv2.drawContours(image, [leg_contour], -1, (0, 255, 0), 3)
+    # draw a yellow circle at (x+w, y+h)
+    cv2.circle(image, (x+w, y+h), 5, (0, 255, 255), -1)
+    x, y, w, h = cv2.boundingRect(leg_contour)
     cv2.imwrite('image_with_leg_contours.jpg', image)
 
     x, y, w, h = cv2.boundingRect(leg_contour)
-    return x, y
+    return x+w, y+h
 
 # ----------- CONVEYOR DETECTION -------------
 def get_conveyor_threshold(image):
