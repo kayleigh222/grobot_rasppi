@@ -26,7 +26,7 @@ DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS = 40 # pixels - max vertical distan
 previous_error = 0
 integral = 0
 
-def pid_control(error, Kp=0.7, Ki=0.001, Kd=0.05): # error is the difference between the target value and the current value
+def pid_control(error, Kp=0.7, Ki=0.005, Kd=0.05): # error is the difference between the target value and the current value
     global previous_error, integral # integral used to be 0.1
 
     print("Error: ", error)
