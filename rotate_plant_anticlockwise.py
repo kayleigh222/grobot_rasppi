@@ -80,6 +80,7 @@ def capture_image(path="captured_image.jpg"):
 # ----------- TURN ON LIGHTS BY RUNNING SERVO MOTOR IN SEPARATE THREAD TO TRIGGER MOTION SENSOR --------
 try:
     GPIO.cleanup()  # Clean up GPIO settings
+    gc.collect() # run garbage collector to free up memory
     os.system("sudo pigpiod")
     time.sleep(1)  # Give it a second to start
     pi = pigpio.pi() # Connect to pigpio daemon
