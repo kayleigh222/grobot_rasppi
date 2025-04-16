@@ -127,7 +127,7 @@ try:
     conveyor_height = top_conveyor - bottom_conveyor
     leg_contours = find_leg_contours(image)
     top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y  = find_leg_top_conveyor(leg_contours)
-    target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 200) # TODO- currently hardcoding this, probably want a better way 
+    target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 170) # TODO- currently hardcoding this, probably want a better way 
 
     # ----------- FIND TOP HOLDER ON RIGHT CONVEYOR ------------------
     bottom_of_top_holder_right_conveyor_x_coord, top_right_plant_id = update_top_right_plant_position(image, conveyor_threshold)
@@ -201,16 +201,12 @@ try:
 
     del image_with_contours
 
-    # get two corners with highest y value on left contour
-    corners_left = sorted(corners_left, key=lambda x: x[0][1], reverse=True)[:2] # get two corners with highest y value
-    # of these corners, get the corner with lowest x value
-    bottom_left_corner_left_holder = min(corners_left, key=lambda x: x[0][0]) # get corner with lowest x value
+    # get the corner that balances lowest x and y value
+    bottom_left_corner_left_holder = min(corners_left, key=lambda pt: pt[0] + pt[1])
     del corners_left
 
     # get two corners with lowest y value on right contour
-    corners_right = sorted(corners_right, key=lambda x: x[0][1])[:2] # get two corners with lowest y value
-    # of these corners, get the corner with lowest x value
-    top_left_corner_right_holder = min(corners_right, key=lambda x: x[0][0]) # get corner with lowest x value
+    top_left_corner_right_holder = min(corners_right, key=lambda pt: pt[0] - pt[1])
     del corners_right
 
     target_x_value = top_left_corner_right_holder[0][0]
