@@ -7,7 +7,7 @@ import gc
 import numpy as np
 import time
 import threading
-from image_analysis import divide_holders_into_conveyors, find_holders, find_leg_top_conveyor, find_top_and_bottom_of_conveyors, get_top_qr_left_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
+from image_analysis import bottom_holder_with_barcode_left_conveyor, divide_holders_into_conveyors, find_holders, find_leg_bottom_conveyor, find_leg_top_conveyor, find_top_and_bottom_of_conveyors, get_top_qr_left_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
 from calibration import TOP_CONVEYOR_SPEED_BACKWARD, TOP_CONVEYOR_SPEED_FORWARD, calibrate_top_conveyor_motor, calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
 from servo_motor_code import clean_up_servo, set_up_servo, sweep_servo
 import servo_motor_code
@@ -45,6 +45,25 @@ def pid_control(error, Kp=0.7, Ki=0.01, Kd=0.05): # error is the difference betw
     adjustment = Kp * error + Ki * integral + Kd * derivative
     print("Adjustment: ", adjustment)
     return adjustment
+
+def update_bottom_left_plant_position(image, conveyor_threshold):
+    """
+    Identifies the x-coordinate of the bottom edge of the bottom holder with a visible QR code 
+    on the left-side conveyor.
+
+    Args:
+        image (np.ndarray): The input image from the conveyor camera.
+        conveyor_threshold (int): Pixel value separating left and right conveyors.
+
+    Returns:
+        int: X-coordinate of the bottom edge of the topmost right conveyor holder with a barcode.
+        id (str or None): The decoded string from the holder's QR code if present; otherwise None.
+    """
+    holders = find_holders(image)
+    holders_divided = divide_holders_into_conveyors(conveyor_threshold, holders)
+    bottom_plant = bottom_holder_with_barcode_left_conveyor(holders_divided)
+    bottom = get_bottom_edge_of_holder(bottom_plant['contour'])
+    return bottom[0][0], bottom_plant['id']
 
 def update_top_right_plant_position(image, conveyor_threshold):
     """
@@ -115,7 +134,6 @@ try:
     print("Moving right conveyor up close enough to slide tray across.")
     print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
 
-
     # ------ USE PID CONTROL TO MOVE TOP HOLDER ON RIGHT CONVEYOR UP CLOSE ENOUGH TO SLIDE TRAY ACROSS -----------
     while(distance_from_bottom_of_holder_to_target > 100): # TODO: base target location on end of top conveyor leg for better relability
         # Visualise current (red) and target (green) location
@@ -146,8 +164,6 @@ try:
 
     # --------- FIND DESIRED POSITION FOR TOP LEFT HOLDER -----------
     image = capture_image()
-
-    print('detecting corners')
 
     # get corners of each holder
     holders = find_holders(image)
@@ -316,6 +332,18 @@ try:
     else:
         print("Error: Tray not moved successfully")
 
+    # -------- FIND BOTTOM PLANT LEFT CONVEYOR AND TARGET LOCATION ----------
+    bottom_conveyor_leg_top_right_x, top_conveyor_leg_top_right_y  = find_leg_bottom_conveyor(image)
+    target_location_for_bottom_tray = int(bottom_conveyor_leg_top_right_x) 
+    
+    bottom_of_bottom_holder_left_conveyor_x_coord, bottom_left_plant_id = update_bottom_left_plant_position(image, conveyor_threshold)
+    distance_from_bottom_of_holder_to_target = bottom_of_top_holder_right_conveyor_x_coord - target_location_for_top_tray
+
+    print("Moving right conveyor up close enough to slide tray across.")
+    print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
+
+
+    
 
 
     # --------- WHEN FINISHED, STOP THREAD SPINNING SERVO MOTOR ---------- 

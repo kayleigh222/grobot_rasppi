@@ -164,6 +164,30 @@ def top_holder_with_barcode_right_conveyor(holders_divided_into_conveyors):
         print("Top holder with qrcode: ", top_holder_with_barcode['holder_center'])
     return top_holder_with_barcode
 
+def bottom_holder_with_barcode_left_conveyor(holders_divided_into_conveyors):
+    """
+    Loops through right conveyor holders and returns the top-most non-empty holder.
+    Removes empty holders from the list.
+    """
+    left_conveyor_holders, _ = holders_divided_into_conveyors
+    bottom_holder_with_barcode = None
+
+    while bottom_holder_with_barcode is None:
+        if not left_conveyor_holders:
+            print("Error: No qrcodes found in left conveyor")
+            break
+
+        top_candidate = min(left_conveyor_holders, key=lambda h: h['holder_center'][0])
+        if top_candidate['is_empty']:
+            left_conveyor_holders.remove(top_candidate)
+        else:
+            bottom_holder_with_barcode = top_candidate
+
+    if bottom_holder_with_barcode:
+        print("Bottom holder with qrcode: ", bottom_holder_with_barcode['holder_center'])
+    return bottom_holder_with_barcode
+
+
 def divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders):
     """
     Divides detected holders into left or right conveyors based on y-coordinate.
