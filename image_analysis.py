@@ -34,9 +34,14 @@ def find_leg_top_conveyor(image):
 
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if not contours:
-        raise ValueError("No leg contours found.")  
+        raise ValueError("No leg contours found.") 
+    
+    # draw all contours in blue
+    cv2.drawContours(image, contours, -1, (255, 0, 0), 3) 
     
     print(f"Number of leg contours found: {len(contours)}")
+    # filter to the two largest contours
+    contours = sorted(contours, key=cv2.contourArea, reverse=True)[:2]
     
     leg_contour = max(contours, key=lambda c: cv2.boundingRect(c)[0]) # pick the leg with the greatest x value
     cv2.drawContours(image, [leg_contour], -1, (0, 255, 0), 3)

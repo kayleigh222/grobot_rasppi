@@ -370,8 +370,58 @@ try:
     print("Finished moving bottom holder on left conveyor close enough to slide tray across. Distance to target location now ", distance_from_bottom_of_holder_to_target)
     gc.collect() # run garbage collector to free up memory
 
+    # --------- FIND DESIRED POSITION FOR BOTTOM RIGHT HOLDER -----------
+    image = capture_image()
 
-    
+    # get corners of each holder
+    holders = find_holders(image)
+    holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
+    bottom_holder_right = bottom_holder_right_conveyor(holders_divided_into_conveyors)
+    bottom_holder_left = bottom_holder_left_conveyor(holders_divided_into_conveyors)
+    image_with_contours = image.copy()
+
+    print('finding corners for right holder')
+    corners_right = extract_holder_corners(image, bottom_holder_right['contour'], 16, 0.02, 10)
+
+    gc.collect() # run garbage collector to free up memory
+
+    print('finding corners for left contour')
+    corners_left = extract_holder_corners(image, bottom_holder_left['contour'], 8, 0.01, 20)
+
+    gc.collect() # run garbage collector to free up memory
+
+    print('got corners - drawing')
+
+    # Draw the corners on the image
+    for corner in corners_right:
+        x, y = corner.ravel()
+        cv2.circle(image_with_contours, (x, y), 10, (255, 0, 0), -1)  # Green circle for right corners
+
+    for corner in corners_left:
+        x, y = corner.ravel()
+        cv2.circle(image_with_contours, (x, y), 10, (0, 0, 255), -1)  # Red circle for left corners
+
+    # Save the image with detected corners
+    cv2.imwrite("image_with_corners.jpg", image_with_contours)
+    print("Image with corners saved as image_with_corners.jpg")
+
+    del image_with_contours
+
+    # get two corners with highest y value on left contour
+    corners_left = sorted(corners_left, key=lambda x: x[0][1], reverse=True)[:2] # get two corners with highest y value
+    # of these corners, get the corner with lowest x value
+    bottom_left_corner_left_holder = min(corners_left, key=lambda x: x[0][0]) # get corner with lowest x value
+    del corners_left
+
+    # get two corners with lowest y value on right contour
+    corners_right = sorted(corners_right, key=lambda x: x[0][1])[:2] # get two corners with lowest y value
+    # of these corners, get the corner with lowest x value
+    top_left_corner_right_holder = min(corners_right, key=lambda x: x[0][0]) # get corner with lowest x value
+    del corners_right
+
+    target_x_value = bottom_left_corner_left_holder[0][0]
+    print("Target x value: ", target_x_value)
+    print("Top left corner right holder: ", top_left_corner_right_holder[0][0])
 
 
     # --------- WHEN FINISHED, STOP THREAD SPINNING SERVO MOTOR ---------- 
