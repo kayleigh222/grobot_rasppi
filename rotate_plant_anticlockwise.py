@@ -7,7 +7,7 @@ import gc
 import numpy as np
 import time
 import threading
-from image_analysis import bottom_holder_with_barcode_left_conveyor, divide_holders_into_conveyors, find_holders, find_leg_bottom_conveyor, find_leg_contours, find_leg_top_conveyor, find_top_and_bottom_of_conveyors, get_top_qr_left_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
+from image_analysis import bottom_holder_left_conveyor, bottom_holder_right_conveyor, bottom_holder_with_barcode_left_conveyor, divide_holders_into_conveyors, find_holders, find_leg_bottom_conveyor, find_leg_contours, find_leg_top_conveyor, find_top_and_bottom_of_conveyors, get_top_qr_left_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
 from calibration import TOP_CONVEYOR_SPEED_BACKWARD, TOP_CONVEYOR_SPEED_FORWARD, calibrate_top_conveyor_motor, calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
 from servo_motor_code import clean_up_servo, set_up_servo, sweep_servo
 import servo_motor_code
@@ -126,7 +126,7 @@ try:
     conveyor_height = top_conveyor - bottom_conveyor
     leg_contours = find_leg_contours(image)
     top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y  = find_leg_top_conveyor(leg_contours)
-    target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 150) # TODO- currently hardcoding this, probably want a better way 
+    target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 200) # TODO- currently hardcoding this, probably want a better way 
 
     # ----------- FIND TOP HOLDER ON RIGHT CONVEYOR ------------------
     bottom_of_top_holder_right_conveyor_x_coord, top_right_plant_id = update_top_right_plant_position(image, conveyor_threshold)

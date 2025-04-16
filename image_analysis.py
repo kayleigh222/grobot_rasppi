@@ -147,6 +147,28 @@ def top_holder_right_conveyor(holders_divided_into_conveyors):
     top_holder = max(right_conveyor_holders, key=lambda h: h['holder_center'][0])
     return top_holder
 
+def bottom_holder_right_conveyor(holders_divided_into_conveyors):
+    """
+    Returns the holder on the right conveyor with the largest x (i.e., furthest right in the image, closest to top of conveyors in real life).
+    """
+    _, right_conveyor_holders = holders_divided_into_conveyors
+    if not right_conveyor_holders:
+        return None
+
+    top_holder = min(right_conveyor_holders, key=lambda h: h['holder_center'][0])
+    return top_holder
+
+def bottom_holder_left_conveyor(holders_divided_into_conveyors):
+    """
+    Returns the holder on the left conveyor with the largest x (i.e., furthest right in the image, closest to top of conveyors in real life).
+    """
+    left_conveyor_holders, _ = holders_divided_into_conveyors
+    if not left_conveyor_holders:
+        return None
+
+    top_holder = min(left_conveyor_holders, key=lambda h: h['holder_center'][0])
+    return top_holder
+
 def top_holder_with_barcode_right_conveyor(holders_divided_into_conveyors):
     """
     Loops through right conveyor holders and returns the top-most non-empty holder.
