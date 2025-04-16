@@ -384,12 +384,12 @@ try:
     image_with_contours = image.copy()
 
     print('finding corners for right holder')
-    corners_right = extract_holder_corners(image, bottom_holder_right['contour'], 16, 0.02, 10)
+    corners_right = extract_holder_corners(image, bottom_holder_right['contour'], 8, 0.02, 10)
 
     gc.collect() # run garbage collector to free up memory
 
     print('finding corners for left contour')
-    corners_left = extract_holder_corners(image, bottom_holder_left['contour'], 8, 0.01, 20)
+    corners_left = extract_holder_corners(image, bottom_holder_left['contour'], 16, 0.02, 20)
 
     gc.collect() # run garbage collector to free up memory
 
@@ -425,6 +425,58 @@ try:
     target_x_value = bottom_left_corner_left_holder[0][0]
     print("Target x value: ", target_x_value)
     print("Top left corner right holder: ", top_left_corner_right_holder[0][0])
+
+    # visualize positions on image
+    cv2.circle(image, (bottom_left_corner_left_holder[0][0], bottom_left_corner_left_holder[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for left edge
+    cv2.circle(image, (top_left_corner_right_holder[0][0], top_left_corner_right_holder[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for right edge
+    cv2.imwrite("image_before_move_left_holder.jpg", image)
+
+    distance_below_target = target_x_value - top_left_corner_right_holder[0][0]
+
+    print("Distance between holders: ", distance_below_target)
+
+    # ------ USE PID CONTROL TO MOVE RIGHT HOLDER TO ALIGN WITH LEFT HOLDER -----------
+    while(distance_below_target < -DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS or distance_below_target > 0):
+        steps_to_take = int(pid_control(distance_below_target, Kp=(1/calibration_variables[RIGHT_CONVEYOR_SPEED])))
+        if(steps_to_take == 0):
+            print("No steps to take")
+            break
+        print("Steps to take: ", steps_to_take)
+        
+        # move conveyor
+        set_up_right_conveyor()
+        move_right_conveyor(steps_to_take)
+        clean_up_right_conveyor()
+
+        #take new image
+        del image
+        gc.collect() # run garbage collector to free up memory
+        image = capture_image()
+
+        # find new left holder position
+        holders = find_holders(image)
+        holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
+        bottom_holder_right = bottom_holder_right_conveyor(holders_divided_into_conveyors)
+
+        print('finding corners for right contour')
+        corners_right = extract_holder_corners(image, bottom_holder_right['contour'], 8, 0.02, 10)
+
+        # get two corners with highest y value on left contour
+        corners_right = sorted(corners_right, key=lambda x: x[0][1], reverse=True)[:2] # get two corners with highest y value
+        # of these corners, get the corner with lowest x value
+        top_left_corner_right_holder = min(corners_right, key=lambda x: x[0][0]) # get corner with lowest x value
+
+        del corners_right
+
+        # visualize on image
+        cv2.circle(image, (bottom_left_corner_left_holder[0][0], bottom_left_corner_left_holder[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for left edge
+        cv2.circle(image, (top_left_corner_right_holder[0][0], top_left_corner_right_holder[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for right edge
+        cv2.imwrite("image_before_move_right_holder.jpg", image)
+
+        distance_below_target = target_x_value - top_left_corner_right_holder[0][0]
+        print("Distance between holders: ", distance_below_target)
+
+    print('finished moving holders together')
 
 
     # --------- WHEN FINISHED, STOP THREAD SPINNING SERVO MOTOR ---------- 
