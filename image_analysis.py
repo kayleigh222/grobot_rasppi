@@ -22,12 +22,13 @@ MIN_LEG_AREA = 4500
 NUM_QRCODES = 1  # Set this to however many QR codes you expect
 
 # ----------- LEG DETECTION -------------
-def find_leg_top_conveyor(image):
+def find_leg_contours(image):
     """
-    Detects the top-left corner of the top leg contour on the conveyor.
+    Detects contours of legs in the image.
     - Assumes legs are green and defined by a color mask.
+    - Assumes there are two legs, so picks the two largest green contours.
     - Draws and saves the mask and contour outline.
-    Returns: (x, y) coordinate of top-left corner of bounding box.
+    Returns: list of contours.
     """
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
     mask = cv2.inRange(hsv, LEG_COLOR_LOWER_THRESHOLD_HSV, LEG_COLOR_UPPER_THRESHOLD_HSV)
@@ -35,42 +36,42 @@ def find_leg_top_conveyor(image):
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if not contours:
         raise ValueError("No leg contours found.") 
-    
+
     # draw all contours in blue
     cv2.drawContours(image, contours, -1, (255, 0, 0), 3) 
     
     print(f"Number of leg contours found: {len(contours)}")
+    
     # filter to the two largest contours
     contours = sorted(contours, key=cv2.contourArea, reverse=True)[:2]
     
-    leg_contour = max(contours, key=lambda c: cv2.boundingRect(c)[0]) # pick the leg with the greatest x value
-    cv2.drawContours(image, [leg_contour], -1, (0, 255, 0), 3)
+    for contour in contours:
+        cv2.drawContours(image, [contour], -1, (0, 255, 0), 3)
+    
     cv2.imwrite('image_with_leg_contours.jpg', image)
+    
+    return contours
 
-    x, y, w, h = cv2.boundingRect(leg_contour)
+def find_leg_top_conveyor(leg_contours):
+    """
+    Detects the top-left corner of the top leg contour on the conveyor.
+    - Assumes legs are green and defined by a color mask.
+    - Draws and saves the mask and contour outline.
+    Returns: (x, y) coordinate of top-left corner of bounding box.
+    """
+    top_leg_contour = max(leg_contours, key=lambda c: cv2.boundingRect(c)[0]) # pick the leg with the greatest x value
+
+    x, y, w, h = cv2.boundingRect(top_leg_contour)
     return x, y
 
-def find_leg_bottom_conveyor(image):
+def find_leg_bottom_conveyor(leg_contours):
     """
     Detects the top-right corner of the bottom leg contour on the conveyor.
     - Assumes legs are green and defined by a color mask.
     - Draws and saves the mask and contour outline.
     Returns: (x, y) coordinate of top-left corner of bounding box.
     """
-    hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-    mask = cv2.inRange(hsv, LEG_COLOR_LOWER_THRESHOLD_HSV, LEG_COLOR_UPPER_THRESHOLD_HSV)
-
-    contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    if not contours:
-        raise ValueError("No leg contours found.")
-
-    leg_contour = min(contours, key=cv2.contourArea)
-    cv2.drawContours(image, [leg_contour], -1, (0, 255, 0), 3)
-    # draw a yellow circle at (x+w, y+h)
-    cv2.circle(image, (x+w, y+h), 5, (0, 255, 255), -1)
-    x, y, w, h = cv2.boundingRect(leg_contour)
-    cv2.imwrite('image_with_leg_contours.jpg', image)
-
+    leg_contour = min(leg_contours, key=cv2.contourArea)
     x, y, w, h = cv2.boundingRect(leg_contour)
     return x+w, y+h
 

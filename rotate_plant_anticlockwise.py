@@ -7,7 +7,7 @@ import gc
 import numpy as np
 import time
 import threading
-from image_analysis import bottom_holder_with_barcode_left_conveyor, divide_holders_into_conveyors, find_holders, find_leg_bottom_conveyor, find_leg_top_conveyor, find_top_and_bottom_of_conveyors, get_top_qr_left_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
+from image_analysis import bottom_holder_with_barcode_left_conveyor, divide_holders_into_conveyors, find_holders, find_leg_bottom_conveyor, find_leg_contours, find_leg_top_conveyor, find_top_and_bottom_of_conveyors, get_top_qr_left_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
 from calibration import TOP_CONVEYOR_SPEED_BACKWARD, TOP_CONVEYOR_SPEED_FORWARD, calibrate_top_conveyor_motor, calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
 from servo_motor_code import clean_up_servo, set_up_servo, sweep_servo
 import servo_motor_code
@@ -124,7 +124,8 @@ try:
     conveyor_threshold, conveyors_left, conveyors_right = get_conveyor_threshold(image) # find threshold between left and right conveyor
     top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
     conveyor_height = top_conveyor - bottom_conveyor
-    top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y  = find_leg_top_conveyor(image)
+    leg_contours = find_leg_contours(image)
+    top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y  = find_leg_top_conveyor(leg_contours)
     target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 150) # TODO- currently hardcoding this, probably want a better way 
 
     # ----------- FIND TOP HOLDER ON RIGHT CONVEYOR ------------------
@@ -297,7 +298,8 @@ try:
         image = capture_image()
 
         # find new position of top conveyor leg
-        top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y = find_leg_top_conveyor(image)
+        leg_contours = find_leg_contours(image)
+        top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y = find_leg_top_conveyor(leg_contours)
         distance_from_target = top_conveyor_leg_top_left_y - (conveyor_threshold - additional_distance_to_push_tray_across_threshold)
 
         print("Distance from top conveyor target: ", distance_from_target)
@@ -305,8 +307,8 @@ try:
     print('finished moving top conveyor to target')
 
     # --------- MOVE TOP CONVEYOR LEG OUT OF THE WAY OF CONVEYORS -----------
-    top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y = find_leg_top_conveyor(image)
-    target_location = conveyors_right # + additional_distance_to_push_tray_across_threshold # TODO - this is sus?
+    top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y = find_leg_top_conveyor(leg_contours)
+    target_location = conveyors_right
     while(top_conveyor_leg_top_left_y < target_location):
         steps_to_take = abs(int((target_location - top_conveyor_leg_top_left_y) // calibration_variables[TOP_CONVEYOR_SPEED_BACKWARD]))
         if(steps_to_take == 0):
@@ -318,7 +320,8 @@ try:
         image = capture_image()
 
         # find new position of top conveyor leg
-        top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y = find_leg_top_conveyor(image)
+        leg_contours = find_leg_contours(image)
+        top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y = find_leg_top_conveyor(leg_contours)
         
     clean_up_top_conveyor()
     print("Finished moving top conveyor leg out of the way")
@@ -333,7 +336,7 @@ try:
         print("Error: Tray not moved successfully")
 
     # -------- FIND BOTTOM PLANT LEFT CONVEYOR AND TARGET LOCATION ----------
-    bottom_conveyor_leg_top_right_x, top_conveyor_leg_top_right_y  = find_leg_bottom_conveyor(image)
+    bottom_conveyor_leg_top_right_x, top_conveyor_leg_top_right_y  = find_leg_bottom_conveyor(leg_contours)
     target_location_for_bottom_tray = int(bottom_conveyor_leg_top_right_x) 
     
     bottom_of_bottom_holder_left_conveyor_x_coord, bottom_left_plant_id = update_bottom_left_plant_position(image, conveyor_threshold)
