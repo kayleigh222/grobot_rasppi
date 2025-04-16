@@ -35,15 +35,13 @@ def find_leg_contours(image):
 
     contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     if not contours:
-        raise ValueError("No leg contours found.") 
-
-    # draw all contours in blue
-    cv2.drawContours(image, contours, -1, (255, 0, 0), 3) 
-    
-    print(f"Number of leg contours found: {len(contours)}")
-    
+        raise ValueError("No leg contours found.")  
+        
     # filter to the two largest contours
     contours = sorted(contours, key=cv2.contourArea, reverse=True)[:2]
+    
+    # draw leg contours in blue
+    cv2.drawContours(image, contours, -1, (255, 0, 0), 3)
     
     for contour in contours:
         cv2.drawContours(image, [contour], -1, (0, 255, 0), 3)
