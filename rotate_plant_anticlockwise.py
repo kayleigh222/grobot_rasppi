@@ -100,7 +100,7 @@ try:
     image = capture_image()
     calibration_variables = load_variables() 
 
-    # # ---------- FIND OUTLINES OF CONVEYOR TO GET TARGET LOCATION FOR TOP TRAY -----------
+    # # ---------- FIND OUTLINES OF CONVEYOR TO GET TARGET LOCATION FOR TOP RIGHT TRAY -----------
     conveyor_threshold, conveyors_left, conveyors_right = get_conveyor_threshold(image) # find threshold between left and right conveyor
     top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
     conveyor_height = top_conveyor - bottom_conveyor
@@ -137,7 +137,7 @@ try:
         # find new distance left to travel
         distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
 
-    print("Finished moving top holder on right conveyor up close enough to slide tray across.")
+    print("Finished moving top holder on right conveyor up close enough to slide tray across. Distance to target location now ", distance_from_bottom_of_holder_to_target)
     gc.collect() # run garbage collector to free up memory
 
     # --------- FIND DESIRED POSITION FOR LEFT HOLDER -----------
