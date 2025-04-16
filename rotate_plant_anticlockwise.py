@@ -331,7 +331,7 @@ try:
     target_location_for_bottom_tray = int(bottom_conveyor_leg_top_right_x) 
     
     bottom_of_bottom_holder_left_conveyor_x_coord, bottom_left_plant_id = update_bottom_left_plant_position(image, conveyor_threshold)
-    distance_from_bottom_of_holder_to_target = target_location_for_bottom_tray - bottom_of_top_holder_right_conveyor_x_coord
+    distance_from_bottom_of_holder_to_target = target_location_for_bottom_tray - bottom_of_bottom_holder_left_conveyor_x_coord
 
     print("Moving left conveyor down close enough to slide tray across.")
     print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
@@ -340,7 +340,7 @@ try:
     while(distance_from_bottom_of_holder_to_target < -100): # TODO: base target location on end of top conveyor leg for better relability
         # Visualise current (red) and target (green) location
         cv2.line(image, (target_location_for_bottom_tray, 0), (target_location_for_bottom_tray, image.shape[0]), (0, 255, 0), 2)  
-        cv2.line(image, (int(bottom_of_top_holder_right_conveyor_x_coord), 0), (int(bottom_of_top_holder_right_conveyor_x_coord), image.shape[0]), (0, 0, 255), 2) 
+        cv2.line(image, (int(bottom_of_bottom_holder_left_conveyor_x_coord), 0), (int(bottom_of_bottom_holder_left_conveyor_x_coord), image.shape[0]), (0, 0, 255), 2) 
         cv2.imwrite("before_move_left_holder_to_bottom.jpg", image)
 
         # move conveyor
@@ -357,8 +357,8 @@ try:
 
         # find new distance left to travel
         print("target location: ", target_location_for_bottom_tray)
-        print("bottom of top holder right conveyor: ", bottom_of_top_holder_right_conveyor_x_coord)
-        distance_from_bottom_of_holder_to_target = target_location_for_bottom_tray - bottom_of_top_holder_right_conveyor_x_coord
+        print("bottom of bottom holder left conveyor: ",bottom_of_bottom_holder_left_conveyor_x_coord)
+        distance_from_bottom_of_holder_to_target = target_location_for_bottom_tray - bottom_of_bottom_holder_left_conveyor_x_coord
         print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
 
     print("Finished moving bottom holder on left conveyor close enough to slide tray across. Distance to target location now ", distance_from_bottom_of_holder_to_target)
