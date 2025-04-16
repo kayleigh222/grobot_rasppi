@@ -270,7 +270,7 @@ try:
 
     # ------- ROTATE TOP CONVEYOR TO SLIDE TRAY ACROSS -----------
     set_up_top_conveyor()
-    additional_distance_to_push_tray_across_threshold = 100 # (conveyors_right - conveyors_left) // 20 # move an extra quarter of a conveyor across threshold
+    additional_distance_to_push_tray_across_threshold = 200
     distance_from_target = top_conveyor_leg_top_left_y - (conveyor_threshold - additional_distance_to_push_tray_across_threshold)
     # draw a horizontal line at conveyor_threshold
     cv2.line(image, (0, conveyor_threshold), (image.shape[1], conveyor_threshold), (0, 255, 0), 2)  # Green line
@@ -318,10 +318,10 @@ try:
     print("Finished moving top conveyor leg out of the way")
 
     # check tray has moved to other conveyor
-    print("Was top plant on right ", top_right_plant_id) # TODO: get data from this e.g. plant 4
-    new_top_plant_left_conveyor = get_top_qr_left_conveyor(image, conveyor_threshold, conveyors_left, conveyors_right) # TODO: get data from this e.g. plant 4
-    print("New top plant on left ", new_top_plant_left_conveyor) # TODO: get data from this e.g. plant 4
-    if(new_top_plant_left_conveyor[0] == top_right_plant_id): # TODO - change indexing here so actually get right data?
+    print("Was top plant on right ", top_right_plant_id) 
+    new_top_plant_left_conveyor = get_top_qr_left_conveyor(image, conveyor_threshold)
+    print("New top plant on left ", new_top_plant_left_conveyor) 
+    if(new_top_plant_left_conveyor[0] == top_right_plant_id):
         print("Tray moved successfully")
     else:
         print("Error: Tray not moved successfully")
