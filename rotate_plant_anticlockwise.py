@@ -227,20 +227,20 @@ try:
 
     # ------ USE PID CONTROL TO MOVE LEFT HOLDER TO ALIGN WITH RIGHT HOLDER -----------
     while(distance_below_target > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS or distance_below_target < 0):
-        del image
-        gc.collect() # run garbage collector to free up memory
         steps_to_take = int(pid_control(distance_below_target, Kp=(1/calibration_variables[LEFT_CONVEYOR_SPEED])))
         if(steps_to_take == 0):
             print("No steps to take")
             break
         print("Steps to take: ", steps_to_take)
-
+        
         # move conveyor
         set_up_left_conveyor()
         move_left_conveyor(steps_to_take)
         clean_up_left_conveyor()
 
         #take new image
+        del image
+        gc.collect() # run garbage collector to free up memory
         image = capture_image()
 
         # find new left holder position
