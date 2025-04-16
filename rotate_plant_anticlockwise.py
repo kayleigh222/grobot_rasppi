@@ -249,22 +249,13 @@ try:
         top_holder_left = top_holder_left_conveyor(holders_divided_into_conveyors)
 
         print('finding corners for left contour')
-        top_holder_left_contour = top_holder_left['contour']
-        top_holder_left_contour = cv2.approxPolyDP(top_holder_left_contour, 0.01 * cv2.arcLength(top_holder_left_contour, True), True)
-        image_with_left_contour = np.zeros_like(image)
-        cv2.drawContours(image_with_left_contour, [top_holder_left_contour], -1, (255, 255, 255), 1)
-        left_gray = cv2.cvtColor(image_with_left_contour, cv2.COLOR_BGR2GRAY)
-        corners_left = cv2.goodFeaturesToTrack(left_gray, maxCorners=8, qualityLevel=0.01, minDistance=20)
-        corners_left = np.intp(corners_left)
+        corners_left = extract_holder_corners(image, top_holder_left['contour'], 8, 0.01, 20)
 
         # get two corners with highest y value on left contour
         corners_left = sorted(corners_left, key=lambda x: x[0][1], reverse=True)[:2] # get two corners with highest y value
         # of these corners, get the corner with lowest x value
         bottom_left_corner_left_holder = min(corners_left, key=lambda x: x[0][0]) # get corner with lowest x value
 
-        del top_holder_left_contour
-        del image_with_left_contour
-        del left_gray
         del corners_left
 
         # visualize on image
