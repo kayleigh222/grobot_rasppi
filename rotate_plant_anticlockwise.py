@@ -20,7 +20,7 @@ parser = argparse.ArgumentParser(description="Run plant position updater with op
 parser.add_argument('--calibrate', action='store_true', help='Run motor calibration before starting.')
 args = parser.parse_args()
 
-DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS = 30 # pixels - max vertical distance between holders to be able to slide across
+DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS = 40 # pixels - max vertical distance between holders to be able to slide across
 
 # variables for PID control - used to move conveyor to align holders before sliding tray across
 previous_error = 0
@@ -136,7 +136,7 @@ try:
     print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
 
     # ------ USE PID CONTROL TO MOVE TOP HOLDER ON RIGHT CONVEYOR UP CLOSE ENOUGH TO SLIDE TRAY ACROSS -----------
-    while(distance_from_bottom_of_holder_to_target > 100): # TODO: base target location on end of top conveyor leg for better relability
+    while(distance_from_bottom_of_holder_to_target > 50): # TODO: base target location on end of top conveyor leg for better relability
         # Visualise current (red) and target (green) location
         cv2.line(image, (target_location_for_top_tray, 0), (target_location_for_top_tray, image.shape[0]), (0, 255, 0), 2)  
         cv2.line(image, (int(bottom_of_top_holder_right_conveyor_x_coord), 0), (int(bottom_of_top_holder_right_conveyor_x_coord), image.shape[0]), (0, 0, 255), 2) 
