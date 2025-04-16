@@ -1,5 +1,6 @@
 import os
 import cv2
+from bottom_conveyor_motor_code import clean_up_bottom_conveyor, set_up_bottom_conveyor, step_bottom_conveyor_backward, step_bottom_conveyor_forward
 import pigpio
 import RPi.GPIO as GPIO
 import argparse
@@ -226,7 +227,7 @@ try:
     print("Distance between holders: ", distance_below_target)
 
     # ------ USE PID CONTROL TO MOVE LEFT HOLDER TO ALIGN WITH RIGHT HOLDER -----------
-    while(abs(distance_below_target) > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS):
+    while(distance_below_target > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS or distance_below_target < 0):
         steps_to_take = int(pid_control(distance_below_target, Kp=(1/calibration_variables[LEFT_CONVEYOR_SPEED])))
         if(steps_to_take == 0):
             print("No steps to take")
@@ -298,7 +299,6 @@ try:
     print('finished moving top conveyor to target')
 
     # --------- MOVE TOP CONVEYOR LEG OUT OF THE WAY OF CONVEYORS -----------
-    top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y = find_leg_top_conveyor(leg_contours)
     target_location = conveyors_right
     while(top_conveyor_leg_top_left_y < target_location):
         steps_to_take = abs(int((target_location - top_conveyor_leg_top_left_y) // calibration_variables[TOP_CONVEYOR_SPEED_BACKWARD]))
@@ -327,7 +327,7 @@ try:
         print("Error: Tray not moved successfully")
 
     # -------- FIND BOTTOM PLANT LEFT CONVEYOR AND TARGET LOCATION ----------
-    bottom_conveyor_leg_top_right_x, top_conveyor_leg_top_right_y  = find_leg_bottom_conveyor(leg_contours)
+    bottom_conveyor_leg_top_right_x, bottom_conveyor_leg_top_right_y  = find_leg_bottom_conveyor(leg_contours)
     target_location_for_bottom_tray = int(bottom_conveyor_leg_top_right_x) 
     
     bottom_of_bottom_holder_left_conveyor_x_coord, bottom_left_plant_id = update_bottom_left_plant_position(image, conveyor_threshold)
@@ -469,6 +469,64 @@ try:
 
     print('finished moving holders together')
 
+        # ------- ROTATE BOTTOM CONVEYOR TO SLIDE TRAY ACROSS -----------
+    set_up_bottom_conveyor()
+    additional_distance_to_push_tray_across_threshold = 200
+    target = conveyor_threshold + additional_distance_to_push_tray_across_threshold
+    distance_from_target = target - bottom_conveyor_leg_top_right_y
+    # draw a horizontal line at target
+    cv2.line(image, (0, target), (image.shape[1], target), (0, 255, 0), 2)  # Green line
+    # draw a horizontal line at top_conveyor_leg_top_left_y
+    cv2.line(image, (0, bottom_conveyor_leg_top_right_y), (image.shape[1], bottom_conveyor_leg_top_right_y), (0, 0, 255), 2)  # Red line
+    cv2.imwrite("before_move_bottom_conveyor.jpg", image)
+
+    while(distance_from_target > 0):
+        steps_to_take = int(pid_control(distance_from_target, Kp=(1/calibration_variables[BOTTOM_CONVEYOR_SPEED_FORWARD])))
+        if(steps_to_take == 0):
+            print("No steps to take")
+            break
+        print("Steps to take: ", steps_to_take)
+        step_bottom_conveyor_forward(steps_to_take)
+
+        image = capture_image()
+
+        # find new position of top conveyor leg
+        leg_contours = find_leg_contours(image)
+        bottom_conveyor_leg_top_right_x, bottom_conveyor_leg_top_right_y  = find_leg_bottom_conveyor(leg_contours)
+        distance_from_target = target - bottom_conveyor_leg_top_right_y
+
+        print("Distance from bottom conveyor target: ", distance_from_target)
+
+    print('finished moving bottom conveyor to target')
+
+    # --------- MOVE BOTTOM CONVEYOR LEG OUT OF THE WAY OF CONVEYORS -----------
+    bottom_conveyor_leg_top_right_x, bottom_conveyor_leg_top_right_y  = find_leg_bottom_conveyor(leg_contours)
+    target_location = conveyors_left
+    while(bottom_conveyor_leg_top_right_y < target_location):
+        steps_to_take = abs(int((target_location - top_conveyor_leg_top_left_y) // calibration_variables[BOTTOM_CONVEYOR_SPEED_BACKWARD]))
+        if(steps_to_take == 0):
+            print("No steps to take")
+            break
+        print("Steps to take: ", steps_to_take)
+        step_bottom_conveyor_backward(steps_to_take)
+
+        image = capture_image()
+
+        # find new position of top conveyor leg
+        leg_contours = find_leg_contours(image)
+        bottom_conveyor_leg_top_right_x, bottom_conveyor_leg_top_right_y  = find_leg_bottom_conveyor(leg_contours)
+        
+    clean_up_bottom_conveyor()
+    print("Finished moving bottom conveyor leg out of the way")
+
+    # check tray has moved to other conveyor
+    print("Was bottom plant on left ", bottom_left_plant_id) 
+    new_bottom_plant_right_conveyor = get_bottom_qr_right_conveyor(image, conveyor_threshold)
+    print("New bottom plant on right ", new_bottom_plant_right_conveyor) 
+    if(new_bottom_plant_right_conveyor[0] == bottom_left_plant_id):
+        print("Tray moved successfully")
+    else:
+        print("Error: Tray not moved successfully")
 
     # --------- WHEN FINISHED, STOP THREAD SPINNING SERVO MOTOR ---------- 
     servo_motor_code.sweeping = False
