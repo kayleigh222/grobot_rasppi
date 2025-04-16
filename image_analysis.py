@@ -301,20 +301,20 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=450):
     return holders_info
 
 # -------- QR CODE DETECTION ----------------
-def get_top_qr_right_conveyor(image, conveyor_threshold):
+def get_bottom_qr_right_conveyor(image, conveyor_threshold):
     """
-    Finds the top-right QR code on the bottom conveyor (y > threshold), based on the highest x-position.
+    Finds the bottom QR code on the right conveyor (y > threshold), based on the lowest x-position.
     """
     _, right_conveyor_qrcodes = qrs_divided_into_conveyors(image, conveyor_threshold)
     if right_conveyor_qrcodes:
-        return max(right_conveyor_qrcodes, key=lambda b: b[1][0])
+        return min(right_conveyor_qrcodes, key=lambda b: b[1][0])
     print("No right conveyor qrcodes found.")
     return None
 
 
 def get_top_qr_left_conveyor(image, conveyor_threshold):
     """
-    Finds the top-left qrcode on the top conveyor (y < threshold), based on the highest x-position.
+    Finds the top qrcode on the left conveyor (y < threshold), based on the highest x-position.
     """
     left_conveyor_qrcodes, _ = qrs_divided_into_conveyors(image, conveyor_threshold)
     if left_conveyor_qrcodes:

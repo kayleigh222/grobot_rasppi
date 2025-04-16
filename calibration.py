@@ -1,5 +1,6 @@
 import json
-from image_analysis import find_leg_top_conveyor, get_conveyor_threshold, get_top_qr_right_conveyor, get_top_qr_left_conveyor
+from bottom_conveyor_motor_code import set_up_bottom_conveyor, step_bottom_conveyor_forward
+from image_analysis import find_leg_bottom_conveyor, find_leg_contours, find_leg_top_conveyor, get_conveyor_threshold, get_top_qr_right_conveyor, get_top_qr_left_conveyor
 import os
 import cv2
 from top_conveyor_motor_code import set_up_top_conveyor, step_top_conveyor_backward, step_top_conveyor_forward
@@ -12,6 +13,8 @@ RIGHT_CONVEYOR_SPEED = "right_conveyor_motor_pixels_per_step"
 LEFT_CONVEYOR_SPEED = "left_conveyor_motor_pixels_per_step"
 TOP_CONVEYOR_SPEED_FORWARD = "top_conveyor_motor_pixels_per_step_forward"
 TOP_CONVEYOR_SPEED_BACKWARD = "top_conveyor_motor_pixels_per_step_backward"
+BOTTOM_CONVEYOR_SPEED_FORWARD = "bottom_conveyor_motor_pixels_per_step_forward"
+BOTTOM_CONVEYOR_SPEED_BACKWARD = "bottom_conveyor_motor_pixels_per_step_backward"
 
 # Save variables
 def save_variables(new_data):
@@ -33,6 +36,44 @@ def load_variables():
     except (FileNotFoundError, json.JSONDecodeError):
         return {}  # Return empty dict if file doesn't exist or is corrupted
 
+def calibrate_bottom_conveyor_motor(num_steps_to_test=400):
+    print("Calibrating bottom conveyor motor...")
+    set_up_bottom_conveyor()  # Set up the top conveyor motor
+    # measure initial position
+    image_path = "captured_image.jpg"
+    os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
+    image = cv2.imread(image_path) # read the captured image with opencv
+    leg_contours = find_leg_contours(image)
+    x_original, y_original = find_leg_bottom_conveyor(leg_contours) # find the bottom leg
+
+    print("Original position: ", x_original, y_original)
+
+    # move motor
+    set_up_bottom_conveyor()
+    step_bottom_conveyor_forward(num_steps_to_test)
+
+    # measure new position
+    os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
+    image = cv2.imread(image_path) # read the captured image with opencv
+    x_new, y_new = find_leg_top_conveyor(image) # find the top leg
+    pixels_moved_forward = abs(y_new - y_original)
+    pixels_moved_per_step_forward = pixels_moved_forward/num_steps_to_test
+    x_original, y_original = x_new, y_new # update original position
+
+    # move motor back
+    step_top_conveyor_backward(num_steps_to_test)  # Move back to original position
+    os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
+    image = cv2.imread(image_path) # read the captured image with opencv
+    x_new, y_new = find_leg_top_conveyor(image) # find the top leg
+    pixels_moved_backward = abs(y_new - y_original)
+    pixels_moved_per_step_backward = pixels_moved_backward/num_steps_to_test
+
+    # save new calibration variables
+    data = {BOTTOM_CONVEYOR_SPEED_FORWARD: pixels_moved_per_step_forward,
+            BOTTOM_CONVEYOR_SPEED_BACKWARD: pixels_moved_per_step_backward}  # Assuming same speed for both directions
+    print(data)
+    save_variables(data)  # Save
+
 def calibrate_top_conveyor_motor(num_steps_to_test=400):
     print("Calibrating top conveyor motor...")
     set_up_top_conveyor()  # Set up the top conveyor motor
@@ -40,7 +81,8 @@ def calibrate_top_conveyor_motor(num_steps_to_test=400):
     image_path = "captured_image.jpg"
     os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
     image = cv2.imread(image_path) # read the captured image with opencv
-    x_original, y_original = find_leg_top_conveyor(image) # find the top leg
+    leg_contours = find_leg_contours(image)
+    x_original, y_original = find_leg_top_conveyor(leg_contours) # find the top leg
 
     print("Original position: ", x_original, y_original)
 
