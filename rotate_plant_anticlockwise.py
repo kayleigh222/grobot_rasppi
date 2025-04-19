@@ -246,19 +246,16 @@ try:
         print('finding corners for left contour')
         corners_left = extract_holder_corners(image, top_holder_left['contour'], 8, 0.01, 20)
 
-        # get two corners with highest y value on left contour
-        corners_left = sorted(corners_left, key=lambda x: x[0][1], reverse=True)[:2] # get two corners with highest y value
-        # of these corners, get the corner with lowest x value
-        bottom_left_corner_left_holder = min(corners_left, key=lambda x: x[0][0]) # get corner with lowest x value
+        bottom_left_corner_left_holder = min(corners_left, key=lambda pt: pt[0] + pt[1])
 
         del corners_left
 
         # visualize on image
-        cv2.circle(image, (bottom_left_corner_left_holder[0][0], bottom_left_corner_left_holder[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for left edge
-        cv2.circle(image, (top_left_corner_right_holder[0][0], top_left_corner_right_holder[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for right edge
+        cv2.circle(image, (bottom_left_corner_left_holder[0], bottom_left_corner_left_holder[1]), 10, (0, 255, 255), -1)  # Yellow circle for left edge
+        cv2.circle(image, (top_left_corner_right_holder[0], top_left_corner_right_holder[1]), 10, (0, 255, 255), -1)  # Yellow circle for right edge
         cv2.imwrite("image_before_move_left_holder.jpg", image)
 
-        distance_below_target = target_x_value - bottom_left_corner_left_holder[0][0]
+        distance_below_target = target_x_value - bottom_left_corner_left_holder[0]
         print("Distance between holders: ", distance_below_target)
 
     print('finished moving holders together')
