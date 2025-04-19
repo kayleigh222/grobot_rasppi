@@ -234,7 +234,7 @@ def divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders)
     return left_conveyor_holders, right_conveyor_holders
 
 # Finds all holders, returns the contours and empty status
-def find_holders(image, max_dist_between_holder_center_and_barcode=450):
+def find_holders(image, max_dist_between_holder_center_and_barcode=500):
     """
     Detects holder regions (red-colored contours) in the input image and determines whether 
     each holder is empty or occupied based on proximity to a detected QR code.
@@ -277,7 +277,7 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=450):
         holder_center = (x + w // 2, y + h // 2)
         print(f"Holder center: {holder_center}")
 
-        near_barcode = (holder_center[0], holder_center[1] + max_dist_between_holder_center_and_barcode)
+        near_barcode = (holder_center[0], holder_center[1] + 450)
 
         # Determine if a qrcode is nearby
         barcode_close = False
