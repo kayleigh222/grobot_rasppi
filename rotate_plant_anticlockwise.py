@@ -200,6 +200,7 @@ try:
     del image_with_contours
 
     # get the corner that balances lowest x and y value
+    print(corners_left)
     bottom_left_corner_left_holder = min(corners_left, key=lambda pt: pt[0] + pt[1])
     del corners_left
 
