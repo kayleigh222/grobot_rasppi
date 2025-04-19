@@ -322,6 +322,16 @@ def get_top_qr_left_conveyor(image, conveyor_threshold):
     print("No left conveyor qrcodes found.")
     return None
 
+def get_top_qr_right_conveyor(image, conveyor_threshold):
+    """
+    Finds the top qrcode on the left conveyor (y < threshold), based on the highest x-position.
+    """
+    _, right_conveyor_qrcodes = qrs_divided_into_conveyors(image, conveyor_threshold)
+    if right_conveyor_qrcodes:
+        return max(right_conveyor_qrcodes, key=lambda b: b[1][0])
+    print("No left conveyor qrcodes found.")
+    return None
+
 def qrs_divided_into_conveyors(image, conveyor_threshold):
     """
     Divides detected qrcodes into top and bottom conveyor based on their y-position.
