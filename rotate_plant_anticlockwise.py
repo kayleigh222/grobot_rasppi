@@ -165,8 +165,6 @@ try:
     gc.collect() # run garbage collector to free up memory
 
     # --------- FIND DESIRED POSITION FOR TOP LEFT HOLDER -----------
-    image = capture_image()
-
     # get corners of each holder
     holders = find_holders(image)
     holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
