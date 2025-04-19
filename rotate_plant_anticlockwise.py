@@ -91,7 +91,7 @@ def extract_holder_corners(image, contour, num_corners=8, quality_level=0.01, mi
     cv2.drawContours(blank_image, [approx], -1, (255, 255, 255), 1)
     gray = cv2.cvtColor(blank_image, cv2.COLOR_BGR2GRAY)
     corners = cv2.goodFeaturesToTrack(gray, maxCorners=num_corners, qualityLevel=quality_level, minDistance=min_distance)
-    return np.intp(corners) if corners is not None else []
+    return np.intp(corners).reshape(-1, 2) if corners is not None else [] # reshape the corners into array of points (cv2 returns it with weird structure to suit 3D stuff)
 
 def capture_image(path="captured_image.jpg"):
     os.system(f"rpicam-still --output {path} --nopreview")
