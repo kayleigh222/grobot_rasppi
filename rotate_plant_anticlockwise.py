@@ -201,11 +201,11 @@ try:
 
     # get the corner that balances lowest x and y value
     print(corners_left)
-    bottom_left_corner_left_holder = min(corners_left, key=lambda pt: pt[0] + pt[1])
+    bottom_left_corner_left_holder = min(corners_left, key=lambda pt: pt[0] - pt[1])
     del corners_left
 
     # get two corners with lowest y value on right contour
-    top_left_corner_right_holder = min(corners_right, key=lambda pt: pt[0] - pt[1])
+    top_left_corner_right_holder = min(corners_right, key=lambda pt: pt[0] + pt[1])
     del corners_right
 
     target_x_value = top_left_corner_right_holder[0]
@@ -246,7 +246,7 @@ try:
         print('finding corners for left contour')
         corners_left = extract_holder_corners(image, top_holder_left['contour'], 8, 0.01, 20)
 
-        bottom_left_corner_left_holder = min(corners_left, key=lambda pt: pt[0] + pt[1])
+        bottom_left_corner_left_holder = min(corners_left, key=lambda pt: pt[0] - pt[1])
 
         del corners_left
 
