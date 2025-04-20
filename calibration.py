@@ -1,5 +1,5 @@
 import json
-from bottom_conveyor_motor_code import set_up_bottom_conveyor, step_bottom_conveyor_forward
+from bottom_conveyor_motor_code import set_up_bottom_conveyor, step_bottom_conveyor_backward, step_bottom_conveyor_forward
 from image_analysis import find_leg_bottom_conveyor, find_leg_contours, find_leg_top_conveyor, get_conveyor_threshold, get_top_qr_right_conveyor, get_top_qr_left_conveyor
 import os
 import cv2
@@ -61,7 +61,7 @@ def calibrate_bottom_conveyor_motor(num_steps_to_test=600):
     x_original, y_original = x_new, y_new # update original position
 
     # move motor back
-    step_top_conveyor_backward(num_steps_to_test)  # Move back to original position
+    step_bottom_conveyor_backward(num_steps_to_test)  # Move back to original position
     os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
     image = cv2.imread(image_path) # read the captured image with opencv
     x_new, y_new = find_leg_top_conveyor(image) # find the top leg
