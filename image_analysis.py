@@ -272,6 +272,7 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=500):
     mask1 = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
     mask2 = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV_2, HOLDER_COLOR_UPPER_THRESHOLD_HSV_2)
     red_mask = cv2.bitwise_or(mask1, mask2)
+    cv2.imwrite('red_mask.jpg', red_mask)  # Save the mask for debugging
 
     # Find contours of red areas (potential holders)
     contours, _ = cv2.findContours(red_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
