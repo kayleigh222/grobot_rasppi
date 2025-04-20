@@ -127,7 +127,7 @@ def get_bottom_left_corner(corners):
 
 def get_top_left_corner(corners):
     # takes an array of corner coordinates and returns the top leftmost
-    return min(corners, key=lambda pt: 0.4*pt[0] + 0.6*pt[1])
+    return min(corners, key=lambda pt: 0.2*pt[0] + 0.8*pt[1])
 
 def get_bottom_edge_of_holder(holder_contour):
     """
