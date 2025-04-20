@@ -173,6 +173,6 @@ def calibrate_left_conveyor_motor(num_steps_to_test=400):  # to use, put one bar
 
 if __name__ == "__main__":
     print("Running motor calibration...")
-    calibrate_vertical_conveyor_motors()
+    # calibrate_vertical_conveyor_motors()
     calibrate_top_conveyor_motor()
     print("Calibration complete.")
