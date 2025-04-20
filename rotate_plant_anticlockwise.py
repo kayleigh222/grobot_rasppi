@@ -8,7 +8,7 @@ import gc
 import numpy as np
 import time
 import threading
-from image_analysis import bottom_holder_left_conveyor, bottom_holder_right_conveyor, bottom_holder_with_barcode_left_conveyor, divide_holders_into_conveyors, find_holders, find_leg_bottom_conveyor, find_leg_contours, find_leg_top_conveyor, find_top_and_bottom_of_conveyors, get_bottom_qr_right_conveyor, get_top_qr_left_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
+from image_analysis import bottom_holder_left_conveyor, bottom_holder_right_conveyor, bottom_holder_with_barcode_left_conveyor, capture_image, divide_holders_into_conveyors, find_holders, find_leg_bottom_conveyor, find_leg_contours, find_leg_top_conveyor, find_top_and_bottom_of_conveyors, get_bottom_left_corner, get_bottom_qr_right_conveyor, get_top_left_corner, get_top_qr_left_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
 from calibration import BOTTOM_CONVEYOR_SPEED_BACKWARD, BOTTOM_CONVEYOR_SPEED_FORWARD, TOP_CONVEYOR_SPEED_BACKWARD, TOP_CONVEYOR_SPEED_FORWARD, calibrate_bottom_conveyor_motor, calibrate_top_conveyor_motor, calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
 from servo_motor_code import clean_up_servo, set_up_servo, sweep_servo
 import servo_motor_code
@@ -92,10 +92,6 @@ def extract_holder_corners(image, contour, num_corners=8, quality_level=0.01, mi
     gray = cv2.cvtColor(blank_image, cv2.COLOR_BGR2GRAY)
     corners = cv2.goodFeaturesToTrack(gray, maxCorners=num_corners, qualityLevel=quality_level, minDistance=min_distance)
     return np.intp(corners).reshape(-1, 2) if corners is not None else [] # reshape the corners into array of points (cv2 returns it with weird structure to suit 3D stuff)
-
-def capture_image(path="captured_image.jpg"):
-    os.system(f"rpicam-still --output {path} --nopreview")
-    return cv2.imread(path)
 
 # ----------- TURN ON LIGHTS BY RUNNING SERVO MOTOR IN SEPARATE THREAD TO TRIGGER MOTION SENSOR --------
 try:
@@ -200,13 +196,11 @@ try:
 
     del image_with_contours
 
-    # get the corner that balances lowest x and y value
-    print(corners_left)
-    bottom_left_corner_left_holder = min(corners_left, key=lambda pt: pt[0] - pt[1])
+    bottom_left_corner_left_holder = get_bottom_left_corner(corners_left)
     del corners_left
 
     # get two corners with lowest y value on right contour
-    top_left_corner_right_holder = min(corners_right, key=lambda pt: 0.4*pt[0] + 0.6*pt[1])
+    top_left_corner_right_holder = get_top_left_corner(corners_right) 
     del corners_right
 
     target_x_value = top_left_corner_right_holder[0]
@@ -249,8 +243,7 @@ try:
 
         print('finding corners for left contour')
         corners_left = extract_holder_corners(image, top_holder_left['contour'], 8, 0.01, 20)
-
-        bottom_left_corner_left_holder = min(corners_left, key=lambda pt: pt[0] - pt[1])
+        bottom_left_corner_left_holder = get_bottom_left_corner(corners_left)
 
         del corners_left
 
@@ -396,21 +389,15 @@ try:
 
     del image_with_contours
 
-    # get two corners with highest y value on left contour
-    corners_left = sorted(corners_left, key=lambda x: x[0][1], reverse=True)[:2] # get two corners with highest y value
-    # of these corners, get the corner with lowest x value
-    bottom_left_corner_left_holder = min(corners_left, key=lambda x: x[0][0]) # get corner with lowest x value
+    bottom_left_corner_left_holder = get_bottom_left_corner(corners_left)
     del corners_left
 
-    # get two corners with lowest y value on right contour
-    corners_right = sorted(corners_right, key=lambda x: x[0][1])[:2] # get two corners with lowest y value
-    # of these corners, get the corner with lowest x value
-    top_left_corner_right_holder = min(corners_right, key=lambda x: x[0][0]) # get corner with lowest x value
+    top_left_corner_right_holder = get_top_left_corner(corners_right)
     del corners_right
 
-    target_x_value = bottom_left_corner_left_holder[0][0]
+    target_x_value = bottom_left_corner_left_holder[0]
     print("Target x value: ", target_x_value)
-    print("Top left corner right holder: ", top_left_corner_right_holder[0][0])
+    print("Top left corner right holder: ", top_left_corner_right_holder[0])
 
     # visualize positions on image
     cv2.circle(image, (bottom_left_corner_left_holder[0][0], bottom_left_corner_left_holder[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for left edge
@@ -446,11 +433,7 @@ try:
 
         print('finding corners for right contour')
         corners_right = extract_holder_corners(image, bottom_holder_right['contour'], 8, 0.02, 10)
-
-        # get two corners with highest y value on left contour
-        corners_right = sorted(corners_right, key=lambda x: x[0][1], reverse=True)[:2] # get two corners with highest y value
-        # of these corners, get the corner with lowest x value
-        top_left_corner_right_holder = min(corners_right, key=lambda x: x[0][0]) # get corner with lowest x value
+        top_left_corner_right_holder = get_top_left_corner(corners_right)
 
         del corners_right
 

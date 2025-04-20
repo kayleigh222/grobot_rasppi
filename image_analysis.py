@@ -121,6 +121,14 @@ def find_left_and_right_of_conveyors(image):
     return conveyor_left, conveyor_right
 
 # ----------- HOLDER DETECTION -------------
+def get_bottom_left_corner(corners):
+    # takes an array of corner coordinates and returns the bottom leftmost
+    return min(corners, key=lambda pt: pt[0] - pt[1])
+
+def get_top_left_corner(corners):
+    # takes an array of corner coordinates and returns the top leftmost
+    return min(corners, key=lambda pt: 0.4*pt[0] + 0.6*pt[1])
+
 def get_bottom_edge_of_holder(holder_contour):
     """
     Returns the bottom edge of a holder's bounding box.
