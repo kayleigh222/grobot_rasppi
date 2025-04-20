@@ -205,7 +205,7 @@ try:
     del corners_left
 
     # get two corners with lowest y value on right contour
-    top_left_corner_right_holder = min(corners_right, key=lambda pt: pt[0] + pt[1])
+    top_left_corner_right_holder = min(corners_right, key=lambda pt: 0.4*pt[0] + 0.6*pt[1])
     del corners_right
 
     target_x_value = top_left_corner_right_holder[0]
