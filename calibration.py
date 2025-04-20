@@ -175,4 +175,5 @@ if __name__ == "__main__":
     print("Running motor calibration...")
     # calibrate_vertical_conveyor_motors()
     calibrate_top_conveyor_motor()
+    calibrate_bottom_conveyor_motor()
     print("Calibration complete.")

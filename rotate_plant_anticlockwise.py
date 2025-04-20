@@ -9,7 +9,7 @@ import numpy as np
 import time
 import threading
 from image_analysis import bottom_holder_left_conveyor, bottom_holder_right_conveyor, bottom_holder_with_barcode_left_conveyor, divide_holders_into_conveyors, find_holders, find_leg_bottom_conveyor, find_leg_contours, find_leg_top_conveyor, find_top_and_bottom_of_conveyors, get_bottom_qr_right_conveyor, get_top_qr_left_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
-from calibration import BOTTOM_CONVEYOR_SPEED_BACKWARD, BOTTOM_CONVEYOR_SPEED_FORWARD, TOP_CONVEYOR_SPEED_BACKWARD, TOP_CONVEYOR_SPEED_FORWARD, calibrate_top_conveyor_motor, calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
+from calibration import BOTTOM_CONVEYOR_SPEED_BACKWARD, BOTTOM_CONVEYOR_SPEED_FORWARD, TOP_CONVEYOR_SPEED_BACKWARD, TOP_CONVEYOR_SPEED_FORWARD, calibrate_bottom_conveyor_motor, calibrate_top_conveyor_motor, calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
 from servo_motor_code import clean_up_servo, set_up_servo, sweep_servo
 import servo_motor_code
 from top_conveyor_motor_code import clean_up_top_conveyor, set_up_top_conveyor, step_top_conveyor_backward, step_top_conveyor_forward
@@ -113,6 +113,7 @@ try:
         print("Running motor calibration...")
         calibrate_vertical_conveyor_motors()
         calibrate_top_conveyor_motor()
+        calibrate_bottom_conveyor_motor()
         print("Calibration complete.")
     else:
         print("Skipping calibration.")
@@ -173,7 +174,7 @@ try:
     image_with_contours = image.copy()
 
     print('finding corners for right holder')
-    corners_right = extract_holder_corners(image, top_holder_right['contour'], 16, 0.02, 10)
+    corners_right = extract_holder_corners(image, top_holder_right['contour'], 8, 0.02, 10)
 
     gc.collect() # run garbage collector to free up memory
 
