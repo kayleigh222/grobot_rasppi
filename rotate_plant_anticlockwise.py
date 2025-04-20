@@ -400,11 +400,11 @@ try:
     print("Top left corner right holder: ", top_left_corner_right_holder[0])
 
     # visualize positions on image
-    cv2.circle(image, (bottom_left_corner_left_holder[0][0], bottom_left_corner_left_holder[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for left edge
-    cv2.circle(image, (top_left_corner_right_holder[0][0], top_left_corner_right_holder[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for right edge
+    cv2.circle(image, (bottom_left_corner_left_holder[0], bottom_left_corner_left_holder[1]), 10, (0, 255, 255), -1)  # Yellow circle for left edge
+    cv2.circle(image, (top_left_corner_right_holder[0], top_left_corner_right_holder[1]), 10, (0, 255, 255), -1)  # Yellow circle for right edge
     cv2.imwrite("image_before_move_left_holder.jpg", image)
 
-    distance_below_target = target_x_value - top_left_corner_right_holder[0][0]
+    distance_below_target = target_x_value - top_left_corner_right_holder[0]
 
     print("Distance between holders: ", distance_below_target)
 
@@ -438,8 +438,8 @@ try:
         del corners_right
 
         # visualize on image
-        cv2.circle(image, (bottom_left_corner_left_holder[0][0], bottom_left_corner_left_holder[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for left edge
-        cv2.circle(image, (top_left_corner_right_holder[0][0], top_left_corner_right_holder[0][1]), 10, (0, 255, 255), -1)  # Yellow circle for right edge
+        cv2.circle(image, (bottom_left_corner_left_holder[0], bottom_left_corner_left_holder[1]), 10, (0, 255, 255), -1)  # Yellow circle for left edge
+        cv2.circle(image, (top_left_corner_right_holder[0], top_left_corner_right_holder[1]), 10, (0, 255, 255), -1)  # Yellow circle for right edge
         cv2.imwrite("image_before_move_right_holder.jpg", image)
 
         distance_below_target = target_x_value - top_left_corner_right_holder[0][0]
