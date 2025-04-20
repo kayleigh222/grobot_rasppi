@@ -74,7 +74,7 @@ def calibrate_bottom_conveyor_motor(num_steps_to_test=400):
     print(data)
     save_variables(data)  # Save
 
-def calibrate_top_conveyor_motor(num_steps_to_test=400):
+def calibrate_top_conveyor_motor(num_steps_to_test=600):
     print("Calibrating top conveyor motor...")
     set_up_top_conveyor()  # Set up the top conveyor motor
     # measure initial position
