@@ -36,7 +36,7 @@ def load_variables():
     except (FileNotFoundError, json.JSONDecodeError):
         return {}  # Return empty dict if file doesn't exist or is corrupted
 
-def calibrate_bottom_conveyor_motor(num_steps_to_test=400):
+def calibrate_bottom_conveyor_motor(num_steps_to_test=600):
     print("Calibrating bottom conveyor motor...")
     set_up_bottom_conveyor()  # Set up the top conveyor motor
     # measure initial position
