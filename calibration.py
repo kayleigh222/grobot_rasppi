@@ -56,6 +56,7 @@ def calibrate_bottom_conveyor_motor(num_steps_to_test=600):
     os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
     image = cv2.imread(image_path) # read the captured image with opencv
     x_new, y_new = find_leg_top_conveyor(image) # find the top leg
+    print('new position after moving forward: ', x_new, y_new)
     pixels_moved_forward = abs(y_new - y_original)
     pixels_moved_per_step_forward = pixels_moved_forward/num_steps_to_test
     x_original, y_original = x_new, y_new # update original position
