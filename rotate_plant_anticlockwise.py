@@ -442,7 +442,7 @@ try:
         cv2.circle(image, (top_left_corner_right_holder[0], top_left_corner_right_holder[1]), 10, (0, 255, 255), -1)  # Yellow circle for right edge
         cv2.imwrite("image_before_move_right_holder.jpg", image)
 
-        distance_below_target = target_x_value - top_left_corner_right_holder[0][0]
+        distance_below_target = target_x_value - top_left_corner_right_holder[0]
         print("Distance between holders: ", distance_below_target)
 
     print('finished moving holders together')
