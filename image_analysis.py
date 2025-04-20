@@ -267,12 +267,28 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=500):
     """
     # Convert image to HSV for better color filtering
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+        
+        # Split channels
+    h, s, v = cv2.split(hsv)
 
-    # Mask red hues (both ends of HSV spectrum for red)
-    mask1 = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
-    mask2 = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV_2, HOLDER_COLOR_UPPER_THRESHOLD_HSV_2)
+    # Equalize the V channel
+    v_eq = cv2.equalizeHist(v)
+
+    # Merge back and convert to HSV image
+    hsv_eq = cv2.merge((h, s, v_eq))
+
+    # Now apply your red masks
+    mask1 = cv2.inRange(hsv_eq, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
+    mask2 = cv2.inRange(hsv_eq, HOLDER_COLOR_LOWER_THRESHOLD_HSV_2, HOLDER_COLOR_UPPER_THRESHOLD_HSV_2)
     red_mask = cv2.bitwise_or(mask1, mask2)
-    cv2.imwrite('red_mask.jpg', red_mask)  # Save the mask for debugging
+
+    cv2.imwrite('red_mask_equalized.jpg', red_mask)
+
+    # # Mask red hues (both ends of HSV spectrum for red)
+    # mask1 = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
+    # mask2 = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV_2, HOLDER_COLOR_UPPER_THRESHOLD_HSV_2)
+    # red_mask = cv2.bitwise_or(mask1, mask2)
+    # cv2.imwrite('red_mask.jpg', red_mask)  # Save the mask for debugging
 
     # Find contours of red areas (potential holders)
     contours, _ = cv2.findContours(red_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
