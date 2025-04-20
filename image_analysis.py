@@ -3,8 +3,6 @@ import cv2
 import numpy as np
 from pyzbar.pyzbar import decode
 
-from rotate_plant_anticlockwise import capture_image
-
 
 # Define holder color range in HSV (red) - because red is at both ends of the hue spectrum, need two ranges
 HOLDER_COLOR_LOWER_THRESHOLD_HSV = np.array([0, 150, 50])    # Lower bound of red
@@ -22,6 +20,10 @@ MIN_HOLDER_AREA = 80000
 MIN_LEG_AREA = 4500
 
 NUM_QRCODES = 1  # Set this to however many QR codes you expect
+
+def capture_image(path="captured_image.jpg"):
+    os.system(f"rpicam-still --output {path} --nopreview")
+    return cv2.imread(path)
 
 # ----------- LEG DETECTION -------------
 def find_leg_contours(image):
