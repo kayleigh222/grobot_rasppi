@@ -224,7 +224,7 @@ try:
     # ------ USE PID CONTROL TO MOVE LEFT HOLDER TO ALIGN WITH RIGHT HOLDER -----------
     while(distance_below_target > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS or distance_below_target < 0):
         if (distance_below_target < 0):
-            steps_to_take = int(-5)
+            steps_to_take = int(-10)
         else:
             steps_to_take = int(pid_control(distance_below_target, Kp=(1/calibration_variables[LEFT_CONVEYOR_SPEED])))
         if(steps_to_take == 0):

@@ -366,6 +366,7 @@ def find_qrcodes(image):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         blurred = cv2.GaussianBlur(gray, (3, 3), 0)
         equalized = cv2.equalizeHist(blurred)
+        cv2.imwrite('equalized_qr_image.jpg', equalized)  # Save the equalized image for debugging
 
         # Decode QR codes
         detected_qrcodes = decode(equalized)
