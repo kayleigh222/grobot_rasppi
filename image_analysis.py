@@ -238,7 +238,7 @@ def bottom_holder_with_barcode_left_conveyor(holders_divided_into_conveyors):
     return bottom_holder_with_barcode
 
 def extract_holder_corners(image, contour, num_corners=8, quality_level=0.02, min_distance=20):
-    approx = cv2.approxPolyDP(contour, 0.005* cv2.arcLength(contour, True), True) # change from 0.01 to 0.02
+    approx = cv2.approxPolyDP(contour, 0.005* cv2.arcLength(contour, True), True) # change from 0.01
     blank_image = np.zeros_like(image)
     cv2.drawContours(blank_image, [approx], -1, (255, 255, 255), 1)
     gray = cv2.cvtColor(blank_image, cv2.COLOR_BGR2GRAY)
@@ -440,8 +440,8 @@ def find_qrcodes(image):
 
 if __name__ == "__main__":
     gc.collect()  # Run garbage collection to free up memory
-    # image = capture_image()
-    image = cv2.imread('captured_image.jpg')
+    image = capture_image()
+    # image = cv2.imread('captured_image.jpg')
     print("Image loaded successfully.")
     holders = find_holders(image)
     print(f"Number of holders found: {len(holders)}")
