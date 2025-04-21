@@ -8,7 +8,7 @@ import gc
 import numpy as np
 import time
 import threading
-from image_analysis import bottom_holder_left_conveyor, bottom_holder_right_conveyor, bottom_holder_with_barcode_left_conveyor, capture_image, divide_holders_into_conveyors, extract_holder_corners, find_holders, find_leg_bottom_conveyor, find_leg_contours, find_leg_top_conveyor, find_top_and_bottom_of_conveyors, get_bottom_left_corner, get_bottom_qr_right_conveyor, get_top_left_corner, get_top_qr_left_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
+from image_analysis import bottom_holder_left_conveyor, bottom_holder_right_conveyor, bottom_holder_with_barcode_left_conveyor, capture_image, divide_holders_into_conveyors, extract_holder_corners, find_holders, find_leg_bottom_conveyor, find_leg_contours, find_leg_top_conveyor, get_bottom_left_corner, get_bottom_qr_right_conveyor, get_top_left_corner, get_top_qr_left_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
 from calibration import BOTTOM_CONVEYOR_SPEED_BACKWARD, BOTTOM_CONVEYOR_SPEED_FORWARD, TOP_CONVEYOR_SPEED_BACKWARD, TOP_CONVEYOR_SPEED_FORWARD, calibrate_bottom_conveyor_motor, calibrate_top_conveyor_motor, calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
 from servo_motor_code import clean_up_servo, set_up_servo, sweep_servo
 import servo_motor_code
@@ -111,8 +111,7 @@ try:
     calibration_variables = load_variables() 
 
     # # ---------- FIND OUTLINES OF CONVEYOR TO GET TARGET LOCATION FOR TOP RIGHT TRAY -----------
-    conveyor_threshold, conveyors_left, conveyors_right = get_conveyor_threshold(image) # find threshold between left and right conveyor
-    top_conveyor, bottom_conveyor = find_top_and_bottom_of_conveyors(image)
+    conveyor_threshold, conveyors_left, conveyors_right, top_conveyor, bottom_conveyor = get_conveyor_threshold(image) # find threshold between left and right conveyor
     conveyor_height = top_conveyor - bottom_conveyor
     leg_contours = find_leg_contours(image)
     top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y  = find_leg_top_conveyor(leg_contours)

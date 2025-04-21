@@ -137,8 +137,6 @@ def find_borders_of_conveyors(image):
     cv2.imwrite('equalized_conveyor_image.jpg', equalized)  # Save the equalized image for debugging
     _, binary_mask = cv2.threshold(equalized, 60, 255, cv2.THRESH_BINARY_INV) # changed intesnity from 50
     
-
-    # binary_mask = np.where(gray < 50, 1, 0) # Create a binary mask where intensity < 50 is set to 1, and others are set to 0
     # get the contours of the mask
     contours = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
     
@@ -164,9 +162,6 @@ def find_borders_of_conveyors(image):
     cv2.drawContours(image, contours, -1, (255, 0, 0), 3)
     cv2.imwrite('image_with_conveyor_contours.jpg', image)  # Save the image with the contours for debugging
 
-    # conveyor_left = next((i for i, row in enumerate(binary_mask) if np.sum(row) >= min_area), 0)
-    # conveyor_right = next((i for i in range(binary_mask.shape[0] - 1, -1, -1)
-    #                        if np.sum(binary_mask[i]) >= min_area), 0)
     return conveyor_left, conveyor_right, conveyor_top, conveyor_bottom
 
 # ----------- HOLDER DETECTION -------------
@@ -325,7 +320,7 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=500):
     # Convert image to HSV for better color filtering
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         
-        # Split channels
+    # Split channels
     h, s, v = cv2.split(hsv)
 
     # Equalize the V channel
