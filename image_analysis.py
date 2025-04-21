@@ -365,7 +365,7 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=500):
         closest_barcode = None
 
         for qrcode in qrcodes:
-            distance = np.linalg.norm(np.array(near_barcode) - np.array(qrcode[1]))
+            distance = np.linalg.norm(np.array(near_barcode) - np.array(qrcode[2]))  # qrcode[2] is the top left corner of the qrcode
             if distance < max_dist_between_holder_center_and_barcode:
                 barcode_close = True
                 closest_barcode = qrcode
@@ -457,11 +457,12 @@ def find_qrcodes(image):
         for qr in detected_qrcodes:
             data = qr.data.decode("utf-8")
             x, y, w, h = qr.rect
-            # center = (x + w / 2, y + h / 2)
+            center = (x + w / 2, y + h / 2)
             top_left = (x, y)
-            qrcode_info.append((data, top_left))
+            qrcode_info.append((data, center, top_left))
 
             print(f"QR Code Data: {data}")
+            print(f"QR Code Center: ({center[0]:.1f}, {center[1]:.1f})")
             print(f"QR Code Top Left: ({top_left[0]:.1f}, {top_left[1]:.1f})")
 
         if num_qrcodes_found < NUM_QRCODES:
