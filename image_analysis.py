@@ -91,8 +91,8 @@ def get_conveyor_threshold(image):
     # draw a horizontal line on the image at threshold 
     cv2.line(image, (0, threshold), (image.shape[1], threshold), (255, 0, 0), 2)  # Blue line
     # draw a horizontal like at conveyor left and right
-    cv2.line(image, (conveyor_left, 0), (conveyor_left, image.shape[0]), (0, 255, 0), 2)  # Green line
-    cv2.line(image, (conveyor_right, 0), (conveyor_right, image.shape[0]), (0, 255, 0), 2)  # Green line
+    cv2.line(image, (0, conveyor_left), (image.shape[1], conveyor_left), (0, 255, 0), 2)  # Green line
+    cv2.line(image, (0, conveyor_right), (image.shape[1], conveyor_right), (0, 255, 0), 2)  # Green line
     cv2.imwrite('image_with_conveyor_threshold.jpg', image)  # Save the image with the threshold line for debugging
     return threshold, conveyor_left, conveyor_right
 
