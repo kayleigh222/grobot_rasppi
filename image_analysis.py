@@ -459,6 +459,8 @@ def find_qrcodes(image):
             x, y, w, h = qr.rect
             center = (x + w / 2, y + h / 2)
             top_left = (x, y)
+            # draw a dot at top left of barcode
+            cv2.circle(image, top_left, 5, (0, 255, 0), -1)  # Green circle
             qrcode_info.append((data, center, top_left))
 
             print(f"QR Code Data: {data}")
