@@ -357,8 +357,8 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=450):
         # near_barcode = (holder_center[0], holder_center[1] + 450)
         near_barcode = (holder_center[0], holder_center[1])
         # draw a circle of radius max_dist_between_holder_center_and_barcode
-        cv2.circle(image, near_barcode, max_dist_between_holder_center_and_barcode, (0, 255, 0), 2)  # Green circle
-        cv2.imwrite('image_with_holder_circles.jpg', image)  # Save the image with the circles for debugging
+        # cv2.circle(image, near_barcode, max_dist_between_holder_center_and_barcode, (0, 255, 0), 2)  # Green circle
+        # cv2.imwrite('image_with_holder_circles.jpg', image)  # Save the image with the circles for debugging
         
         # Determine if a qrcode is nearby
         barcode_close = False
@@ -460,7 +460,7 @@ def find_qrcodes(image):
             center = (x + w / 2, y + h / 2)
             top_left = (x+w, y)
             # draw a dot at top left of barcode
-            cv2.circle(image, top_left, 5, (0, 255, 0), -1)  # Green circle
+            # cv2.circle(image, top_left, 5, (0, 255, 0), -1)  # Green circle
             qrcode_info.append((data, center, top_left))
 
             print(f"QR Code Data: {data}")
