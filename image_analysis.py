@@ -239,10 +239,10 @@ def bottom_holder_with_barcode_left_conveyor(holders_divided_into_conveyors):
 
 def extract_holder_corners(image, contour, num_corners=8, quality_level=0.02, min_distance=20):
     approx = cv2.approxPolyDP(contour, 0.01 * cv2.arcLength(contour, True), True)
-    cv2.imwrite('approx_poly_dp.jpg', approx)  # Save the approximated polygon for debugging
     blank_image = np.zeros_like(image)
     cv2.drawContours(blank_image, [approx], -1, (255, 255, 255), 1)
     gray = cv2.cvtColor(blank_image, cv2.COLOR_BGR2GRAY)
+    cv2.imwrite('contour_image.jpg', gray)  # Save the contour image for debugging
     corners = cv2.goodFeaturesToTrack(gray, maxCorners=num_corners, qualityLevel=quality_level, minDistance=min_distance)
     return np.intp(corners).reshape(-1, 2) if corners is not None else [] # reshape the corners into array of points (cv2 returns it with weird structure to suit 3D stuff)
 
