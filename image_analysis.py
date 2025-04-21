@@ -96,6 +96,17 @@ def find_top_and_bottom_of_conveyors(image):
     """
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     binary_mask = np.where(gray < 50, 1, 0) # Create a binary mask where intensity < 50 is set to 1, and others are set to 0
+    cv2.imwrite('binary_mask_for_conveyors.jpg', binary_mask * 255)  # Save the binary mask for debugging
+    # find the contours of the dark sections
+    # contours = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
+    # # pick the contour with the largest area
+    # largest_contour = max(contours, key=cv2.contourArea) if contours else None
+    # if largest_contour is None:
+    #     print("No contours found")
+    #     return 0, 0
+    
+    
+    
     threshold = 500 # minimum number of dark pixels for a column to be part of a conveyor
 
     # Bottom (leftmost dark column)
