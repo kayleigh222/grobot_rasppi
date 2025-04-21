@@ -89,13 +89,13 @@ def update_top_right_plant_position(image, conveyor_threshold):
 try:
     GPIO.cleanup()  # Clean up GPIO settings
     gc.collect() # run garbage collector to free up memory
-    os.system("sudo pigpiod")
-    time.sleep(1)  # Give it a second to start
-    pi = pigpio.pi() # Connect to pigpio daemon
-    set_up_servo(pi) # Set up servo motor
-    servo_motor_code.sweeping = True # Control flag
-    servo_thread = threading.Thread(target=sweep_servo, args=(pi,)) # Create thread to run servo motor
-    servo_thread.start()
+    # os.system("sudo pigpiod")
+    # time.sleep(1)  # Give it a second to start
+    # pi = pigpio.pi() # Connect to pigpio daemon
+    # set_up_servo(pi) # Set up servo motor
+    # servo_motor_code.sweeping = True # Control flag
+    # servo_thread = threading.Thread(target=sweep_servo, args=(pi,)) # Create thread to run servo motor
+    # servo_thread.start()
 
     if args.calibrate:
         print("Running motor calibration...")
@@ -499,14 +499,14 @@ try:
         print("Error: Tray not moved successfully")
 
     # --------- WHEN FINISHED, STOP THREAD SPINNING SERVO MOTOR ---------- 
-    servo_motor_code.sweeping = False
-    servo_thread.join()
-    clean_up_servo(pi) # Clean up servo motor
+    # servo_motor_code.sweeping = False
+    # servo_thread.join()
+    # clean_up_servo(pi) # Clean up servo motor
 
 finally:
     # Clean up GPIO settings
     GPIO.cleanup()  # Clean up GPIO settings
-    os.system("sudo killall pigpiod")  # Stop pigpio daemon
+    # os.system("sudo killall pigpiod")  # Stop pigpio daemon
     print("Cleaned up GPIO and stopped pigpio daemon")
     gc.collect()  # Run garbage collector to free up memory
 
