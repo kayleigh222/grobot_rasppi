@@ -429,10 +429,14 @@ def find_qrcodes(image):
 
 if __name__ == "__main__":
     image = cv2.imread("captured_image.jpg")
+    print("Image loaded successfully.")
     holders = find_holders(image)
+    print(f"Number of holders found: {len(holders)}")
     conveyor_threshold, conveyors_left, conveyors_right = get_conveyor_threshold(image) # find threshold between left and right conveyor
-    holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
+    holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders)
+    print("Divided holders into conveyors.")
     top_holder_right = top_holder_right_conveyor(holders_divided_into_conveyors)
+    print("Extracting corners")
     corners_right = extract_holder_corners(image, top_holder_right['contour'], 16, 0.04, 10)
     for corner in corners_right:
         x, y = corner.ravel()
