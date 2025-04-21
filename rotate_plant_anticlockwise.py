@@ -127,7 +127,7 @@ try:
     # ------ USE PID CONTROL TO MOVE TOP HOLDER ON RIGHT CONVEYOR UP CLOSE ENOUGH TO SLIDE TRAY ACROSS -----------
     while(distance_from_bottom_of_holder_to_target > 50): # TODO: base target location on end of top conveyor leg for better relability
         # Visualise current (red) and target (green) location
-        cv2.line(image, (target_location_for_top_tray, 0), (target_location_for_top_tray, image.shape[0]), (0, 255, 0), 2)  
+        cv2.line(image, (target_location_for_top_tray, 0), (target_location_for_top_tray, image.shape[0]), (0, 0, 255), 2)  
         cv2.line(image, (int(bottom_of_top_holder_right_conveyor_x_coord), 0), (int(bottom_of_top_holder_right_conveyor_x_coord), image.shape[0]), (0, 0, 255), 2) 
         cv2.imwrite("before_move_right_holder_to_top.jpg", image)
 
