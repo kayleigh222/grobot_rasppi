@@ -167,7 +167,7 @@ try:
     gc.collect() # run garbage collector to free up memory
 
     print('finding corners for left contour')
-    corners_left = extract_holder_corners(image, top_holder_left['contour'], 8, 0.01, 20)
+    corners_left = extract_holder_corners(image, top_holder_left['contour'], 8, 0.02, 20)
 
     gc.collect() # run garbage collector to free up memory
 
@@ -234,7 +234,7 @@ try:
         top_holder_left = top_holder_left_conveyor(holders_divided_into_conveyors)
 
         print('finding corners for left contour')
-        corners_left = extract_holder_corners(image, top_holder_left['contour'], 8, 0.01, 20)
+        corners_left = extract_holder_corners(image, top_holder_left['contour'], 8, 0.02, 20)
         bottom_left_corner_left_holder = get_bottom_left_corner(corners_left)
 
         del corners_left
@@ -360,7 +360,7 @@ try:
     gc.collect() # run garbage collector to free up memory
 
     print('finding corners for left contour')
-    corners_left = extract_holder_corners(image, bottom_holder_left['contour'], 16, 0.02, 20)
+    corners_left = extract_holder_corners(image, bottom_holder_left['contour'], 16, 0.04, 20)
 
     gc.collect() # run garbage collector to free up memory
 

@@ -227,7 +227,7 @@ def bottom_holder_with_barcode_left_conveyor(holders_divided_into_conveyors):
         print("Bottom holder with qrcode: ", bottom_holder_with_barcode['holder_center'])
     return bottom_holder_with_barcode
 
-def extract_holder_corners(image, contour, num_corners=8, quality_level=0.01, min_distance=20):
+def extract_holder_corners(image, contour, num_corners=8, quality_level=0.02, min_distance=20):
     approx = cv2.approxPolyDP(contour, 0.01 * cv2.arcLength(contour, True), True)
     blank_image = np.zeros_like(image)
     cv2.drawContours(blank_image, [approx], -1, (255, 255, 255), 1)
