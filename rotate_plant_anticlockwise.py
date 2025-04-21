@@ -8,7 +8,7 @@ import gc
 import numpy as np
 import time
 import threading
-from image_analysis import bottom_holder_left_conveyor, bottom_holder_right_conveyor, bottom_holder_with_barcode_left_conveyor, capture_image, divide_holders_into_conveyors, find_holders, find_leg_bottom_conveyor, find_leg_contours, find_leg_top_conveyor, find_top_and_bottom_of_conveyors, get_bottom_left_corner, get_bottom_qr_right_conveyor, get_top_left_corner, get_top_qr_left_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
+from image_analysis import bottom_holder_left_conveyor, bottom_holder_right_conveyor, bottom_holder_with_barcode_left_conveyor, capture_image, divide_holders_into_conveyors, extract_holder_corners, find_holders, find_leg_bottom_conveyor, find_leg_contours, find_leg_top_conveyor, find_top_and_bottom_of_conveyors, get_bottom_left_corner, get_bottom_qr_right_conveyor, get_top_left_corner, get_top_qr_left_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
 from calibration import BOTTOM_CONVEYOR_SPEED_BACKWARD, BOTTOM_CONVEYOR_SPEED_FORWARD, TOP_CONVEYOR_SPEED_BACKWARD, TOP_CONVEYOR_SPEED_FORWARD, calibrate_bottom_conveyor_motor, calibrate_top_conveyor_motor, calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
 from servo_motor_code import clean_up_servo, set_up_servo, sweep_servo
 import servo_motor_code
@@ -84,14 +84,6 @@ def update_top_right_plant_position(image, conveyor_threshold):
     top_plant = top_holder_with_barcode_right_conveyor(holders_divided)
     bottom = get_bottom_edge_of_holder(top_plant['contour'])
     return bottom[0][0], top_plant['id']
-
-def extract_holder_corners(image, contour, num_corners=8, quality_level=0.01, min_distance=20):
-    approx = cv2.approxPolyDP(contour, 0.01 * cv2.arcLength(contour, True), True)
-    blank_image = np.zeros_like(image)
-    cv2.drawContours(blank_image, [approx], -1, (255, 255, 255), 1)
-    gray = cv2.cvtColor(blank_image, cv2.COLOR_BGR2GRAY)
-    corners = cv2.goodFeaturesToTrack(gray, maxCorners=num_corners, qualityLevel=quality_level, minDistance=min_distance)
-    return np.intp(corners).reshape(-1, 2) if corners is not None else [] # reshape the corners into array of points (cv2 returns it with weird structure to suit 3D stuff)
 
 # ----------- TURN ON LIGHTS BY RUNNING SERVO MOTOR IN SEPARATE THREAD TO TRIGGER MOTION SENSOR --------
 try:

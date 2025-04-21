@@ -227,6 +227,13 @@ def bottom_holder_with_barcode_left_conveyor(holders_divided_into_conveyors):
         print("Bottom holder with qrcode: ", bottom_holder_with_barcode['holder_center'])
     return bottom_holder_with_barcode
 
+def extract_holder_corners(image, contour, num_corners=8, quality_level=0.01, min_distance=20):
+    approx = cv2.approxPolyDP(contour, 0.01 * cv2.arcLength(contour, True), True)
+    blank_image = np.zeros_like(image)
+    cv2.drawContours(blank_image, [approx], -1, (255, 255, 255), 1)
+    gray = cv2.cvtColor(blank_image, cv2.COLOR_BGR2GRAY)
+    corners = cv2.goodFeaturesToTrack(gray, maxCorners=num_corners, qualityLevel=quality_level, minDistance=min_distance)
+    return np.intp(corners).reshape(-1, 2) if corners is not None else [] # reshape the corners into array of points (cv2 returns it with weird structure to suit 3D stuff)
 
 def divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders):
     """
@@ -421,5 +428,9 @@ def find_qrcodes(image):
     return qrcode_info
 
 if __name__ == "__main__":
-    image = capture_image()
-    print(find_qrcodes(image))
+    image = cv2.imread("captured_image.jpg")
+    holders = find_holders(image)
+    conveyor_threshold, conveyors_left, conveyors_right = get_conveyor_threshold(image) # find threshold between left and right conveyor
+    holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
+    top_holder_right = top_holder_right_conveyor(holders_divided_into_conveyors)
+    corners_right = extract_holder_corners(image, top_holder_right['contour'], 16, 0.04, 10)
