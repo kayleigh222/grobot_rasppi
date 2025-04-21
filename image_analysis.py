@@ -134,7 +134,7 @@ def find_left_and_right_of_conveyors(image):
     # get the contours of the mask
     contours = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
     
-    min_area = 20000 # minimum number of dark pixels for a row to be considered part of the conveyor
+    min_area = 200000 # minimum number of dark pixels for a row to be considered part of the conveyor
     
     # filter the contours to only ones with the minimum area
     contours = [cnt for cnt in contours if cv2.contourArea(cnt) > min_area]
