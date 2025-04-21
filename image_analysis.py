@@ -355,7 +355,7 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=500):
         print(f"Holder center: {holder_center}")
 
         # near_barcode = (holder_center[0], holder_center[1] + 450)
-        near_barcode = (holder_center[0], holder_center[1] + 450)
+        near_barcode = (holder_center[0], holder_center[1])
         # draw a circle of radius max_dist_between_holder_center_and_barcode
         cv2.circle(image, near_barcode, max_dist_between_holder_center_and_barcode, (0, 255, 0), 2)  # Green circle
         cv2.imwrite('image_with_holder_circles.jpg', image)  # Save the image with the circles for debugging
@@ -457,11 +457,12 @@ def find_qrcodes(image):
         for qr in detected_qrcodes:
             data = qr.data.decode("utf-8")
             x, y, w, h = qr.rect
-            center = (x + w / 2, y + h / 2)
-            qrcode_info.append((data, center))
+            # center = (x + w / 2, y + h / 2)
+            top_left = (x, y)
+            qrcode_info.append((data, top_left))
 
             print(f"QR Code Data: {data}")
-            print(f"QR Code Center: ({center[0]:.1f}, {center[1]:.1f})")
+            print(f"QR Code Top Left: ({top_left[0]:.1f}, {top_left[1]:.1f})")
 
         if num_qrcodes_found < NUM_QRCODES:
             print(f"Found {num_qrcodes_found} QR codes, expected {NUM_QRCODES}, retrying...")
@@ -474,8 +475,8 @@ def find_qrcodes(image):
 
 if __name__ == "__main__":
     gc.collect()  # Run garbage collection to free up memory
-    # image = capture_image()
-    image = cv2.imread('captured_image.jpg')
+    image = capture_image()
+    # image = cv2.imread('captured_image.jpg')
     print("Image loaded successfully.")
     holders = find_holders(image)
     for holder in holders:
