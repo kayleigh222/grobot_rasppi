@@ -131,14 +131,18 @@ def find_borders_of_conveyors(image):
     Finds left and right edges of conveyors by scanning rows for darkness.
     Returns: (left, right) row indices.
     """
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    # equalize the image
+    equalized = cv2.equalizeHist(image)
+    cv2.imwrite('equalized_conveyor_image.jpg', equalized)  # Save the equalized image for debugging
+    
+    gray = cv2.cvtColor(equalized, cv2.COLOR_BGR2GRAY)
     _, binary_mask = cv2.threshold(gray, 40, 255, cv2.THRESH_BINARY_INV) # changed intesnity from 50
 
     # binary_mask = np.where(gray < 50, 1, 0) # Create a binary mask where intensity < 50 is set to 1, and others are set to 0
     # get the contours of the mask
     contours = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
     
-    min_area = 45000 # minimum number of dark pixels for a contour to be considered part of the conveyor
+    min_area = 50000 # minimum number of dark pixels for a contour to be considered part of the conveyor
     
     # filter the contours to only ones with the minimum area
     contours = [cnt for cnt in contours if cv2.contourArea(cnt) > min_area]
