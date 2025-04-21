@@ -129,11 +129,27 @@ def find_left_and_right_of_conveyors(image):
     """
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     binary_mask = np.where(gray < 50, 1, 0) # Create a binary mask where intensity < 50 is set to 1, and others are set to 0
-    threshold = 2000 # minimum number of dark pixels for a row to be considered part of the conveyor
+    # get the contours of the mask
+    contours = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
+    
+    min_area = 2000 # minimum number of dark pixels for a row to be considered part of the conveyor
+    
+    # filter the contours to only ones with the minimum area
+    contours = [cnt for cnt in contours if cv2.contourArea(cnt) > min_area]
+    if not contours:
+        print("No conveyor contours found")
+        return 0, 0
+    # pick the highest and lowest y value in the contours
+    conveyor_left = min([cv2.boundingRect(cnt)[1] for cnt in contours])
+    conveyor_right = max([cv2.boundingRect(cnt)[1] + cv2.boundingRect(cnt)[3] for cnt in contours])
 
-    conveyor_left = next((i for i, row in enumerate(binary_mask) if np.sum(row) >= threshold), 0)
-    conveyor_right = next((i for i in range(binary_mask.shape[0] - 1, -1, -1)
-                           if np.sum(binary_mask[i]) >= threshold), 0)
+    # draw the contours on the image
+    cv2.drawContours(image, contours, -1, (255, 0, 0), 3)
+    cv2.imwrite('image_with_conveyor_contours.jpg', image)  # Save the image with the contours for debugging
+
+    # conveyor_left = next((i for i, row in enumerate(binary_mask) if np.sum(row) >= min_area), 0)
+    # conveyor_right = next((i for i in range(binary_mask.shape[0] - 1, -1, -1)
+    #                        if np.sum(binary_mask[i]) >= min_area), 0)
     return conveyor_left, conveyor_right
 
 # ----------- HOLDER DETECTION -------------
