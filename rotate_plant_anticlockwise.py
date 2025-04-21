@@ -162,7 +162,7 @@ try:
     image_with_contours = image.copy()
 
     print('finding corners for right holder')
-    corners_right = extract_holder_corners(image, top_holder_right['contour'], 16, 0.04, 30)
+    corners_right = extract_holder_corners(image, top_holder_right['contour'], 16, 0.04, 45)
 
     gc.collect() # run garbage collector to free up memory
 
@@ -360,7 +360,7 @@ try:
     gc.collect() # run garbage collector to free up memory
 
     print('finding corners for left contour')
-    corners_left = extract_holder_corners(image, bottom_holder_left['contour'], 16, 0.04, 20)
+    corners_left = extract_holder_corners(image, bottom_holder_left['contour'], 16, 0.04, 45)
 
     gc.collect() # run garbage collector to free up memory
 
