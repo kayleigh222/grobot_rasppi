@@ -116,7 +116,7 @@ try:
     leg_contours = find_leg_contours(image)
     top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y  = find_leg_top_conveyor(leg_contours)
     # draw a circle at top conveyor leg top left
-    cv2.circle(image, (top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y), 10, (255, 0, 0), 5)  # Green circle
+    # cv2.circle(image, (top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y), 10, (255, 0, 0), 5)  # Green circle
     target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 170) # TODO- currently hardcoding this, probably want a better way 
 
     # ----------- FIND TOP HOLDER ON RIGHT CONVEYOR ------------------
