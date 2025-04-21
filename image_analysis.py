@@ -454,10 +454,10 @@ if __name__ == "__main__":
     conveyor_threshold, conveyors_left, conveyors_right = get_conveyor_threshold(image) # find threshold between left and right conveyor
     holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders)
     print("Divided holders into conveyors.")
-    top_holder_right = top_holder_right_conveyor(holders_divided_into_conveyors)
-    print("Extracting corners")
-    corners_right = extract_holder_corners(image, top_holder_right['contour'], 16, 0.04, 45)
-    for corner in corners_right:
-        x, y = corner.ravel()
-        cv2.circle(image, (x, y), 10, (255, 0, 0), -1)  # Green circle for right corners
-    cv2.imwrite('corners_right.jpg', image)
+    # top_holder_right = top_holder_right_conveyor(holders_divided_into_conveyors)
+    # print("Extracting corners")
+    # corners_right = extract_holder_corners(image, top_holder_right['contour'], 16, 0.04, 45)
+    # for corner in corners_right:
+    #     x, y = corner.ravel()
+    #     cv2.circle(image, (x, y), 10, (255, 0, 0), -1)  # Green circle for right corners
+    # cv2.imwrite('corners_right.jpg', image)
