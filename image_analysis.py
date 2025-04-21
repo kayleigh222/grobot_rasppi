@@ -446,8 +446,8 @@ def find_qrcodes(image):
 
 if __name__ == "__main__":
     gc.collect()  # Run garbage collection to free up memory
-    image = capture_image()
-    # image = cv2.imread('captured_image.jpg')
+    # image = capture_image()
+    image = cv2.imread('captured_image.jpg')
     print("Image loaded successfully.")
     holders = find_holders(image)
     print(f"Number of holders found: {len(holders)}")
