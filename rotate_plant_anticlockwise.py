@@ -308,7 +308,7 @@ try:
 
     # -------- FIND BOTTOM PLANT LEFT CONVEYOR AND TARGET LOCATION ----------
     bottom_conveyor_leg_top_right_x, bottom_conveyor_leg_top_right_y  = find_leg_bottom_conveyor(leg_contours)
-    target_location_for_bottom_tray = int(bottom_conveyor_leg_top_right_x - 30) 
+    target_location_for_bottom_tray = int(bottom_conveyor_leg_top_right_x - 70) 
     
     bottom_of_bottom_holder_left_conveyor_x_coord, bottom_left_plant_id = update_bottom_left_plant_position(image, conveyor_threshold)
     distance_from_bottom_of_holder_to_target = target_location_for_bottom_tray - bottom_of_bottom_holder_left_conveyor_x_coord
@@ -317,7 +317,7 @@ try:
     print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
 
     # ------ USE PID CONTROL TO MOVE BOTTOM HOLDER ON LEFT CONVEYOR DOWN CLOSE ENOUGH TO SLIDE TRAY ACROSS -----------
-    while(distance_from_bottom_of_holder_to_target < -100): # TODO: base target location on end of top conveyor leg for better relability
+    while(distance_from_bottom_of_holder_to_target < -50): # TODO: base target location on end of top conveyor leg for better relability
         # Visualise current (red) and target (green) location
         cv2.line(image, (target_location_for_bottom_tray, 0), (target_location_for_bottom_tray, image.shape[0]), (0, 255, 0), 2)  
         cv2.line(image, (int(bottom_of_bottom_holder_left_conveyor_x_coord), 0), (int(bottom_of_bottom_holder_left_conveyor_x_coord), image.shape[0]), (0, 0, 255), 2) 
