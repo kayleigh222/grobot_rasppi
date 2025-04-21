@@ -145,7 +145,7 @@ def find_borders_of_conveyors(image):
     cv2.drawContours(image, contours, -1, (255, 0, 0), 3)
     cv2.imwrite('image_with_conveyor_contours_before_size_filtering.jpg', image)  # Save the image with the contours for debugging
 
-    min_area = 45000 # minimum number of dark pixels for a contour to be considered part of the conveyor
+    min_area = 50000 # minimum number of dark pixels for a contour to be considered part of the conveyor
     
     # filter the contours to only ones with the minimum area
     contours = [cnt for cnt in contours if cv2.contourArea(cnt) > min_area]
