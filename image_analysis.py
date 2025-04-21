@@ -131,9 +131,7 @@ def find_borders_of_conveyors(image):
     Finds left and right edges of conveyors by scanning rows for darkness.
     Returns: (left, right) row indices.
     """
-
-    
-    gray = cv2.cvtColor(equalized, cv2.COLOR_BGR2GRAY)
+    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     # equalize the image
     equalized = cv2.equalizeHist(gray)
     cv2.imwrite('equalized_conveyor_image.jpg', equalized)  # Save the equalized image for debugging
