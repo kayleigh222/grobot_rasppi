@@ -128,7 +128,7 @@ def find_left_and_right_of_conveyors(image):
     Returns: (left, right) row indices.
     """
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    _, binary_mask = cv2.threshold(gray, 45, 255, cv2.THRESH_BINARY_INV) # changed intesnity from 50
+    _, binary_mask = cv2.threshold(gray, 40, 255, cv2.THRESH_BINARY_INV) # changed intesnity from 50
 
     # binary_mask = np.where(gray < 50, 1, 0) # Create a binary mask where intensity < 50 is set to 1, and others are set to 0
     # get the contours of the mask
