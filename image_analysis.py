@@ -447,7 +447,7 @@ if __name__ == "__main__":
     print("Divided holders into conveyors.")
     top_holder_right = top_holder_right_conveyor(holders_divided_into_conveyors)
     print("Extracting corners")
-    corners_right = extract_holder_corners(image, top_holder_right['contour'], 16, 0.04, 30)
+    corners_right = extract_holder_corners(image, top_holder_right['contour'], 16, 0.04, 50)
     for corner in corners_right:
         x, y = corner.ravel()
         cv2.circle(image, (x, y), 10, (255, 0, 0), -1)  # Green circle for right corners
