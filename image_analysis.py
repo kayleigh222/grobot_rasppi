@@ -2,6 +2,7 @@ import os
 import cv2
 import numpy as np
 from pyzbar.pyzbar import decode
+import gc
 
 
 # Define holder color range in HSV (red) - because red is at both ends of the hue spectrum, need two ranges
@@ -437,6 +438,7 @@ def find_qrcodes(image):
     return qrcode_info
 
 if __name__ == "__main__":
+    gc.collect()  # Run garbage collection to free up memory
     # image = capture_image()
     image = cv2.imread('captured_image.jpg')
     print("Image loaded successfully.")
