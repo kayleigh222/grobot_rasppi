@@ -437,8 +437,8 @@ def find_qrcodes(image):
     return qrcode_info
 
 if __name__ == "__main__":
-    # image = capture_image()
-    image = cv2.imread('captured_image.jpg')
+    image = capture_image()
+    # image = cv2.imread('captured_image.jpg')
     print("Image loaded successfully.")
     holders = find_holders(image)
     print(f"Number of holders found: {len(holders)}")
