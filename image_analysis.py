@@ -328,6 +328,8 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=500):
 
     # Merge back and convert to HSV image
     hsv_eq = cv2.merge((h, s, v_eq))
+    
+    cv2.imwrite('equalized_hsv_image.jpg', hsv_eq)  # Save the equalized HSV image for debugging
 
     # Now apply your red masks
     mask1 = cv2.inRange(hsv_eq, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
@@ -335,12 +337,6 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=500):
     red_mask = cv2.bitwise_or(mask1, mask2)
 
     cv2.imwrite('red_mask_equalized.jpg', red_mask)
-
-    # # Mask red hues (both ends of HSV spectrum for red)
-    # mask1 = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
-    # mask2 = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV_2, HOLDER_COLOR_UPPER_THRESHOLD_HSV_2)
-    # red_mask = cv2.bitwise_or(mask1, mask2)
-    # cv2.imwrite('red_mask.jpg', red_mask)  # Save the mask for debugging
 
     # Find contours of red areas (potential holders)
     contours, _ = cv2.findContours(red_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -358,8 +354,12 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=500):
         holder_center = (x + w // 2, y + h // 2)
         print(f"Holder center: {holder_center}")
 
+        # near_barcode = (holder_center[0], holder_center[1] + 450)
         near_barcode = (holder_center[0], holder_center[1] + 450)
-
+        # draw a circle of radius max_dist_between_holder_center_and_barcode
+        cv2.circle(image, near_barcode, max_dist_between_holder_center_and_barcode, (0, 255, 0), 2)  # Green circle
+        cv2.imwrite('image_with_holder_circles.jpg', image)  # Save the image with the circles for debugging
+        
         # Determine if a qrcode is nearby
         barcode_close = False
         closest_barcode = None
@@ -474,14 +474,19 @@ def find_qrcodes(image):
 
 if __name__ == "__main__":
     gc.collect()  # Run garbage collection to free up memory
-    image = capture_image()
-    # image = cv2.imread('captured_image.jpg')
+    # image = capture_image()
+    image = cv2.imread('captured_image.jpg')
     print("Image loaded successfully.")
     holders = find_holders(image)
-    print(f"Number of holders found: {len(holders)}")
-    conveyor_threshold, conveyors_left, conveyors_right, conveyor_top, conveyor_bottom = get_conveyor_threshold(image) # find threshold between left and right conveyor
-    holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders)
-    print("Divided holders into conveyors.")
+    for holder in holders:
+        print("Holder ID: ", holder['id'])
+        print("Holder center: ", holder['holder_center'])
+        print("Holder is empty: ", holder['is_empty'])
+    # print(holders)
+    # print(f"Number of holders found: {len(holders)}")
+    # conveyor_threshold, conveyors_left, conveyors_right, conveyor_top, conveyor_bottom = get_conveyor_threshold(image) # find threshold between left and right conveyor
+    # holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders)
+    # print("Divided holders into conveyors.")
     # top_holder_right = top_holder_right_conveyor(holders_divided_into_conveyors)
     # print("Extracting corners")
     # corners_right = extract_holder_corners(image, top_holder_right['contour'], 16, 0.04, 45)
