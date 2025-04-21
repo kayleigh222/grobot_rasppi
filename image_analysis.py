@@ -277,7 +277,7 @@ def extract_holder_corners(image, contour, num_corners=8, quality_level=0.02, mi
     blank_image = np.zeros_like(image)
     cv2.drawContours(blank_image, [approx], -1, (255, 255, 255), 1)
     gray = cv2.cvtColor(blank_image, cv2.COLOR_BGR2GRAY)
-    cv2.imwrite('contour_image.jpg', gray)  # Save the contour image for debugging
+    cv2.imwrite(f'contour_image_{num_corners}.jpg', gray)  # Save the contour image for debugging
     corners = cv2.goodFeaturesToTrack(gray, maxCorners=num_corners, qualityLevel=quality_level, minDistance=min_distance)
 
     return np.intp(corners).reshape(-1, 2) if corners is not None else [] # reshape the corners into array of points (cv2 returns it with weird structure to suit 3D stuff)
