@@ -16,7 +16,7 @@ LEG_COLOR_LOWER_THRESHOLD_HSV = np.array([30, 50, 50])   # Lower bound of green
 LEG_COLOR_UPPER_THRESHOLD_HSV = np.array([90, 255, 255])  # Upper bound of green
 
 # Define a minimum area threshold for contours to be considered a contour
-MIN_HOLDER_AREA = 80000 
+MIN_HOLDER_AREA = 5000 
 MIN_LEG_AREA = 4500
 
 NUM_QRCODES = 1  # Set this to however many QR codes you expect
@@ -103,9 +103,7 @@ def find_top_and_bottom_of_conveyors(image):
     # largest_contour = max(contours, key=cv2.contourArea) if contours else None
     # if largest_contour is None:
     #     print("No contours found")
-    #     return 0, 0
-    
-    
+    #     return 0, 0    
     
     threshold = 500 # minimum number of dark pixels for a column to be part of a conveyor
 
