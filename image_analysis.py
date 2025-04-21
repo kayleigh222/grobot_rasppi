@@ -65,7 +65,7 @@ def find_leg_top_conveyor(leg_contours):
     top_leg_contour = max(leg_contours, key=lambda c: cv2.boundingRect(c)[0]) # pick the leg with the greatest x value
     x, y, w, h = cv2.boundingRect(top_leg_contour)
     # draw bounding box
-    cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Green rectangle
+    # cv2.rectangle(image, (x, y), (x + w, y + h), (0, 255, 0), 2)  # Green rectangle
     return x, y
 
 def find_leg_bottom_conveyor(leg_contours):
