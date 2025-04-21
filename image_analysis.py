@@ -85,44 +85,48 @@ def get_conveyor_threshold(image):
     Uses vertical bounds from `find_left_and_right_of_conveyors`.
     Returns: threshold, left, right bounds.
     """
-    conveyor_left, conveyor_right = find_left_and_right_of_conveyors(image)
+    conveyor_left, conveyor_right, conveyor_top, conveyor_bottom = find_borders_of_conveyors(image)
     distance = conveyor_right - conveyor_left
-    threshold = conveyor_right - distance // 2
+    middle_threshold = conveyor_right - distance // 2
     # draw a horizontal line on the image at threshold 
-    cv2.line(image, (0, threshold), (image.shape[1], threshold), (255, 0, 0), 2)  # Blue line
+    cv2.line(image, (0, middle_threshold), (image.shape[1], middle_threshold), (255, 0, 0), 2)  # Blue line
     # draw a horizontal like at conveyor left and right
     cv2.line(image, (0, conveyor_left), (image.shape[1], conveyor_left), (0, 255, 0), 2)  # Green line
     cv2.line(image, (0, conveyor_right), (image.shape[1], conveyor_right), (0, 255, 0), 2)  # Green line
-    cv2.imwrite('image_with_conveyor_threshold.jpg', image)  # Save the image with the threshold line for debugging
-    return threshold, conveyor_left, conveyor_right
-
-def find_top_and_bottom_of_conveyors(image):
-    """
-    Finds top and bottom edges of conveyors by scanning columns for darkness.
-    Returns: (top, bottom) column indices.
-    """
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    binary_mask = np.where(gray < 50, 1, 0) # Create a binary mask where intensity < 50 is set to 1, and others are set to 0
-    cv2.imwrite('binary_mask_for_conveyors.jpg', binary_mask * 255)  # Save the binary mask for debugging
-    # find the contours of the dark sections
-    # contours = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
-    # # pick the contour with the largest area
-    # largest_contour = max(contours, key=cv2.contourArea) if contours else None
-    # if largest_contour is None:
-    #     print("No contours found")
-    #     return 0, 0    
     
-    threshold = 500 # minimum number of dark pixels for a column to be part of a conveyor
+    # draw a vertical line at conveyor top and bottom
+    cv2.line(image, (conveyor_top, 0), (conveyor_top, image.shape[0]), (0, 255, 0), 2)  # Green line
+    cv2.line(image, (conveyor_bottom, 0), (conveyor_bottom, image.shape[0]), (0, 255, 0), 2)  # Green line
+    cv2.imwrite('image_with_conveyor_threshold.jpg', image)  # Save the image with the threshold line for debugging
+    return middle_threshold, conveyor_left, conveyor_right, conveyor_top, conveyor_bottom
 
-    # Bottom (leftmost dark column)
-    conveyor_bottom = next((i for i, col in enumerate(binary_mask.T) if np.sum(col) >= threshold), 0)
+# def find_top_and_bottom_of_conveyors(image):
+#     """
+#     Finds top and bottom edges of conveyors by scanning columns for darkness.
+#     Returns: (top, bottom) column indices.
+#     """
+#     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+#     binary_mask = np.where(gray < 50, 1, 0) # Create a binary mask where intensity < 50 is set to 1, and others are set to 0
+#     cv2.imwrite('binary_mask_for_conveyors.jpg', binary_mask * 255)  # Save the binary mask for debugging
+#     # find the contours of the dark sections
+#     # contours = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
+#     # # pick the contour with the largest area
+#     # largest_contour = max(contours, key=cv2.contourArea) if contours else None
+#     # if largest_contour is None:
+#     #     print("No contours found")
+#     #     return 0, 0    
+    
+#     threshold = 500 # minimum number of dark pixels for a column to be part of a conveyor
 
-    # Top (rightmost dark column)
-    conveyor_top = next((i for i in range(binary_mask.shape[1] - 1, -1, -1)
-                         if np.sum(binary_mask[:, i]) >= threshold), 0)
-    return conveyor_top, conveyor_bottom
+#     # Bottom (leftmost dark column)
+#     conveyor_bottom = next((i for i, col in enumerate(binary_mask.T) if np.sum(col) >= threshold), 0)
 
-def find_left_and_right_of_conveyors(image):
+#     # Top (rightmost dark column)
+#     conveyor_top = next((i for i in range(binary_mask.shape[1] - 1, -1, -1)
+#                          if np.sum(binary_mask[:, i]) >= threshold), 0)
+#     return conveyor_top, conveyor_bottom
+
+def find_borders_of_conveyors(image):
     """
     Finds left and right edges of conveyors by scanning rows for darkness.
     Returns: (left, right) row indices.
@@ -134,7 +138,7 @@ def find_left_and_right_of_conveyors(image):
     # get the contours of the mask
     contours = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
     
-    min_area = 50000 # minimum number of dark pixels for a contour to be considered part of the conveyor
+    min_area = 30000 # minimum number of dark pixels for a contour to be considered part of the conveyor
     
     # filter the contours to only ones with the minimum area
     contours = [cnt for cnt in contours if cv2.contourArea(cnt) > min_area]
@@ -144,6 +148,10 @@ def find_left_and_right_of_conveyors(image):
     # pick the highest and lowest y value in the contours
     conveyor_left = min([cv2.boundingRect(cnt)[1] for cnt in contours])
     conveyor_right = max([cv2.boundingRect(cnt)[1] + cv2.boundingRect(cnt)[3] for cnt in contours])
+    
+    # pick the highest and lowest x value in the contours
+    conveyor_bottom = min([cv2.boundingRect(cnt)[0] for cnt in contours])
+    conveyor_top = max([cv2.boundingRect(cnt)[0] + cv2.boundingRect(cnt)[2] for cnt in contours])
 
     # draw the contours on the image
     cv2.drawContours(image, contours, -1, (255, 0, 0), 3)
@@ -152,7 +160,7 @@ def find_left_and_right_of_conveyors(image):
     # conveyor_left = next((i for i, row in enumerate(binary_mask) if np.sum(row) >= min_area), 0)
     # conveyor_right = next((i for i in range(binary_mask.shape[0] - 1, -1, -1)
     #                        if np.sum(binary_mask[i]) >= min_area), 0)
-    return conveyor_left, conveyor_right
+    return conveyor_left, conveyor_right, conveyor_top, conveyor_bottom
 
 # ----------- HOLDER DETECTION -------------
 def get_bottom_left_corner(corners):
