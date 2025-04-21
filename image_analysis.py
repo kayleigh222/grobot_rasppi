@@ -239,6 +239,7 @@ def bottom_holder_with_barcode_left_conveyor(holders_divided_into_conveyors):
 
 def extract_holder_corners(image, contour, num_corners=8, quality_level=0.02, min_distance=20):
     approx = cv2.approxPolyDP(contour, 0.01 * cv2.arcLength(contour, True), True)
+    cv2.imwrite('approx_poly_dp.jpg', approx)  # Save the approximated polygon for debugging
     blank_image = np.zeros_like(image)
     cv2.drawContours(blank_image, [approx], -1, (255, 255, 255), 1)
     gray = cv2.cvtColor(blank_image, cv2.COLOR_BGR2GRAY)
@@ -449,7 +450,7 @@ if __name__ == "__main__":
     print("Divided holders into conveyors.")
     top_holder_right = top_holder_right_conveyor(holders_divided_into_conveyors)
     print("Extracting corners")
-    corners_right = extract_holder_corners(image, top_holder_right['contour'], 16, 0.1, 45)
+    corners_right = extract_holder_corners(image, top_holder_right['contour'], 16, 0.04, 45)
     for corner in corners_right:
         x, y = corner.ravel()
         cv2.circle(image, (x, y), 10, (255, 0, 0), -1)  # Green circle for right corners
