@@ -135,7 +135,7 @@ def find_borders_of_conveyors(image):
     # equalize the image
     equalized = cv2.equalizeHist(gray)
     cv2.imwrite('equalized_conveyor_image.jpg', equalized)  # Save the equalized image for debugging
-    _, binary_mask = cv2.threshold(equalized, 45, 255, cv2.THRESH_BINARY_INV) # changed intesnity from 50
+    _, binary_mask = cv2.threshold(equalized, 40, 255, cv2.THRESH_BINARY_INV) # changed intesnity from 50
 
     # binary_mask = np.where(gray < 50, 1, 0) # Create a binary mask where intensity < 50 is set to 1, and others are set to 0
     # get the contours of the mask
@@ -475,8 +475,8 @@ def find_qrcodes(image):
 
 if __name__ == "__main__":
     gc.collect()  # Run garbage collection to free up memory
-    image = capture_image()
-    # image = cv2.imread('captured_image.jpg')
+    # image = capture_image()
+    image = cv2.imread('captured_image.jpg')
     print("Image loaded successfully.")
     holders = find_holders(image)
     print(f"Number of holders found: {len(holders)}")
