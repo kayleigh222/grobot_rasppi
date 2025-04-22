@@ -443,8 +443,8 @@ try:
 
         # ------- ROTATE BOTTOM CONVEYOR TO SLIDE TRAY ACROSS -----------
     set_up_bottom_conveyor()
-    additional_distance_to_push_tray_across_threshold = 200
-    target = conveyor_threshold + additional_distance_to_push_tray_across_threshold
+    additional_distance_to_push_tray_across = 20
+    target = top_left_corner_right_holder[1] + additional_distance_to_push_tray_across
     distance_from_target = target - bottom_conveyor_leg_top_right_y
     # draw a horizontal line at target
     cv2.line(image, (0, target), (image.shape[1], target), (0, 255, 0), 2)  # Green line
