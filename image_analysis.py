@@ -506,10 +506,11 @@ if __name__ == "__main__":
     image = capture_image()
     # image = cv2.imread('captured_image.jpg')
     print("Image loaded successfully.")
-    holders = find_holders(image)
-    print(f"Number of holders found: {len(holders)}")
-    for holder in holders:
-        print(f"Holder center: {holder['holder_center']}, ID: {holder['id']}")
+    get_conveyor_threshold(image)  # find threshold between left and right conveyor
+    # holders = find_holders(image)
+    # print(f"Number of holders found: {len(holders)}")
+    # for holder in holders:
+    #     print(f"Holder center: {holder['holder_center']}, ID: {holder['id']}")
     # conveyor_threshold, conveyors_left, conveyors_right, conveyor_top, conveyor_bottom = get_conveyor_threshold(image) # find threshold between left and right conveyor
     # holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders)
     # print("Divided holders into conveyors.")
