@@ -187,6 +187,9 @@ def get_top_left_corner(corners):
 def get_rightmost_corner(corners):
     return max(corners, key=lambda pt: pt[1])
 
+def get_leftmost_corner(corners):
+    return min(corners, key=lambda pt: pt[1])
+
 def get_bottom_edge_of_holder(holder_contour):
     """
     Returns the bottom edge of a holder's bounding box.
