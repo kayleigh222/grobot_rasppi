@@ -90,15 +90,15 @@ def get_conveyor_threshold(image):
     distance = conveyor_right - conveyor_left
     middle_threshold = conveyor_right - distance // 2
     # draw a horizontal line on the image at threshold 
-    cv2.line(image, (0, middle_threshold), (image.shape[1], middle_threshold), (255, 0, 0), 2)  # Blue line
+    # cv2.line(image, (0, middle_threshold), (image.shape[1], middle_threshold), (255, 0, 0), 2)  # Blue line
     # draw a horizontal like at conveyor left and right
-    cv2.line(image, (0, conveyor_left), (image.shape[1], conveyor_left), (0, 255, 0), 2)  # Green line
-    cv2.line(image, (0, conveyor_right), (image.shape[1], conveyor_right), (0, 255, 0), 2)  # Green line
+    # cv2.line(image, (0, conveyor_left), (image.shape[1], conveyor_left), (0, 255, 0), 2)  # Green line
+    # cv2.line(image, (0, conveyor_right), (image.shape[1], conveyor_right), (0, 255, 0), 2)  # Green line
     
     # draw a vertical line at conveyor top and bottom
-    cv2.line(image, (conveyor_top, 0), (conveyor_top, image.shape[0]), (0, 255, 0), 2)  # Green line
-    cv2.line(image, (conveyor_bottom, 0), (conveyor_bottom, image.shape[0]), (0, 255, 0), 2)  # Green line
-    cv2.imwrite('image_with_conveyor_threshold.jpg', image)  # Save the image with the threshold line for debugging
+    # cv2.line(image, (conveyor_top, 0), (conveyor_top, image.shape[0]), (0, 255, 0), 2)  # Green line
+    # cv2.line(image, (conveyor_bottom, 0), (conveyor_bottom, image.shape[0]), (0, 255, 0), 2)  # Green line
+    # cv2.imwrite('image_with_conveyor_threshold.jpg', image)  # Save the image with the threshold line for debugging
     return middle_threshold, conveyor_left, conveyor_right, conveyor_top, conveyor_bottom
 
 # def find_top_and_bottom_of_conveyors(image):
@@ -162,7 +162,7 @@ def find_borders_of_conveyors(image):
     contours = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
     min_area = 200000 # minimum number of dark pixels for a contour to be considered part of the conveyor
     contours = [cnt for cnt in contours if cv2.contourArea(cnt) > min_area]
-    cv2.drawContours(image, contours, -1, (0, 255, 0), 3)
+    # cv2.drawContours(image, contours, -1, (255, 0, 0), 3)
     if not contours:
         print("No conveyor contours found")
         return 0, 0
