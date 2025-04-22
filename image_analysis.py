@@ -136,32 +136,32 @@ def find_borders_of_conveyors(image):
     # equalize the image
     equalized = cv2.equalizeHist(gray)
     cv2.imwrite('equalized_conveyor_image.jpg', equalized)  # Save the equalized image for debugging
-    binary_mask = np.where(gray < 50, 1, 0) # Create a binary mask where intensity < 50 is set to 1, and others are set to 0
-    threshold = 500 # minimum number of dark pixels for a column to be part of a conveyor
+    _, binary_mask = cv2.threshold(equalized, 60, 255, cv2.THRESH_BINARY_INV) # changed intesnity from 50
+    
+    # binary_mask = np.where(gray < 50, 1, 0) # Create a binary mask where intensity < 50 is set to 1, and others are set to 0
+    # threshold = 500 # minimum number of dark pixels for a column to be part of a conveyor
  
      # Bottom (leftmost dark column)
-    conveyor_bottom = next((i for i, col in enumerate(binary_mask.T) if np.sum(col) >= threshold), 0)
+    # conveyor_bottom = next((i for i, col in enumerate(binary_mask.T) if np.sum(col) >= threshold), 0)
  
-     # Top (rightmost dark column)
-    conveyor_top = next((i for i in range(binary_mask.shape[1] - 1, -1, -1)
-                          if np.sum(binary_mask[:, i]) >= threshold), 0)
+    #  # Top (rightmost dark column)
+    # conveyor_top = next((i for i in range(binary_mask.shape[1] - 1, -1, -1)
+    #                       if np.sum(binary_mask[:, i]) >= threshold), 0)
     
+    # have to get left and right differently because shadows from lighting extend the boundaries of the contour otherwise
     threshold = 2000 # minimum number of dark pixels for a row to be considered part of the conveyor
- 
     conveyor_left = next((i for i, row in enumerate(binary_mask) if np.sum(row) >= threshold), 0)
     conveyor_right = next((i for i in range(binary_mask.shape[0] - 1, -1, -1) if np.sum(binary_mask[i]) >= threshold), 0)
-    # _, binary_mask = cv2.threshold(equalized, 60, 255, cv2.THRESH_BINARY_INV) # changed intesnity from 50
     
     # get the contours of the mask
-    # contours = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
+    contours = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
+    cv2.drawContours(image, contours, -1, (255, 0, 0), 3)
+    min_area = 80000 # minimum number of dark pixels for a contour to be considered part of the conveyor
+    contours = [cnt for cnt in contours if cv2.contourArea(cnt) > min_area]
+    conveyor_bottom = min([cv2.boundingRect(cnt)[0] for cnt in contours])
+    conveyor_top = max([cv2.boundingRect(cnt)[0] + cv2.boundingRect(cnt)[2] for cnt in contours])
     
-    # cv2.drawContours(image, contours, -1, (255, 0, 0), 3)
-    # cv2.imwrite('image_with_conveyor_contours_before_size_filtering.jpg', image)  # Save the image with the contours for debugging
-
-    # min_area = 80000 # minimum number of dark pixels for a contour to be considered part of the conveyor
-    
-    # filter the contours to only ones with the minimum area
-    # contours = [cnt for cnt in contours if cv2.contourArea(cnt) > min_area]
+   
     # if not contours:
     #     print("No conveyor contours found")
     #     return 0, 0
@@ -174,8 +174,8 @@ def find_borders_of_conveyors(image):
     # conveyor_top = max([cv2.boundingRect(cnt)[0] + cv2.boundingRect(cnt)[2] for cnt in contours])
 
     # draw the contours on the image
-    # cv2.drawContours(image, contours, -1, (255, 0, 0), 3)
-    # cv2.imwrite('image_with_conveyor_contours.jpg', image)  # Save the image with the contours for debugging
+    cv2.drawContours(image, contours, -1, (255, 0, 0), 3)
+    cv2.imwrite('image_with_conveyor_contours.jpg', image)  # Save the image with the contours for debugging
 
     return conveyor_left, conveyor_right, conveyor_top, conveyor_bottom
 
