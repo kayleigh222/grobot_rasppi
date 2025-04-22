@@ -256,7 +256,7 @@ try:
 
     # ------- ROTATE TOP CONVEYOR TO SLIDE TRAY ACROSS -----------
     set_up_top_conveyor()
-    additional_distance_to_push_tray_across = 130
+    additional_distance_to_push_tray_across = 150
     target = bottom_left_corner_left_holder[1] - additional_distance_to_push_tray_across
     distance_from_target = top_conveyor_leg_top_left_y - target
     # draw a horizontal line at conveyor_threshold
