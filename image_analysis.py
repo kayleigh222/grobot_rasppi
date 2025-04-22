@@ -22,7 +22,7 @@ MIN_LEG_AREA = 4500
 
 NUM_QRCODES = 1  # Set this to however many QR codes you expect
 
-def capture_image(path="captured_image.jpg"):
+def capture_image(path="captured_image.png"):
     os.system(f"rpicam-still --output {path} --nopreview")
     return cv2.imread(path)
 
@@ -490,7 +490,7 @@ def find_qrcodes(image):
 if __name__ == "__main__":
     gc.collect()  # Run garbage collection to free up memory
     # image = capture_image()
-    image = cv2.imread('captured_image.jpg')
+    image = cv2.imread('captured_image.png')
     print("Image loaded successfully.")
     holders = find_holders(image)
     print(f"Number of holders found: {len(holders)}")
