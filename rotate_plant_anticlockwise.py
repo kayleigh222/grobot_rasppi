@@ -117,7 +117,7 @@ try:
     top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y  = find_leg_top_conveyor(leg_contours)
     # draw a circle at top conveyor leg top left
     # cv2.circle(image, (top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y), 10, (255, 0, 0), 5)  # Green circle
-    target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 300) # TODO- currently hardcoding this, probably want a better way 
+    target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 250) # TODO- currently hardcoding this, probably want a better way 
 
     # ----------- FIND TOP HOLDER ON RIGHT CONVEYOR ------------------
     bottom_of_top_holder_right_conveyor_x_coord, top_right_plant_id = update_top_right_plant_position(image, conveyor_threshold)
@@ -125,6 +125,7 @@ try:
 
     print("Moving right conveyor up close enough to slide tray across.")
     print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
+    num_moves_up = 0
 
     # ------ USE PID CONTROL TO MOVE TOP HOLDER ON RIGHT CONVEYOR UP CLOSE ENOUGH TO SLIDE TRAY ACROSS -----------
     while(distance_from_bottom_of_holder_to_target > 50): # TODO: base target location on end of top conveyor leg for better relability
@@ -150,6 +151,10 @@ try:
         print("bottom of top holder right conveyor: ", bottom_of_top_holder_right_conveyor_x_coord)
         distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
         print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
+        if(num_moves_up > 5): # if get stuck in loop moving up, target is probably too high
+            print("STUCK IN LOOP MOVING UP - TARGET LIKELY TOO HIGH")
+            break
+        num_moves_up += 1
 
     print("Finished moving top holder on right conveyor up close enough to slide tray across. Distance to target location now ", distance_from_bottom_of_holder_to_target)
     gc.collect() # run garbage collector to free up memory
