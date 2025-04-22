@@ -148,36 +148,29 @@ def find_borders_of_conveyors(image):
     # conveyor_top = next((i for i in range(binary_mask.shape[1] - 1, -1, -1)
     #                       if np.sum(binary_mask[:, i]) >= threshold), 0)
     
-    # have to get left and right differently because shadows from lighting extend the boundaries of the contour otherwise
-    threshold = 100000 # minimum number of dark pixels for a row to be considered part of the conveyor - times 255 because black pixels were set to white (255) in the binary mask
-    conveyor_left = next(
-        (i for i, row in enumerate(binary_mask) if np.count_nonzero(row == 255) >= threshold), 0
-    )
+    # # have to get left and right differently because shadows from lighting extend the boundaries of the contour otherwise
+    # threshold = 100000 # minimum number of dark pixels for a row to be considered part of the conveyor - times 255 because black pixels were set to white (255) in the binary mask
+    # conveyor_left = next(
+    #     (i for i, row in enumerate(binary_mask) if np.count_nonzero(row == 255) >= threshold), 0
+    # )
 
-    conveyor_right = next(
-        (i for i in range(binary_mask.shape[0] - 1, -1, -1)
-        if np.count_nonzero(binary_mask[i] == 255) >= threshold), 0
-    )
+    # conveyor_right = next(
+    #     (i for i in range(binary_mask.shape[0] - 1, -1, -1)
+    #     if np.count_nonzero(binary_mask[i] == 255) >= threshold), 0
+    # )
     # get the contours of the mask
     contours = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
     min_area = 200000 # minimum number of dark pixels for a contour to be considered part of the conveyor
     contours = [cnt for cnt in contours if cv2.contourArea(cnt) > min_area]
     cv2.drawContours(image, contours, -1, (0, 255, 0), 3)
+    if not contours:
+        print("No conveyor contours found")
+        return 0, 0
     conveyor_bottom = min([cv2.boundingRect(cnt)[0] for cnt in contours])
     conveyor_top = max([cv2.boundingRect(cnt)[0] + cv2.boundingRect(cnt)[2] for cnt in contours])
+    conveyor_left = min([cv2.boundingRect(cnt)[1] for cnt in contours])
+    conveyor_right = max([cv2.boundingRect(cnt)[1] + cv2.boundingRect(cnt)[3] for cnt in contours])
     
-   
-    # if not contours:
-    #     print("No conveyor contours found")
-    #     return 0, 0
-    # pick the highest and lowest y value in the contours
-    # conveyor_left = min([cv2.boundingRect(cnt)[1] for cnt in contours])
-    # conveyor_right = max([cv2.boundingRect(cnt)[1] + cv2.boundingRect(cnt)[3] for cnt in contours])
-    
-    # pick the highest and lowest x value in the contours
-    # conveyor_bottom = min([cv2.boundingRect(cnt)[0] for cnt in contours])
-    # conveyor_top = max([cv2.boundingRect(cnt)[0] + cv2.boundingRect(cnt)[2] for cnt in contours])
-
     cv2.imwrite('image_with_conveyor_contours.jpg', image)  # Save the image with the contours for debugging
 
     return conveyor_left, conveyor_right, conveyor_top, conveyor_bottom
