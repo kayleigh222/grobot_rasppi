@@ -455,6 +455,7 @@ def find_qrcodes(image):
             cv2.THRESH_BINARY,
             11, 2
         )
+        cv2.imwrite('binary_qr_image.jpg', binary)  # Save the binary image for debugging
 
         # equalized = cv2.equalizeHist(blurred)
         # cv2.imwrite('equalized_qr_image.jpg', equalized)  # Save the equalized image for debugging
