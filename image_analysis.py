@@ -323,22 +323,23 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=450):
     hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
         
     # Split channels
-    # h, s, v = cv2.split(hsv)
+    h, s, v = cv2.split(hsv)
 
     # Equalize the V channel
-    # v_eq = cv2.equalizeHist(v)
+    v_eq = cv2.equalizeHist(v)
 
     # Merge back and convert to HSV image
-    # hsv_eq = cv2.merge((h, s, v_eq))
+    hsv_eq = cv2.merge((h, s, v_eq))
     
-    # cv2.imwrite('equalized_hsv_image.jpg', hsv_eq)  # Save the equalized HSV image for debugging
-
+    bgr_eq = cv2.cvtColor(hsv_eq, cv2.COLOR_HSV2BGR)
+    cv2.imwrite('equalized_hsv_image.jpg', bgr_eq)  # Save the equalized BGR image for debugging
+    
     # Now apply your red masks
     mask1 = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
     mask2 = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV_2, HOLDER_COLOR_UPPER_THRESHOLD_HSV_2)
     red_mask = cv2.bitwise_or(mask1, mask2)
 
-    # cv2.imwrite('red_mask_equalized.jpg', red_mask)
+    cv2.imwrite('red_mask_equalized.jpg', red_mask)
 
     # Find contours of red areas (potential holders)
     contours, _ = cv2.findContours(red_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
