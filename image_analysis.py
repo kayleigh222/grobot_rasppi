@@ -449,19 +449,19 @@ def find_qrcodes(image):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         # blurred = cv2.GaussianBlur(gray, (3, 3), 0)
         # Try adaptive thresholding
-        binary = cv2.adaptiveThreshold(
-            gray, 255,
-            cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-            cv2.THRESH_BINARY,
-            11, 2
-        )
-        cv2.imwrite('binary_qr_image.jpg', binary)  # Save the binary image for debugging
+        # binary = cv2.adaptiveThreshold(
+        #     gray, 255,
+        #     cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+        #     cv2.THRESH_BINARY,
+        #     11, 2
+        # )
+        # cv2.imwrite('binary_qr_image.jpg', binary)  # Save the binary image for debugging
 
         # equalized = cv2.equalizeHist(blurred)
         # cv2.imwrite('equalized_qr_image.jpg', equalized)  # Save the equalized image for debugging
 
         # Decode QR codes
-        detected_qrcodes = decode(binary)
+        detected_qrcodes = decode(gray)
         num_qrcodes_found = len(detected_qrcodes)
         qrcode_info = []
 
@@ -489,8 +489,8 @@ def find_qrcodes(image):
 
 if __name__ == "__main__":
     gc.collect()  # Run garbage collection to free up memory
-    # image = capture_image()
-    image = cv2.imread('captured_image.png')
+    image = capture_image()
+    # image = cv2.imread('captured_image.png')
     print("Image loaded successfully.")
     holders = find_holders(image)
     print(f"Number of holders found: {len(holders)}")
