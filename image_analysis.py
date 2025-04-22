@@ -497,7 +497,6 @@ if __name__ == "__main__":
     # image = capture_image()
     image = cv2.imread('captured_image.jpg')
     print("Image loaded successfully.")
-    find_qrcodes(image)  # find qrcodes in the image
     print("Num qrcodes found in image: ", len(find_qrcodes(image)))
     # get_conveyor_threshold(image)  # find threshold between left and right conveyor
     # holders = find_holders(image)
