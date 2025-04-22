@@ -198,7 +198,6 @@ try:
 
     # get two corners with lowest y value on right contour
     top_left_corner_right_holder = get_top_left_corner(corners_right) 
-    del corners_right
 
     target_x_value = top_left_corner_right_holder[0]
     print("Target x value: ", target_x_value)
@@ -286,6 +285,8 @@ try:
 
     # --------- MOVE TOP CONVEYOR LEG OUT OF THE WAY OF CONVEYORS -----------
     target_location = get_rightmost_corner(corners_right) + 20
+    del corners_right
+    gc.collect()
     
     while(top_conveyor_leg_top_left_y < target_location):
         steps_to_take = abs(int((target_location - top_conveyor_leg_top_left_y) // calibration_variables[TOP_CONVEYOR_SPEED_BACKWARD]))
@@ -389,7 +390,6 @@ try:
     del image_with_contours
 
     bottom_left_corner_left_holder = get_bottom_left_corner(corners_left)
-    del corners_left
 
     top_left_corner_right_holder = get_top_left_corner(corners_right)
     del corners_right
@@ -434,8 +434,6 @@ try:
         corners_right = extract_holder_corners(image, bottom_holder_right['contour'], 8, 0.02, 10)
         top_left_corner_right_holder = get_top_left_corner(corners_right)
 
-        del corners_right
-
         # visualize on image
         cv2.circle(image, (bottom_left_corner_left_holder[0], bottom_left_corner_left_holder[1]), 10, (0, 255, 255), -1)  # Yellow circle for left edge
         cv2.circle(image, (top_left_corner_right_holder[0], top_left_corner_right_holder[1]), 10, (0, 255, 255), -1)  # Yellow circle for right edge
@@ -479,6 +477,8 @@ try:
     # --------- MOVE BOTTOM CONVEYOR LEG OUT OF THE WAY OF CONVEYORS -----------
     bottom_conveyor_leg_top_right_x, bottom_conveyor_leg_top_right_y  = find_leg_bottom_conveyor(leg_contours)
     target_location = get_leftmost_corner(corners_left) + 30
+    del corners_left
+    gc.collect()
     while(bottom_conveyor_leg_top_right_y < target_location):
         steps_to_take = abs(int((target_location - top_conveyor_leg_top_left_y) // calibration_variables[BOTTOM_CONVEYOR_SPEED_BACKWARD]))
         if(steps_to_take == 0):
