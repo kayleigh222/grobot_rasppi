@@ -252,8 +252,9 @@ try:
 
     # ------- ROTATE TOP CONVEYOR TO SLIDE TRAY ACROSS -----------
     set_up_top_conveyor()
-    additional_distance_to_push_tray_across_threshold = 270
-    distance_from_target = top_conveyor_leg_top_left_y - (conveyor_threshold - additional_distance_to_push_tray_across_threshold)
+    additional_distance_to_push_tray_across = 20
+    target = bottom_left_corner_left_holder[1] - additional_distance_to_push_tray_across
+    distance_from_target = top_conveyor_leg_top_left_y - target
     # draw a horizontal line at conveyor_threshold
     cv2.line(image, (0, conveyor_threshold), (image.shape[1], conveyor_threshold), (0, 255, 0), 2)  # Green line
     # draw a horizontal line at top_conveyor_leg_top_left_y
@@ -273,7 +274,7 @@ try:
         # find new position of top conveyor leg
         leg_contours = find_leg_contours(image)
         top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y = find_leg_top_conveyor(leg_contours)
-        distance_from_target = top_conveyor_leg_top_left_y - (conveyor_threshold - additional_distance_to_push_tray_across_threshold)
+        distance_from_target = top_conveyor_leg_top_left_y - target
 
         print("Distance from top conveyor target: ", distance_from_target)
 
