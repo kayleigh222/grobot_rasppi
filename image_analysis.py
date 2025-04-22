@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 from pyzbar.pyzbar import decode
 import gc
+import time
 
 
 # Define holder color range in HSV (red) - because red is at both ends of the hue spectrum, need two ranges
@@ -24,6 +25,7 @@ NUM_QRCODES = 1  # Set this to however many QR codes you expect
 
 def capture_image(path="captured_image.png"):
     os.system(f"rpicam-still --output {path} --nopreview")
+    time.sleep(1)  # Wait a second for the image to be fully saved
     return cv2.imread(path)
 
 # ----------- LEG DETECTION -------------
