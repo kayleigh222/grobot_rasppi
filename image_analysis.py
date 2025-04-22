@@ -135,7 +135,7 @@ def find_borders_of_conveyors(image):
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     # equalize the image
     equalized = cv2.equalizeHist(gray)
-    cv2.imwrite('equalized_conveyor_image.jpg', equalized)  # Save the equalized image for debugging
+    # cv2.imwrite('equalized_conveyor_image.jpg', equalized)  # Save the equalized image for debugging
     _, binary_mask = cv2.threshold(equalized, 60, 255, cv2.THRESH_BINARY_INV) # changed intesnity from 50
     
     # binary_mask = np.where(gray < 50, 1, 0) # Create a binary mask where intensity < 50 is set to 1, and others are set to 0
@@ -171,7 +171,7 @@ def find_borders_of_conveyors(image):
     conveyor_left = min([cv2.boundingRect(cnt)[1] for cnt in contours])
     conveyor_right = max([cv2.boundingRect(cnt)[1] + cv2.boundingRect(cnt)[3] for cnt in contours])
     
-    cv2.imwrite('image_with_conveyor_contours.jpg', image)  # Save the image with the contours for debugging
+    # cv2.imwrite('image_with_conveyor_contours.jpg', image)  # Save the image with the contours for debugging
 
     return conveyor_left, conveyor_right, conveyor_top, conveyor_bottom
 
@@ -341,11 +341,11 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=450):
     # Merge back and convert to HSV image
     hsv_eq = cv2.merge((h, s, v_eq))
     
-    bgr_eq = cv2.cvtColor(hsv_eq, cv2.COLOR_HSV2BGR)
-    cv2.imwrite('equalized_hsv_image.jpg', bgr_eq)  # Save the equalized BGR image for debugging
+    # bgr_eq = cv2.cvtColor(hsv_eq, cv2.COLOR_HSV2BGR)
+    # cv2.imwrite('equalized_hsv_image.jpg', bgr_eq)  # Save the equalized BGR image for debugging
     # Now apply your red masks
-    mask1 = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
-    mask2 = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV_2, HOLDER_COLOR_UPPER_THRESHOLD_HSV_2)
+    mask1 = cv2.inRange(hsv_eq, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
+    mask2 = cv2.inRange(hsv_eq, HOLDER_COLOR_LOWER_THRESHOLD_HSV_2, HOLDER_COLOR_UPPER_THRESHOLD_HSV_2)
     red_mask = cv2.bitwise_or(mask1, mask2)
 
     cv2.imwrite('red_mask_equalized.jpg', red_mask)
