@@ -284,7 +284,7 @@ try:
     print('finished moving top conveyor to target')
 
     # --------- MOVE TOP CONVEYOR LEG OUT OF THE WAY OF CONVEYORS -----------
-    target_location = get_rightmost_corner(corners_right) + 20
+    target_location = get_rightmost_corner(corners_right)[1] + 20
     del corners_right
     gc.collect()
     
@@ -476,7 +476,7 @@ try:
 
     # --------- MOVE BOTTOM CONVEYOR LEG OUT OF THE WAY OF CONVEYORS -----------
     bottom_conveyor_leg_top_right_x, bottom_conveyor_leg_top_right_y  = find_leg_bottom_conveyor(leg_contours)
-    target_location = get_leftmost_corner(corners_left) + 30
+    target_location = get_leftmost_corner(corners_left)[1] + 30
     del corners_left
     gc.collect()
     while(bottom_conveyor_leg_top_right_y < target_location):
