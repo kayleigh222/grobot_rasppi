@@ -459,10 +459,10 @@ def find_qrcodes(image):
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         # blurred = cv2.GaussianBlur(gray, (3, 3), 0)
 
-        equalized = cv2.equalizeHist(gray)
-        cv2.imwrite('equalized_qr_image.jpg', equalized)  # Save the equalized image for debugging
+        # equalized = cv2.equalizeHist(gray)
+        # cv2.imwrite('equalized_qr_image.jpg', equalized)  # Save the equalized image for debugging
         
-        thresholded = np.where(equalized < 150, 0, equalized).astype(np.uint8)
+        thresholded = np.where(gray < 150, 0, gray).astype(np.uint8)
         cv2.imwrite('thresholded_qr_image.jpg', thresholded)  # Save the thresholded image for debugging
 
         # Decode QR codes
