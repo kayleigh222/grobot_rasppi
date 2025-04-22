@@ -458,20 +458,12 @@ def find_qrcodes(image):
         # Preprocess for better QR detection
         gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
         # blurred = cv2.GaussianBlur(gray, (3, 3), 0)
-        # Try adaptive thresholding
-        # binary = cv2.adaptiveThreshold(
-        #     gray, 255,
-        #     cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-        #     cv2.THRESH_BINARY,
-        #     11, 2
-        # )
-        # cv2.imwrite('binary_qr_image.jpg', binary)  # Save the binary image for debugging
 
-        # equalized = cv2.equalizeHist(blurred)
-        # cv2.imwrite('equalized_qr_image.jpg', equalized)  # Save the equalized image for debugging
+        equalized = cv2.equalizeHist(gray)
+        cv2.imwrite('equalized_qr_image.jpg', equalized)  # Save the equalized image for debugging
 
         # Decode QR codes
-        detected_qrcodes = decode(gray)
+        detected_qrcodes = decode(equalized)
         num_qrcodes_found = len(detected_qrcodes)
         qrcode_info = []
 
