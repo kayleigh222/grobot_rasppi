@@ -8,7 +8,7 @@ import gc
 import numpy as np
 import time
 import threading
-from image_analysis import bottom_holder_left_conveyor, bottom_holder_right_conveyor, bottom_holder_with_barcode_left_conveyor, capture_image, divide_holders_into_conveyors, extract_holder_corners, find_holders, find_leg_bottom_conveyor, find_leg_contours, find_leg_top_conveyor, get_bottom_left_corner, get_bottom_qr_right_conveyor, get_top_left_corner, get_top_qr_left_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
+from image_analysis import bottom_holder_left_conveyor, bottom_holder_right_conveyor, bottom_holder_with_barcode_left_conveyor, capture_image, divide_holders_into_conveyors, extract_holder_corners, find_holders, find_leg_bottom_conveyor, find_leg_contours, find_leg_top_conveyor, get_bottom_left_corner, get_bottom_qr_right_conveyor, get_rightmost_corner, get_top_left_corner, get_top_qr_left_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
 from calibration import BOTTOM_CONVEYOR_SPEED_BACKWARD, BOTTOM_CONVEYOR_SPEED_FORWARD, TOP_CONVEYOR_SPEED_BACKWARD, TOP_CONVEYOR_SPEED_FORWARD, calibrate_bottom_conveyor_motor, calibrate_top_conveyor_motor, calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
 from servo_motor_code import clean_up_servo, set_up_servo, sweep_servo
 import servo_motor_code
@@ -285,7 +285,8 @@ try:
     print('finished moving top conveyor to target')
 
     # --------- MOVE TOP CONVEYOR LEG OUT OF THE WAY OF CONVEYORS -----------
-    target_location = conveyors_right
+    target_location = get_rightmost_corner(corners_right) + 20
+    
     while(top_conveyor_leg_top_left_y < target_location):
         steps_to_take = abs(int((target_location - top_conveyor_leg_top_left_y) // calibration_variables[TOP_CONVEYOR_SPEED_BACKWARD]))
         if(steps_to_take == 0):
