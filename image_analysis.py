@@ -3,7 +3,6 @@ import cv2
 import numpy as np
 from pyzbar.pyzbar import decode
 import gc
-import time
 
 
 # Define holder color range in HSV (red) - because red is at both ends of the hue spectrum, need two ranges
@@ -23,9 +22,8 @@ MIN_LEG_AREA = 4500
 
 NUM_QRCODES = 1  # Set this to however many QR codes you expect
 
-def capture_image(path="captured_image.png"):
+def capture_image(path="captured_image.jpg"):
     os.system(f"rpicam-still --output {path} --nopreview")
-    time.sleep(1)  # Wait a second for the image to be fully saved
     return cv2.imread(path)
 
 # ----------- LEG DETECTION -------------
@@ -335,7 +333,6 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=450):
     
     bgr_eq = cv2.cvtColor(hsv_eq, cv2.COLOR_HSV2BGR)
     cv2.imwrite('equalized_hsv_image.jpg', bgr_eq)  # Save the equalized BGR image for debugging
-    
     # Now apply your red masks
     mask1 = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV, HOLDER_COLOR_UPPER_THRESHOLD_HSV)
     mask2 = cv2.inRange(hsv, HOLDER_COLOR_LOWER_THRESHOLD_HSV_2, HOLDER_COLOR_UPPER_THRESHOLD_HSV_2)
@@ -493,7 +490,7 @@ def find_qrcodes(image):
 if __name__ == "__main__":
     gc.collect()  # Run garbage collection to free up memory
     image = capture_image()
-    # image = cv2.imread('captured_image.png')
+    # image = cv2.imread('captured_image.jpg')
     print("Image loaded successfully.")
     holders = find_holders(image)
     print(f"Number of holders found: {len(holders)}")
