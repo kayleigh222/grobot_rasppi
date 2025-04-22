@@ -504,7 +504,11 @@ try:
     # servo_motor_code.sweeping = False
     # servo_thread.join()
     # clean_up_servo(pi) # Clean up servo motor
-
+except KeyboardInterrupt:
+        print("Caught Ctrl+C, exiting gracefully.")
+        GPIO.cleanup()  # Clean up GPIO settings
+        print("Cleaned up GPIO")
+        gc.collect()  # Run garbage collector to free up memory
 finally:
     # Clean up GPIO settings
     GPIO.cleanup()  # Clean up GPIO settings
