@@ -149,10 +149,15 @@ def find_borders_of_conveyors(image):
     #                       if np.sum(binary_mask[:, i]) >= threshold), 0)
     
     # have to get left and right differently because shadows from lighting extend the boundaries of the contour otherwise
-    threshold = 10000*255 # minimum number of dark pixels for a row to be considered part of the conveyor - times 255 because black pixels were set to white (255) in the binary mask
-    conveyor_left = next((i for i, row in enumerate(binary_mask) if np.sum(row) >= threshold), 0)
-    conveyor_right = next((i for i in range(binary_mask.shape[0] - 1, -1, -1) if np.sum(binary_mask[i]) >= threshold), 0)
-    
+    threshold = 100000 # minimum number of dark pixels for a row to be considered part of the conveyor - times 255 because black pixels were set to white (255) in the binary mask
+    conveyor_left = next(
+        (i for i, row in enumerate(binary_mask) if np.count_nonzero(row == 255) >= threshold), 0
+    )
+
+    conveyor_right = next(
+        (i for i in range(binary_mask.shape[0] - 1, -1, -1)
+        if np.count_nonzero(binary_mask[i] == 255) >= threshold), 0
+    )
     # get the contours of the mask
     contours = cv2.findContours(binary_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[-2]
     min_area = 200000 # minimum number of dark pixels for a contour to be considered part of the conveyor
