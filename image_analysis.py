@@ -149,7 +149,7 @@ def find_borders_of_conveyors(image):
     #                       if np.sum(binary_mask[:, i]) >= threshold), 0)
     
     # have to get left and right differently because shadows from lighting extend the boundaries of the contour otherwise
-    threshold = 5000 # minimum number of dark pixels for a row to be considered part of the conveyor
+    threshold = 10000 # minimum number of dark pixels for a row to be considered part of the conveyor
     conveyor_left = next((i for i, row in enumerate(binary_mask) if np.sum(row) >= threshold), 0)
     conveyor_right = next((i for i in range(binary_mask.shape[0] - 1, -1, -1) if np.sum(binary_mask[i]) >= threshold), 0)
     
