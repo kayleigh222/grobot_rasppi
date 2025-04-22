@@ -117,7 +117,7 @@ try:
     top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y  = find_leg_top_conveyor(leg_contours)
     # draw a circle at top conveyor leg top left
     # cv2.circle(image, (top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y), 10, (255, 0, 0), 5)  # Green circle
-    target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 170) # TODO- currently hardcoding this, probably want a better way 
+    target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 200) # TODO- currently hardcoding this, probably want a better way 
 
     # ----------- FIND TOP HOLDER ON RIGHT CONVEYOR ------------------
     bottom_of_top_holder_right_conveyor_x_coord, top_right_plant_id = update_top_right_plant_position(image, conveyor_threshold)
