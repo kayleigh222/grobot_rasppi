@@ -117,8 +117,7 @@ try:
     top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y  = find_leg_top_conveyor(leg_contours)
     # draw a circle at top conveyor leg top left
     # cv2.circle(image, (top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y), 10, (255, 0, 0), 5)  # Green circle
-    target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 250) # TODO- currently hardcoding this, probably want a better way 
-
+    target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 200) # don't increase this, or won't be close enough for conveyor to push across. if target too far up to reach, tilt top conveyor forward
     # ----------- FIND TOP HOLDER ON RIGHT CONVEYOR ------------------
     bottom_of_top_holder_right_conveyor_x_coord, top_right_plant_id = update_top_right_plant_position(image, conveyor_threshold)
     distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
@@ -315,7 +314,7 @@ try:
 
     # -------- FIND BOTTOM PLANT LEFT CONVEYOR AND TARGET LOCATION ----------
     bottom_conveyor_leg_top_right_x, bottom_conveyor_leg_top_right_y  = find_leg_bottom_conveyor(leg_contours)
-    target_location_for_bottom_tray = int(bottom_conveyor_leg_top_right_x - 500) 
+    target_location_for_bottom_tray = int(bottom_conveyor_leg_top_right_x - 550) 
     
     bottom_of_bottom_holder_left_conveyor_x_coord, bottom_left_plant_id = update_bottom_left_plant_position(image, conveyor_threshold)
     distance_from_bottom_of_holder_to_target = target_location_for_bottom_tray - bottom_of_bottom_holder_left_conveyor_x_coord
