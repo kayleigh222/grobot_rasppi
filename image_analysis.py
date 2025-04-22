@@ -173,8 +173,6 @@ def find_borders_of_conveyors(image):
     # conveyor_bottom = min([cv2.boundingRect(cnt)[0] for cnt in contours])
     # conveyor_top = max([cv2.boundingRect(cnt)[0] + cv2.boundingRect(cnt)[2] for cnt in contours])
 
-    # draw the contours on the image
-    cv2.drawContours(image, contours, -1, (255, 0, 0), 3)
     cv2.imwrite('image_with_conveyor_contours.jpg', image)  # Save the image with the contours for debugging
 
     return conveyor_left, conveyor_right, conveyor_top, conveyor_bottom
