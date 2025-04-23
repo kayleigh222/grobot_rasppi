@@ -211,8 +211,8 @@ try:
     print("Distance between holders: ", distance_below_target)
 
     # ------ USE PID CONTROL TO MOVE LEFT HOLDER TO ALIGN WITH RIGHT HOLDER -----------
-    while(distance_below_target > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS or distance_below_target < 0):
-        if (distance_below_target < 0):
+    while(distance_below_target > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS or distance_below_target < 3):
+        if (distance_below_target < 3):
             steps_to_take = int(-20)
         else:
             steps_to_take = int(pid_control(distance_below_target, Kp=(1/calibration_variables[LEFT_CONVEYOR_SPEED])))
