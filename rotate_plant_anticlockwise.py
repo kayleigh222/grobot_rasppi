@@ -336,6 +336,8 @@ try:
     distance_from_bottom_of_holder_to_target = target_location_for_bottom_tray - bottom_of_bottom_holder_left_conveyor_x_coord
 
     print("Moving left conveyor down close enough to slide tray across.")
+    print("Target x value: ", target_location_for_bottom_tray)
+    print("Current x value: ", bottom_of_bottom_holder_left_conveyor_x_coord)
     print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
 
     # ------ USE PID CONTROL TO MOVE BOTTOM HOLDER ON LEFT CONVEYOR DOWN CLOSE ENOUGH TO SLIDE TRAY ACROSS -----------
