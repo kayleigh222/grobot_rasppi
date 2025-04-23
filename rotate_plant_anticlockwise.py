@@ -287,6 +287,9 @@ try:
     target_location = get_rightmost_corner(corners_right)[1] + 5
     del corners_right
     gc.collect()
+    # draw a horizontal line at target
+    cv2.line(image, (0, target_location), (image.shape[1], target_location), (255, 0, 0), 2)  
+    cv2.imwrite("before_move_top_conveyor_leg.jpg", image)
     num_moves = 0
     
     while(top_conveyor_leg_top_left_y > target_location):
