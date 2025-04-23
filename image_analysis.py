@@ -503,6 +503,7 @@ if __name__ == "__main__":
     # image = capture_image()
     image = cv2.imread('captured_image.jpg')
     print("Image loaded successfully.")
+    conveyor_threshold, conveyors_left, conveyors_right, top_conveyor, bottom_conveyor = get_conveyor_threshold(image) # find threshold between left and right conveyor
     holders = find_holders(image)
     holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
     top_holder_right = top_holder_right_conveyor(holders_divided_into_conveyors)
