@@ -330,7 +330,7 @@ try:
 
     # -------- FIND BOTTOM PLANT LEFT CONVEYOR AND TARGET LOCATION ----------
     bottom_conveyor_leg_top_right_x, bottom_conveyor_leg_top_right_y  = find_leg_bottom_conveyor(leg_contours)
-    target_location_for_bottom_tray = int(bottom_conveyor_leg_top_right_x - 550) 
+    target_location_for_bottom_tray = int(bottom_conveyor_leg_top_right_x - 450) 
     
     bottom_of_bottom_holder_left_conveyor_x_coord, bottom_left_plant_id = update_bottom_left_plant_position(image, conveyor_threshold)
     distance_from_bottom_of_holder_to_target = target_location_for_bottom_tray - bottom_of_bottom_holder_left_conveyor_x_coord
