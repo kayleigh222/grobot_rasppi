@@ -283,11 +283,14 @@ try:
     print('finished moving top conveyor to target')
 
     # --------- MOVE TOP CONVEYOR LEG OUT OF THE WAY OF CONVEYORS -----------
-    target_location = get_rightmost_corner(corners_right)[1] + 5
+    target_location = get_rightmost_corner(corners_right)[1] + 10
+    print("Target location to move top leg out of way: ", target_location)
     del corners_right
     gc.collect()
     # draw a horizontal line at target
-    cv2.line(image, (0, target_location), (image.shape[1], target_location), (255, 0, 0), 2)  
+    cv2.line(image, (0, target_location), (image.shape[1], target_location), (255, 0, 0), 2) 
+    # draw a horizontal line at top_conveyor_left_top_left_y
+    cv2.line(image, (0, top_conveyor_leg_top_left_y), (image.shape[1], top_conveyor_leg_top_left_y), (0, 0, 255), 2)  # Red line 
     cv2.imwrite("before_move_top_conveyor_leg.jpg", image)
     num_moves = 0
     

@@ -512,5 +512,5 @@ if __name__ == "__main__":
     del corners_right
     gc.collect()
     # draw a horizontal line at target
-    cv2.line(image, (0, target_location+10), (image.shape[1], target_location+10), (255, 0, 0), 2)  
+    cv2.line(image, (0, target_location), (image.shape[1], target_location), (255, 0, 0), 2)  
     cv2.imwrite("before_move_top_conveyor_leg.jpg", image)
