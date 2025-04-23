@@ -112,7 +112,7 @@ try:
 
     # # ---------- FIND OUTLINES OF CONVEYOR TO GET TARGET LOCATION FOR TOP RIGHT TRAY -----------
     conveyor_threshold, conveyors_left, conveyors_right, top_conveyor, bottom_conveyor = get_conveyor_threshold(image) # find threshold between left and right conveyor
-    # leg_contours = find_leg_contours(image)
+    leg_contours = find_leg_contours(image)
     # top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y  = find_leg_top_conveyor(leg_contours)
     # # draw a circle at top conveyor leg top left
     # # cv2.circle(image, (top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y), 10, (255, 0, 0), 5)  # Green circle
