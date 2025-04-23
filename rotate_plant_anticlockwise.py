@@ -124,7 +124,7 @@ try:
 
     print("Moving right conveyor up close enough to slide tray across.")
     print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
-    num_moves_up = 0
+    num_moves = 0
 
     # ------ USE PID CONTROL TO MOVE TOP HOLDER ON RIGHT CONVEYOR UP CLOSE ENOUGH TO SLIDE TRAY ACROSS -----------
     while(distance_from_bottom_of_holder_to_target > 50): # TODO: base target location on end of top conveyor leg for better relability
@@ -150,10 +150,10 @@ try:
         print("bottom of top holder right conveyor: ", bottom_of_top_holder_right_conveyor_x_coord)
         distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
         print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
-        if(num_moves_up > 5): # if get stuck in loop moving up, target is probably too high
-            print("STUCK IN LOOP MOVING UP - TARGET LIKELY TOO HIGH")
+        if(num_moves > 5): # if get stuck in loop moving up, target is probably too high
+            print("STUCK IN LOOP - TARGET LIKELY WRONG")
             break
-        num_moves_up += 1
+        num_moves += 1
 
     print("Finished moving top holder on right conveyor up close enough to slide tray across. Distance to target location now ", distance_from_bottom_of_holder_to_target)
     gc.collect() # run garbage collector to free up memory
@@ -284,11 +284,12 @@ try:
     print('finished moving top conveyor to target')
 
     # --------- MOVE TOP CONVEYOR LEG OUT OF THE WAY OF CONVEYORS -----------
-    target_location = get_rightmost_corner(corners_right)[1] + 20
+    target_location = get_rightmost_corner(corners_right)[1] + 5
     del corners_right
     gc.collect()
+    num_moves = 0
     
-    while(top_conveyor_leg_top_left_y < target_location):
+    while(top_conveyor_leg_top_left_y > target_location):
         steps_to_take = abs(int((target_location - top_conveyor_leg_top_left_y) // calibration_variables[TOP_CONVEYOR_SPEED_BACKWARD]))
         if(steps_to_take == 0):
             print("No steps to take")
@@ -301,6 +302,11 @@ try:
         # find new position of top conveyor leg
         leg_contours = find_leg_contours(image)
         top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y = find_leg_top_conveyor(leg_contours)
+        
+        if(num_moves > 5): # if get stuck in loop moving up, target is probably too high
+            print("STUCK IN LOOP - TARGET LIKELY WRONG")
+            break
+        num_moves += 1
         
     clean_up_top_conveyor()
     print("Finished moving top conveyor leg out of the way")
@@ -476,9 +482,10 @@ try:
 
     # --------- MOVE BOTTOM CONVEYOR LEG OUT OF THE WAY OF CONVEYORS -----------
     bottom_conveyor_leg_top_right_x, bottom_conveyor_leg_top_right_y  = find_leg_bottom_conveyor(leg_contours)
-    target_location = get_leftmost_corner(corners_left)[1] + 30
+    target_location = get_leftmost_corner(corners_left)[1] + 10
     del corners_left
     gc.collect()
+    num_moves = 0
     while(bottom_conveyor_leg_top_right_y < target_location):
         steps_to_take = abs(int((target_location - top_conveyor_leg_top_left_y) // calibration_variables[BOTTOM_CONVEYOR_SPEED_BACKWARD]))
         if(steps_to_take == 0):
@@ -492,6 +499,10 @@ try:
         # find new position of top conveyor leg
         leg_contours = find_leg_contours(image)
         bottom_conveyor_leg_top_right_x, bottom_conveyor_leg_top_right_y  = find_leg_bottom_conveyor(leg_contours)
+        if(num_moves > 5): # if get stuck in loop moving up, target is probably too high
+            print("STUCK IN LOOP - TARGET LIKELY WRONG")
+            break
+        num_moves += 1
         
     clean_up_bottom_conveyor()
     print("Finished moving bottom conveyor leg out of the way")
