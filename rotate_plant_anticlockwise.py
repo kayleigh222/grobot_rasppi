@@ -422,7 +422,7 @@ try:
     print("Distance between holders: ", distance_below_target)
 
     # ------ USE PID CONTROL TO MOVE RIGHT HOLDER TO ALIGN WITH LEFT HOLDER -----------
-    while(distance_below_target < -DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS or distance_below_target > 0):
+    while(distance_below_target < -25 or distance_below_target > 0):
         steps_to_take = int(pid_control(distance_below_target, Kp=(1/calibration_variables[RIGHT_CONVEYOR_SPEED])))
         if(steps_to_take == 0):
             print("No steps to take")
@@ -495,7 +495,7 @@ try:
     gc.collect()
     num_moves = 0
     while(bottom_conveyor_leg_top_right_y > target_location):
-        steps_to_take = abs(int((target_location - top_conveyor_leg_top_left_y) // calibration_variables[BOTTOM_CONVEYOR_SPEED_BACKWARD]))
+        steps_to_take = abs(int((target_location - bottom_conveyor_leg_top_right_y) // calibration_variables[BOTTOM_CONVEYOR_SPEED_BACKWARD]))
         if(steps_to_take == 0):
             print("No steps to take")
             break
