@@ -75,7 +75,7 @@ def find_leg_bottom_conveyor(leg_contours):
     - Draws and saves the mask and contour outline.
     Returns: (x, y) coordinate of top-left corner of bounding box.
     """
-    leg_contour = min(leg_contours, key=cv2.contourArea)
+    leg_contour = min(leg_contours, key=lambda c: cv2.boundingRect(c)[0]) # pick the leg with the smallest x value
     x, y, w, h = cv2.boundingRect(leg_contour)
     return x+w, y+h
 
