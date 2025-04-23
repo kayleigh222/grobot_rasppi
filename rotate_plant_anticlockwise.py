@@ -460,7 +460,7 @@ try:
 
         # ------- ROTATE BOTTOM CONVEYOR TO SLIDE TRAY ACROSS -----------
     set_up_bottom_conveyor()
-    additional_distance_to_push_tray_across = 130
+    additional_distance_to_push_tray_across = 100
     target = top_left_corner_right_holder[1] + additional_distance_to_push_tray_across
     distance_from_target = target - bottom_conveyor_leg_top_right_y
     # draw a horizontal line at target
