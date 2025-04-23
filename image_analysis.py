@@ -503,19 +503,13 @@ if __name__ == "__main__":
     # image = capture_image()
     image = cv2.imread('captured_image.jpg')
     print("Image loaded successfully.")
-    print("Num qrcodes found in image: ", len(find_qrcodes(image)))
-    # get_conveyor_threshold(image)  # find threshold between left and right conveyor
-    # holders = find_holders(image)
-    # print(f"Number of holders found: {len(holders)}")
-    # for holder in holders:
-    #     print(f"Holder center: {holder['holder_center']}, ID: {holder['id']}")
-    # conveyor_threshold, conveyors_left, conveyors_right, conveyor_top, conveyor_bottom = get_conveyor_threshold(image) # find threshold between left and right conveyor
-    # holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders)
-    # print("Divided holders into conveyors.")
-    # top_holder_right = top_holder_right_conveyor(holders_divided_into_conveyors)
-    # print("Extracting corners")
-    # corners_right = extract_holder_corners(image, top_holder_right['contour'], 16, 0.04, 45)
-    # for corner in corners_right:
-    #     x, y = corner.ravel()
-    #     cv2.circle(image, (x, y), 10, (255, 0, 0), -1)  # Green circle for right corners
-    # cv2.imwrite('corners_right.jpg', image)
+    holders = find_holders(image)
+    holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
+    top_holder_right = top_holder_right_conveyor(holders_divided_into_conveyors)
+    corners_right = extract_holder_corners(image, top_holder_right['contour'], 20, 0.04, 45)
+    target_location = get_rightmost_corner(corners_right)[1] + 5
+    del corners_right
+    gc.collect()
+    # draw a horizontal line at target
+    cv2.line(image, (0, target_location), (image.shape[1], target_location), (255, 0, 0), 2)  
+    cv2.imwrite("before_move_top_conveyor_leg.jpg", image)
