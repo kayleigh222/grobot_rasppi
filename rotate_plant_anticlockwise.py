@@ -8,7 +8,7 @@ import gc
 import numpy as np
 import time
 import threading
-from image_analysis import bottom_holder_left_conveyor, bottom_holder_right_conveyor, bottom_holder_with_barcode_left_conveyor, capture_image, divide_holders_into_conveyors, extract_holder_corners, find_holders, find_leg_bottom_conveyor, find_leg_contours, find_leg_top_conveyor, get_bottom_left_corner, get_bottom_qr_right_conveyor, get_leftmost_corner, get_rightmost_corner, get_top_left_corner, get_top_qr_left_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder
+from image_analysis import bottom_holder_left_conveyor, bottom_holder_right_conveyor, bottom_holder_with_qrcode, capture_image, divide_holders_into_conveyors, extract_holder_corners, find_holders, find_leg_bottom_conveyor, find_leg_contours, find_leg_top_conveyor, get_bottom_left_corner, get_bottom_qr_right_conveyor, get_leftmost_corner, get_rightmost_corner, get_top_left_corner, get_top_qr_left_conveyor, top_holder_left_conveyor, top_holder_right_conveyor, get_conveyor_threshold, top_holder_with_barcode_right_conveyor, get_bottom_edge_of_holder, top_holder_with_qrcode
 from calibration import BOTTOM_CONVEYOR_SPEED_BACKWARD, BOTTOM_CONVEYOR_SPEED_FORWARD, TOP_CONVEYOR_SPEED_BACKWARD, TOP_CONVEYOR_SPEED_FORWARD, calibrate_bottom_conveyor_motor, calibrate_top_conveyor_motor, calibrate_vertical_conveyor_motors, load_variables, LEFT_CONVEYOR_SPEED, RIGHT_CONVEYOR_SPEED
 from servo_motor_code import clean_up_servo, set_up_servo, sweep_servo
 import servo_motor_code
@@ -61,8 +61,8 @@ def update_bottom_left_plant_position(image, conveyor_threshold):
         id (str or None): The decoded string from the holder's QR code if present; otherwise None.
     """
     holders = find_holders(image)
-    holders_divided = divide_holders_into_conveyors(conveyor_threshold, holders)
-    bottom_plant = bottom_holder_with_barcode_left_conveyor(holders_divided)
+    left_holders, _ = divide_holders_into_conveyors(conveyor_threshold, holders)
+    bottom_plant = bottom_holder_with_qrcode(left_holders)
     bottom = get_bottom_edge_of_holder(bottom_plant['contour'])
     return bottom[0][0], bottom_plant['id']
 
@@ -80,8 +80,8 @@ def update_top_right_plant_position(image, conveyor_threshold):
         id (str or None): The decoded string from the holder's QR code if present; otherwise None.
     """
     holders = find_holders(image)
-    holders_divided = divide_holders_into_conveyors(conveyor_threshold, holders)
-    top_plant = top_holder_with_barcode_right_conveyor(holders_divided)
+    _, right_holders = divide_holders_into_conveyors(conveyor_threshold, holders)
+    top_plant = top_holder_with_qrcode(right_holders)
     bottom = get_bottom_edge_of_holder(top_plant['contour'])
     return bottom[0][0], top_plant['id']
 

@@ -242,51 +242,45 @@ def bottom_holder_left_conveyor(holders_divided_into_conveyors):
     top_holder = min(left_conveyor_holders, key=lambda h: h['holder_center'][0])
     return top_holder
 
-def top_holder_with_barcode_right_conveyor(holders_divided_into_conveyors):
+def top_holder_with_qrcode(holders):
     """
-    Loops through right conveyor holders and returns the top-most non-empty holder.
+    Loops through holders and returns the top-most non-empty holder.
     Removes empty holders from the list.
     """
-    _, right_conveyor_holders = holders_divided_into_conveyors
-    top_holder_with_barcode = None
+    top_holder_with_qrcode = None
 
-    while top_holder_with_barcode is None:
-        if not right_conveyor_holders:
-            print("Error: No qrcodes found in right conveyor")
+    while top_holder_with_qrcode is None:
+        if not holders:
+            print("Error: No holders found.")
             break
 
-        top_candidate = max(right_conveyor_holders, key=lambda h: h['holder_center'][0])
+        top_candidate = max(holders, key=lambda h: h['holder_center'][0])
         if top_candidate['is_empty']:
-            right_conveyor_holders.remove(top_candidate)
+            holders.remove(top_candidate)
         else:
-            top_holder_with_barcode = top_candidate
+            top_holder_with_qrcode = top_candidate
 
-    if top_holder_with_barcode:
-        print("Top holder with qrcode: ", top_holder_with_barcode['holder_center'])
-    return top_holder_with_barcode
+    if top_holder_with_qrcode:
+        print("Top holder with qrcode: ", top_holder_with_qrcode['holder_center'])
+    return top_holder_with_qrcode
 
-def bottom_holder_with_barcode_left_conveyor(holders_divided_into_conveyors):
+def bottom_holder_with_qrcode(holders):
     """
-    Loops through right conveyor holders and returns the top-most non-empty holder.
+    Loops through holders and returns the top-most non-empty holder.
     Removes empty holders from the list.
     """
-    left_conveyor_holders, _ = holders_divided_into_conveyors
-    bottom_holder_with_barcode = None
+    bottom_holder_with_qrcode = None
 
-    while bottom_holder_with_barcode is None:
-        if not left_conveyor_holders:
-            print("Error: No qrcodes found in left conveyor")
-            break
-
-        top_candidate = min(left_conveyor_holders, key=lambda h: h['holder_center'][0])
+    while bottom_holder_with_qrcode is None:
+        top_candidate = min(holders, key=lambda h: h['holder_center'][0])
         if top_candidate['is_empty']:
-            left_conveyor_holders.remove(top_candidate)
+            holders.remove(top_candidate)
         else:
-            bottom_holder_with_barcode = top_candidate
+            bottom_holder_with_qrcode = top_candidate
 
-    if bottom_holder_with_barcode:
-        print("Bottom holder with qrcode: ", bottom_holder_with_barcode['holder_center'])
-    return bottom_holder_with_barcode
+    if bottom_holder_with_qrcode:
+        print("Bottom holder with qrcode: ", bottom_holder_with_qrcode['holder_center'])
+    return bottom_holder_with_qrcode
 
 def extract_holder_corners(image, contour, num_corners=8, quality_level=0.02, min_distance=20):
     approx = cv2.approxPolyDP(contour, 0.005* cv2.arcLength(contour, True), True) # change from 0.01
