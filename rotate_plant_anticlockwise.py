@@ -155,6 +155,9 @@ try:
         num_moves += 1
 
     print("Finished moving top holder on right conveyor up close enough to slide tray across. Distance to target location now ", distance_from_bottom_of_holder_to_target)
+    # reset PID control
+    previous_error = 0
+    integral = 0
     gc.collect() # run garbage collector to free up memory
 
     # --------- FIND DESIRED POSITION FOR TOP LEFT HOLDER -----------
@@ -251,10 +254,13 @@ try:
         print("Distance between holders: ", distance_below_target)
 
     print('finished moving holders together')
+    # reset PID control
+    previous_error = 0
+    integral = 0
 
     # ------- ROTATE TOP CONVEYOR TO SLIDE TRAY ACROSS -----------
     set_up_top_conveyor()
-    additional_distance_to_push_tray_across = 130
+    additional_distance_to_push_tray_across = 125
     target = bottom_left_corner_left_holder[1] - additional_distance_to_push_tray_across
     distance_from_target = top_conveyor_leg_top_left_y - target
     # draw a horizontal line at conveyor_threshold
@@ -459,8 +465,11 @@ try:
         print("Distance between holders: ", distance_below_target)
 
     print('finished moving holders together')
+    # reset PID control
+    previous_error = 0
+    integral = 0
 
-        # ------- ROTATE BOTTOM CONVEYOR TO SLIDE TRAY ACROSS -----------
+    # ------- ROTATE BOTTOM CONVEYOR TO SLIDE TRAY ACROSS -----------
     set_up_bottom_conveyor()
     additional_distance_to_push_tray_across = 120
     target = top_left_corner_right_holder[1] + additional_distance_to_push_tray_across
@@ -489,10 +498,13 @@ try:
         print("Distance from bottom conveyor target: ", distance_from_target)
 
     print('finished moving bottom conveyor to target')
+    # reset PID control
+    previous_error = 0
+    integral = 0
 
     # --------- MOVE BOTTOM CONVEYOR LEG OUT OF THE WAY OF CONVEYORS -----------
     bottom_conveyor_leg_top_right_x, bottom_conveyor_leg_top_right_y  = find_leg_bottom_conveyor(leg_contours)
-    target_location = get_leftmost_corner(corners_left)[1] + 10
+    target_location = get_leftmost_corner(corners_left)[1] + 30
     del corners_left
     gc.collect()
     num_moves = 0
