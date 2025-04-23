@@ -375,8 +375,8 @@ def find_holders(image, max_dist_between_holder_center_and_barcode=450):
         # near_barcode = (holder_center[0], holder_center[1] + 450)
         near_barcode = (holder_center[0], holder_center[1])
         # draw a circle of radius max_dist_between_holder_center_and_barcode
-        # cv2.circle(image, near_barcode, max_dist_between_holder_center_and_barcode, (0, 255, 0), 2)  # Green circle
-        # cv2.imwrite('image_with_holder_circles.jpg', image)  # Save the image with the circles for debugging
+        cv2.circle(image, near_barcode, max_dist_between_holder_center_and_barcode, (0, 255, 0), 2)  # Green circle
+        cv2.imwrite('image_with_holder_circles.jpg', image)  # Save the image with the circles for debugging
         
         # Determine if a qrcode is nearby
         barcode_close = False
@@ -505,12 +505,12 @@ if __name__ == "__main__":
     print("Image loaded successfully.")
     conveyor_threshold, conveyors_left, conveyors_right, top_conveyor, bottom_conveyor = get_conveyor_threshold(image) # find threshold between left and right conveyor
     holders = find_holders(image)
-    holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
-    top_holder_right = top_holder_right_conveyor(holders_divided_into_conveyors)
-    corners_right = extract_holder_corners(image, top_holder_right['contour'], 20, 0.04, 45)
-    target_location = get_rightmost_corner(corners_right)[1] + 5
-    del corners_right
-    gc.collect()
-    # draw a horizontal line at target
-    cv2.line(image, (0, target_location), (image.shape[1], target_location), (255, 0, 0), 2)  
-    cv2.imwrite("before_move_top_conveyor_leg.jpg", image)
+    # holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
+    # top_holder_right = top_holder_right_conveyor(holders_divided_into_conveyors)
+    # corners_right = extract_holder_corners(image, top_holder_right['contour'], 20, 0.04, 45)
+    # target_location = get_rightmost_corner(corners_right)[1] + 5
+    # del corners_right
+    # gc.collect()
+    # # draw a horizontal line at target
+    # cv2.line(image, (0, target_location), (image.shape[1], target_location), (255, 0, 0), 2)  
+    # cv2.imwrite("before_move_top_conveyor_leg.jpg", image)
