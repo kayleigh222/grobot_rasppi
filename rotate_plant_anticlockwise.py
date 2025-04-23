@@ -290,7 +290,9 @@ try:
     num_moves = 0
     
     while(top_conveyor_leg_top_left_y > target_location):
-        steps_to_take = abs(int((target_location - top_conveyor_leg_top_left_y) // calibration_variables[TOP_CONVEYOR_SPEED_BACKWARD]))
+        distance_to_target = (target_location - top_conveyor_leg_top_left_y)
+        print("Distance to target location: ", distance_to_target)
+        steps_to_take = abs(int(distance_to_target // calibration_variables[TOP_CONVEYOR_SPEED_BACKWARD]))
         if(steps_to_take == 0):
             print("No steps to take")
             break
