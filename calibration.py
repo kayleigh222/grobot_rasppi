@@ -36,7 +36,7 @@ def load_variables():
     except (FileNotFoundError, json.JSONDecodeError):
         return {}  # Return empty dict if file doesn't exist or is corrupted
 
-def calibrate_bottom_conveyor_motor(num_steps_to_test=600):
+def calibrate_bottom_conveyor_motor(num_steps_to_test=800):
     print("Calibrating bottom conveyor motor...")
     set_up_bottom_conveyor()  # Set up the top conveyor motor
     # measure initial position
@@ -74,7 +74,7 @@ def calibrate_bottom_conveyor_motor(num_steps_to_test=600):
     print(data)
     save_variables(data)  # Save
 
-def calibrate_top_conveyor_motor(num_steps_to_test=600):
+def calibrate_top_conveyor_motor(num_steps_to_test=800):
     print("Calibrating top conveyor motor...")
     set_up_top_conveyor()  # Set up the top conveyor motor
     # measure initial position
@@ -112,12 +112,12 @@ def calibrate_top_conveyor_motor(num_steps_to_test=600):
     print(data)
     save_variables(data)  # Save
 
-def calibrate_vertical_conveyor_motors(num_steps_to_test=400):  # to use, put one barcode on left conveyor and one on right conveyor somewhere in the middle
+def calibrate_vertical_conveyor_motors(num_steps_to_test=600):  # to use, put one barcode on left conveyor and one on right conveyor somewhere in the middle
     print("Calibrating vertical conveyor motors...")
     calibrate_right_conveyor_motor(num_steps_to_test)
     calibrate_left_conveyor_motor(num_steps_to_test)
 
-def calibrate_right_conveyor_motor(num_steps_to_test=400):  # to use, put one barcode on right conveyor somewhere in the middle
+def calibrate_right_conveyor_motor(num_steps_to_test=600):  # to use, put one barcode on right conveyor somewhere in the middle
   # measure initial position
   image_path = "captured_image.jpg"
   os.system(f"rpicam-still --output {image_path} --nopreview") # capture image without displaying preview
@@ -144,7 +144,7 @@ def calibrate_right_conveyor_motor(num_steps_to_test=400):  # to use, put one ba
   print(data)
   save_variables(data)  # Save
 
-def calibrate_left_conveyor_motor(num_steps_to_test=400):  # to use, put one barcode on left conveyor somewhere in the middle
+def calibrate_left_conveyor_motor(num_steps_to_test=600):  # to use, put one barcode on left conveyor somewhere in the middle
     
     # measure initial position
     image_path = "captured_image.jpg"
@@ -173,7 +173,7 @@ def calibrate_left_conveyor_motor(num_steps_to_test=400):  # to use, put one bar
 
 if __name__ == "__main__":
     print("Running motor calibration...")
-    # calibrate_vertical_conveyor_motors()
+    calibrate_vertical_conveyor_motors()
     calibrate_bottom_conveyor_motor()
     calibrate_top_conveyor_motor()
     print("Calibration complete.")
