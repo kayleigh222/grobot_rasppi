@@ -3,6 +3,7 @@ from bottom_conveyor_motor_code import set_up_bottom_conveyor, step_bottom_conve
 from image_analysis import find_leg_bottom_conveyor, find_leg_contours, find_leg_top_conveyor, get_conveyor_threshold, get_top_qr_right_conveyor, get_top_qr_left_conveyor
 import os
 import cv2
+import math
 from top_conveyor_motor_code import set_up_top_conveyor, step_top_conveyor_backward, step_top_conveyor_forward
 from vertical_conveyor_left_motor_code import move_left_conveyor, set_up_left_conveyor, clean_up_left_conveyor
 from vertical_conveyor_right_motor_code import move_right_conveyor, set_up_right_conveyor, clean_up_right_conveyor
@@ -15,6 +16,9 @@ TOP_CONVEYOR_SPEED_FORWARD = "top_conveyor_motor_pixels_per_step_forward"
 TOP_CONVEYOR_SPEED_BACKWARD = "top_conveyor_motor_pixels_per_step_backward"
 BOTTOM_CONVEYOR_SPEED_FORWARD = "bottom_conveyor_motor_pixels_per_step_forward"
 BOTTOM_CONVEYOR_SPEED_BACKWARD = "bottom_conveyor_motor_pixels_per_step_backward"
+
+def round_down_2dp(num):
+    return math.floor(num * 100) / 100
 
 # Save variables
 def save_variables(new_data):
@@ -69,8 +73,8 @@ def calibrate_bottom_conveyor_motor(num_steps_to_test=800):
     pixels_moved_per_step_backward = pixels_moved_backward/num_steps_to_test
 
     # save new calibration variables
-    data = {BOTTOM_CONVEYOR_SPEED_FORWARD: pixels_moved_per_step_forward,
-            BOTTOM_CONVEYOR_SPEED_BACKWARD: pixels_moved_per_step_backward}  # Assuming same speed for both directions
+    data = {BOTTOM_CONVEYOR_SPEED_FORWARD: round_down_2dp(pixels_moved_per_step_forward),
+            BOTTOM_CONVEYOR_SPEED_BACKWARD: round_down_2dp(pixels_moved_per_step_backward)}  # Assuming same speed for both directions
     print(data)
     save_variables(data)  # Save
 
@@ -107,8 +111,8 @@ def calibrate_top_conveyor_motor(num_steps_to_test=800):
     pixels_moved_per_step_backward = pixels_moved_backward/num_steps_to_test
 
     # save new calibration variables
-    data = {TOP_CONVEYOR_SPEED_FORWARD: pixels_moved_per_step_forward,
-            TOP_CONVEYOR_SPEED_BACKWARD: pixels_moved_per_step_backward}  # Assuming same speed for both directions
+    data = {TOP_CONVEYOR_SPEED_FORWARD: round_down_2dp(pixels_moved_per_step_forward),
+            TOP_CONVEYOR_SPEED_BACKWARD: round_down_2dp(pixels_moved_per_step_backward)}  # Assuming same speed for both directions
     print(data)
     save_variables(data)  # Save
 
@@ -140,7 +144,7 @@ def calibrate_right_conveyor_motor(num_steps_to_test=600):  # to use, put one ba
   pixels_moved_per_step = pixels_moved/num_steps_to_test
 
   # save new calibration variables
-  data = {RIGHT_CONVEYOR_SPEED: pixels_moved_per_step}
+  data = {RIGHT_CONVEYOR_SPEED: round_down_2dp(pixels_moved_per_step)}
   print(data)
   save_variables(data)  # Save
 
@@ -167,7 +171,7 @@ def calibrate_left_conveyor_motor(num_steps_to_test=600):  # to use, put one bar
     pixels_moved_per_step = pixels_moved/num_steps_to_test
 
     # save new calibration variables
-    data = {"left_conveyor_motor_pixels_per_step": pixels_moved_per_step}
+    data = {"left_conveyor_motor_pixels_per_step": round_down_2dp(pixels_moved_per_step)}
     print(data)
     save_variables(data)  # Save
 
