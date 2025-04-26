@@ -21,7 +21,7 @@ parser = argparse.ArgumentParser(description="Run plant position updater with op
 parser.add_argument('--calibrate', action='store_true', help='Run motor calibration before starting.')
 args = parser.parse_args()
 
-DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS = 20 # pixels - max vertical distance between holders to be able to slide across
+DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS = 17 # pixels - max vertical distance between holders to be able to slide across
 
 # variables for PID control - used to move conveyor to align holders before sliding tray across
 previous_error = 0
