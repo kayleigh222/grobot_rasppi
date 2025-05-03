@@ -11,5 +11,7 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setup(RELAY_PIN, GPIO.OUT)
 
 GPIO.output(RELAY_PIN, GPIO.LOW)
+print("Watering system activated")
 time.sleep(WATERING_TIME)
 GPIO.output(RELAY_PIN, GPIO.HIGH)
+print("Watering system deactivated")
