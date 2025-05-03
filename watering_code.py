@@ -6,7 +6,7 @@ import time
 WATERING_TIME = 30 # seconds to turn on misting system
 
 # compressor relay setup
-RELAY_PIN = 23
+RELAY_PIN = 17
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(RELAY_PIN, GPIO.OUT)
 
