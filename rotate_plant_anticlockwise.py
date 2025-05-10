@@ -114,53 +114,53 @@ try:
     conveyor_threshold, conveyors_left, conveyors_right, top_conveyor, bottom_conveyor = get_conveyor_threshold(image) # find threshold between left and right conveyor
     leg_contours = find_leg_contours(image)
     top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y  = find_leg_top_conveyor(leg_contours)
-    # draw a circle at top conveyor leg top left
-    # cv2.circle(image, (top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y), 10, (255, 0, 0), 5)  # Green circle
-    target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 200) # don't increase this, or won't be close enough for conveyor to push across. if target too far up to reach, tilt top conveyor forward
-    # ----------- FIND TOP HOLDER ON RIGHT CONVEYOR ------------------
-    bottom_of_top_holder_right_conveyor_x_coord, top_right_plant_id = update_top_right_plant_position(image, conveyor_threshold)
-    distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
+    # # draw a circle at top conveyor leg top left
+    # # cv2.circle(image, (top_conveyor_leg_top_left_x, top_conveyor_leg_top_left_y), 10, (255, 0, 0), 5)  # Green circle
+    # target_location_for_top_tray = int(top_conveyor_leg_top_left_x - 200) # don't increase this, or won't be close enough for conveyor to push across. if target too far up to reach, tilt top conveyor forward
+    # # ----------- FIND TOP HOLDER ON RIGHT CONVEYOR ------------------
+    # bottom_of_top_holder_right_conveyor_x_coord, top_right_plant_id = update_top_right_plant_position(image, conveyor_threshold)
+    # distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
 
-    print("Moving right conveyor up close enough to slide tray across.")
-    print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
-    num_moves = 0
+    # print("Moving right conveyor up close enough to slide tray across.")
+    # print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
+    # num_moves = 0
 
-    # ------ USE PID CONTROL TO MOVE TOP HOLDER ON RIGHT CONVEYOR UP CLOSE ENOUGH TO SLIDE TRAY ACROSS -----------
-    while(distance_from_bottom_of_holder_to_target > 50): # TODO: base target location on end of top conveyor leg for better relability
-        # Visualise current (red) and target (green) location
-        cv2.line(image, (target_location_for_top_tray, 0), (target_location_for_top_tray, image.shape[0]), (0, 0, 255), 2)  
-        cv2.line(image, (int(bottom_of_top_holder_right_conveyor_x_coord), 0), (int(bottom_of_top_holder_right_conveyor_x_coord), image.shape[0]), (0, 0, 255), 2) 
-        cv2.imwrite("before_move_right_holder_to_top.jpg", image)
+    # # ------ USE PID CONTROL TO MOVE TOP HOLDER ON RIGHT CONVEYOR UP CLOSE ENOUGH TO SLIDE TRAY ACROSS -----------
+    # while(distance_from_bottom_of_holder_to_target > 50): # TODO: base target location on end of top conveyor leg for better relability
+    #     # Visualise current (red) and target (green) location
+    #     cv2.line(image, (target_location_for_top_tray, 0), (target_location_for_top_tray, image.shape[0]), (0, 0, 255), 2)  
+    #     cv2.line(image, (int(bottom_of_top_holder_right_conveyor_x_coord), 0), (int(bottom_of_top_holder_right_conveyor_x_coord), image.shape[0]), (0, 0, 255), 2) 
+    #     cv2.imwrite("before_move_right_holder_to_top.jpg", image)
 
-        # move conveyor
-        steps_to_take = int(pid_control(distance_from_bottom_of_holder_to_target, Kp=(1/calibration_variables[RIGHT_CONVEYOR_SPEED])))
-        set_up_right_conveyor()
-        move_right_conveyor(steps_to_take)
-        clean_up_right_conveyor()
+    #     # move conveyor
+    #     steps_to_take = int(pid_control(distance_from_bottom_of_holder_to_target, Kp=(1/calibration_variables[RIGHT_CONVEYOR_SPEED])))
+    #     set_up_right_conveyor()
+    #     move_right_conveyor(steps_to_take)
+    #     clean_up_right_conveyor()
 
-        # capture new image
-        image = capture_image()
+    #     # capture new image
+    #     image = capture_image()
 
-        # find new position of top holder
-        bottom_of_top_holder_right_conveyor_x_coord, top_right_plant_id = update_top_right_plant_position(image, conveyor_threshold)
+    #     # find new position of top holder
+    #     bottom_of_top_holder_right_conveyor_x_coord, top_right_plant_id = update_top_right_plant_position(image, conveyor_threshold)
 
-        # find new distance left to travel
-        print("target location: ", target_location_for_top_tray)
-        print("bottom of top holder right conveyor: ", bottom_of_top_holder_right_conveyor_x_coord)
-        distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
-        print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
-        if(num_moves > 5): # if get stuck in loop moving up, target is probably too high
-            print("STUCK IN LOOP - TARGET LIKELY WRONG")
-            break
-        num_moves += 1
+    #     # find new distance left to travel
+    #     print("target location: ", target_location_for_top_tray)
+    #     print("bottom of top holder right conveyor: ", bottom_of_top_holder_right_conveyor_x_coord)
+    #     distance_from_bottom_of_holder_to_target = target_location_for_top_tray - bottom_of_top_holder_right_conveyor_x_coord
+    #     print("Distance to target location to slide across: ", distance_from_bottom_of_holder_to_target)
+    #     if(num_moves > 5): # if get stuck in loop moving up, target is probably too high
+    #         print("STUCK IN LOOP - TARGET LIKELY WRONG")
+    #         break
+    #     num_moves += 1
 
-    print("Finished moving top holder on right conveyor up close enough to slide tray across. Distance to target location now ", distance_from_bottom_of_holder_to_target)
-    # reset PID control
-    previous_error = 0
-    integral = 0
-    gc.collect() # run garbage collector to free up memory
+    # print("Finished moving top holder on right conveyor up close enough to slide tray across. Distance to target location now ", distance_from_bottom_of_holder_to_target)
+    # # reset PID control
+    # previous_error = 0
+    # integral = 0
+    # gc.collect() # run garbage collector to free up memory
 
-    # --------- FIND DESIRED POSITION FOR TOP LEFT HOLDER -----------
+    # # --------- FIND DESIRED POSITION FOR TOP LEFT HOLDER -----------
     # get corners of each holder
     holders = find_holders(image)
     holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
@@ -198,65 +198,65 @@ try:
     bottom_left_corner_left_holder = get_bottom_left_corner(corners_left)
     del corners_left
 
-    # get two corners with lowest y value on right contour
-    top_left_corner_right_holder = get_top_left_corner(corners_right) 
+    # # get two corners with lowest y value on right contour
+    # top_left_corner_right_holder = get_top_left_corner(corners_right) 
 
-    target_x_value = top_left_corner_right_holder[0]
-    print("Target x value: ", target_x_value)
+    # target_x_value = top_left_corner_right_holder[0]
+    # print("Target x value: ", target_x_value)
 
-    # visualize positions on image
-    cv2.circle(image, (bottom_left_corner_left_holder[0], bottom_left_corner_left_holder[1]), 10, (0, 255, 255), -1)  # Yellow circle for left edge
-    cv2.circle(image, (top_left_corner_right_holder[0], top_left_corner_right_holder[1]), 10, (0, 255, 255), -1)  # Yellow circle for right edge
-    cv2.imwrite("image_before_move_left_holder.jpg", image)
+    # # visualize positions on image
+    # cv2.circle(image, (bottom_left_corner_left_holder[0], bottom_left_corner_left_holder[1]), 10, (0, 255, 255), -1)  # Yellow circle for left edge
+    # cv2.circle(image, (top_left_corner_right_holder[0], top_left_corner_right_holder[1]), 10, (0, 255, 255), -1)  # Yellow circle for right edge
+    # cv2.imwrite("image_before_move_left_holder.jpg", image)
 
-    distance_below_target = target_x_value - bottom_left_corner_left_holder[0]
+    # distance_below_target = target_x_value - bottom_left_corner_left_holder[0]
 
-    print("Distance between holders: ", distance_below_target)
+    # print("Distance between holders: ", distance_below_target)
 
-    # ------ USE PID CONTROL TO MOVE LEFT HOLDER TO ALIGN WITH RIGHT HOLDER -----------
-    while(distance_below_target > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS or distance_below_target < 3):
-        if (distance_below_target < 3):
-            steps_to_take = int(-20)
-        else:
-            steps_to_take = int(pid_control(distance_below_target, Kp=(1/calibration_variables[LEFT_CONVEYOR_SPEED])))
-        if(steps_to_take == 0):
-            print("No steps to take")
-            break
-        print("Steps to take: ", steps_to_take)
+    # # ------ USE PID CONTROL TO MOVE LEFT HOLDER TO ALIGN WITH RIGHT HOLDER -----------
+    # while(distance_below_target > DISTANCE_BELOW_TARGET_HOLDER_TO_SLIDE_ACROSS or distance_below_target < 3):
+    #     if (distance_below_target < 3):
+    #         steps_to_take = int(-20)
+    #     else:
+    #         steps_to_take = int(pid_control(distance_below_target, Kp=(1/calibration_variables[LEFT_CONVEYOR_SPEED])))
+    #     if(steps_to_take == 0):
+    #         print("No steps to take")
+    #         break
+    #     print("Steps to take: ", steps_to_take)
         
-        # move conveyor
-        set_up_left_conveyor()
-        move_left_conveyor(steps_to_take)
-        clean_up_left_conveyor()
+    #     # move conveyor
+    #     set_up_left_conveyor()
+    #     move_left_conveyor(steps_to_take)
+    #     clean_up_left_conveyor()
 
-        #take new image
-        del image
-        gc.collect() # run garbage collector to free up memory
-        image = capture_image()
+    #     #take new image
+    #     del image
+    #     gc.collect() # run garbage collector to free up memory
+    #     image = capture_image()
 
-        # find new left holder position
-        holders = find_holders(image)
-        holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
-        top_holder_left = top_holder_left_conveyor(holders_divided_into_conveyors)
+    #     # find new left holder position
+    #     holders = find_holders(image)
+    #     holders_divided_into_conveyors = divide_holders_into_conveyors(conveyor_threshold, holders_from_find_holders=holders) # TODO - this is a bit sus, need to check if it work
+    #     top_holder_left = top_holder_left_conveyor(holders_divided_into_conveyors)
 
-        print('finding corners for left contour')
-        corners_left = extract_holder_corners(image, top_holder_left['contour'], 8, 0.02, 20)
-        bottom_left_corner_left_holder = get_bottom_left_corner(corners_left)
+    #     print('finding corners for left contour')
+    #     corners_left = extract_holder_corners(image, top_holder_left['contour'], 8, 0.02, 20)
+    #     bottom_left_corner_left_holder = get_bottom_left_corner(corners_left)
 
-        del corners_left
+    #     del corners_left
 
-        # visualize on image
-        cv2.circle(image, (bottom_left_corner_left_holder[0], bottom_left_corner_left_holder[1]), 10, (0, 255, 255), -1)  # Yellow circle for left edge
-        cv2.circle(image, (top_left_corner_right_holder[0], top_left_corner_right_holder[1]), 10, (0, 255, 255), -1)  # Yellow circle for right edge
-        cv2.imwrite("image_before_move_left_holder.jpg", image)
+    #     # visualize on image
+    #     cv2.circle(image, (bottom_left_corner_left_holder[0], bottom_left_corner_left_holder[1]), 10, (0, 255, 255), -1)  # Yellow circle for left edge
+    #     cv2.circle(image, (top_left_corner_right_holder[0], top_left_corner_right_holder[1]), 10, (0, 255, 255), -1)  # Yellow circle for right edge
+    #     cv2.imwrite("image_before_move_left_holder.jpg", image)
 
-        distance_below_target = target_x_value - bottom_left_corner_left_holder[0]
-        print("Distance between holders: ", distance_below_target)
+    #     distance_below_target = target_x_value - bottom_left_corner_left_holder[0]
+    #     print("Distance between holders: ", distance_below_target)
 
-    print('finished moving holders together')
-    # reset PID control
-    previous_error = 0
-    integral = 0
+    # print('finished moving holders together')
+    # # reset PID control
+    # previous_error = 0
+    # integral = 0
 
     # ------- ROTATE TOP CONVEYOR TO SLIDE TRAY ACROSS -----------
     set_up_top_conveyor()
