@@ -5,7 +5,7 @@ from vertical_conveyor_right_motor_code import clean_up_right_conveyor, move_rig
 
 # turns on the watering system for X seconds. to be scheduled by a cronjob.
 
-WATERING_TIME = 5 # seconds to turn on misting system
+WATERING_TIME = 10 # seconds to turn on misting system
 
 # compressor relay setup
 RELAY_PIN = 17
@@ -18,5 +18,6 @@ print("Watering system activated")
 time.sleep(WATERING_TIME)
 GPIO.output(RELAY_PIN, GPIO.HIGH)
 print("Watering system deactivated")
-move_right_conveyor(2000) # Move down 1000 steps
+time.sleep(5)
+move_right_conveyor(1500) # Move down 1000 steps
 clean_up_right_conveyor()
