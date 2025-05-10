@@ -9,9 +9,9 @@ WATERING_TIME = 5 # seconds to turn on misting system
 
 # compressor relay setup
 RELAY_PIN = 17
+set_up_right_conveyor()
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(RELAY_PIN, GPIO.OUT)
-set_up_right_conveyor()
 
 GPIO.output(RELAY_PIN, GPIO.LOW)
 print("Watering system activated")
